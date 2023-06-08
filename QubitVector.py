@@ -1,5 +1,5 @@
 from __future__ import annotations
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, ClassicalRegister, Aer, transpile
 
 class QubitVector:
     """This is a helper class to make it easier to work with vectors of Qubits, ensuring that rotations are gate free operations. It is compatible with the Qiskit library."""
@@ -70,3 +70,41 @@ class QubitVector:
         xor = qc.to_instruction()
         return xor
 
+def _simulate(qc):
+    """Simulate the given circuit and return the results"""
+    backend_sim = Aer.get_backend('qasm_simulator')
+    job_sim = backend_sim.run(transpile(qc, backend_sim), shots=1024)
+    result_sim = job_sim.result()
+    counts = result_sim.get_counts(qc)
+    return counts
+
+def make_circuit(qc, input_vectors, output_vectors):
+    """Make a circuit with vectors as input and measurement for the output vectors"""
+    # Copy the circuit to avoid modifying it
+    qc = qc.copy()
+    # Add classical register for the output vectors
+    qc.add_register(ClassicalRegister(sum(map(len, output_vectors))))
+    # Prepare the input
+    for input_vector in input_vectors:
+        qc.compose(input_vector.prepare(), input_vector, inplace=True, front=True)
+    output_index = 0
+    # Add measurements for the output
+    for output_vector in output_vectors:
+        qc.measure(output_vector, range(output_index, output_index+len(output_vector)))
+        output_index += len(output_vector)
+    return qc
+
+
+def run_circuit(qc, output_vectors):
+    """Run circuit returns the integer value of the output vectors"""
+    # Make the circuit and simulate it
+    result = _simulate(qc).most_frequent()
+    print(result)
+    # Extract the output vectors (result is in big endian so we need to the vector order)
+    outputs = []
+    output_index = 0
+    for output_vector in output_vectors:
+        outputs = [(result[output_index:output_index+len(output_vector)])] + outputs
+        output_index += len(output_vector)
+    # Convert the outputs to integers
+    return [int(output, 2) for output in outputs]

@@ -1,15 +1,8 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, Aer, transpile
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
-from QubitVector import QubitVector
+from QubitVector import QubitVector, make_circuit, run_circuit
 
-def simulate(qc):
-    """Simulate the given circuit and returns the results"""
-    backend_sim = Aer.get_backend('qasm_simulator')
-    job_sim = backend_sim.run(transpile(qc, backend_sim), shots=1024)
-    result_sim = job_sim.result()
-    counts = result_sim.get_counts(qc)
-    return counts
 
 def test_gate(gate, X, Y):
     n = len(X)
@@ -54,37 +47,11 @@ n = 3
 # # How can we set the initial value of QubitVector? Should that be includedi n the QubitVector?
 
 import random
-
-def make_circuit(circuit, input_vectors, output_vectors):
-    """Make a circuit with vectors as input and measurement for the output vectors"""
-    # How to specify output? This should add the measure gate maybe? 
-    # Maybe just mark which qubitvector is the output! So we have a circuit that operates on qubitvectors instead of qubits...
-    # TODO: automatically add the classical bits for output vector, this is easy
-    # TODO: multiple output/input vectors needed, test with other number than 3, like X XOR Y XOR S3(Z)
-    # Copy the circuit to avoid modifying it
-    qc = circuit.copy()
-    # Add classical register for the output vectors
-    qc.add_register(ClassicalRegister(sum(map(len, output_vectors))))
-    for input_vector in input_vectors:
-        qc.compose(input_vector.prepare(), input_vector, inplace=True, front=True)
-    output_index = 0
-    for output_vector in output_vectors:
-        qc.measure(output_vector, range(output_index, output_index+len(output_vector)))
-        output_index += len(output_vector)
-    print(qc)
-    return qc
-
-def run_circuit(circuit, input_vectors, output_vectors, expected_output):
-    """Run circuit with vectors as input and returns the integer value of the output vectors"""
-    results = simulate(make_circuit(circuit, input_vectors, output_vectors)).most_frequent()
-    print(results)
-    #return result == expected_output
-
 def test_xor():
     n = 3#random.randint(1, 100)
-    r = 2#random.randint(0, 10*n)
+    r = 1#random.randint(0, 10*n)
     a = 0b101#random.getrandbits(n) 
-    b = 0b100#random.getrandbits(n)
+    b = 0b110#random.getrandbits(n)
     true_result = a^rol(b, r, n)
     #print(f"{fmt(a, n)}^rol({fmt(b, n)}, {r}) should be {fmt(true_result, n)}")
     
@@ -92,11 +59,15 @@ def test_xor():
     Y = QubitVector(range(n, n*2), initial_value=b)
     gate = X.XOR(Y.ROL(r))
 
-    qc = QuantumCircuit(n*2)
-    qc.append(gate, range(n*2))
-    
-    run_circuit(qc, (X, Y), (X,), true_result)
+    qc = QuantumCircuit(2*n)
+    qc.append(gate, range(2*n))
+    print(qc.decompose())
 
+    circuit = make_circuit(qc, (X, Y), (X ,Y))
+    print(circuit)
+    result = run_circuit(circuit, (X, Y))
 
+    print("Expected result:\t", true_result)
+    print("Actual result:\t\t", result)
 
 test_xor()
