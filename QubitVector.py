@@ -4,22 +4,24 @@ from qiskit import QuantumCircuit, ClassicalRegister, Aer, transpile
 class QubitVector:
     """This is a helper class to make it easier to work with vectors of Qubits, ensuring that rotations are gate free operations. It is compatible with the Qiskit library."""
 
-    def __init__(self, qubits: list, initial_value=None):
+    def __init__(self, qubits: list, initial_value: int=0):
         """Create a qubit vector from specified qubits
 
         :param qubits: a list of the qubits to use for the vector, the first qubit in the list is the LSB
-        :param initial_value: a list of the initial values of the qubits in the QubitVector (used to prepare the vector)
+        :param circuit: the circuit in which this QubitVector lives
+        :param initial_value: an integer representing the initial value of the qubitvector
         """
+        # The length of the QubitVector
         self.n = len(qubits)
+        # The initial positions of the qubits
+        self.initial_qubits = list(qubits)
+        # The current positions of the qubits
         self.qubits = list(qubits)
         if initial_value is not None:
             self.initial_value = initial_value
 
     def __getitem__(self, i):
         return self.qubits[i]
-
-    def __iter__(self):
-        return iter(self.qubits)
 
     def __len__(self):
         return self.n
@@ -30,7 +32,6 @@ class QubitVector:
     def prepare(self):
         """Returns a circuit that prepares the QubitVector to its initial value. QubitVector are prepared in little endian."""
         qc = QuantumCircuit(self.n, name=f'prepare {self.initial_value}')
-        # TODO: ignores rotation, maybe take the current circuit as parameter of __init__ and add to that circuit? Or we'd have to add to the circuit according to list(self)
         bits = [int(i) for i in '{:0{n}b}'.format(self.initial_value, n=self.n)][::-1]
         for i in range(self.n):
             qc.reset(i)
@@ -41,20 +42,21 @@ class QubitVector:
                 qc.i(i)
         prepare = qc.to_instruction()
         return prepare
-
+    
     def ROR(self, r):
         """Returns the right rotation by r qubits of the QubitVector"""
         if r < 0:
             raise ValueError("Rotation must be by a positive amount.")
         r = r % self.n
-        return QubitVector(self.qubits[r:]+self.qubits[:r])
+        
+        self.qubits = self.qubits[r:]+self.qubits[:r]
 
     def ROL(self, r):
         """Returns the left rotation by r qubits of the QubitVector"""
         if r < 0:
             raise ValueError("Rotation must be by a positive amount.")
         r = r % self.n
-        return QubitVector(self.qubits[-r:]+self.qubits[:-r])
+        self.qubits = self.qubits[-r:]+self.qubits[:-r]
 
     # TODO: Is there a way this could returna  qubit vector, and this vector could be added to the circuit as a circuit part? Or directly add to the whole circuit. Cause there is a problem if we have more than two qubitvectors in the circuit right now...
     def XOR(self, other: QubitVector):
@@ -86,7 +88,7 @@ def make_circuit(qc, input_vectors, output_vectors):
     qc.add_register(ClassicalRegister(sum(map(len, output_vectors))))
     # Prepare the input
     for input_vector in input_vectors:
-        qc.compose(input_vector.prepare(), input_vector, inplace=True, front=True)
+        qc.compose(input_vector.prepare(), input_vector.initial_qubits, inplace=True, front=True)
     output_index = 0
     # Add measurements for the output
     for output_vector in output_vectors:
@@ -99,7 +101,6 @@ def run_circuit(qc, output_vectors):
     """Run circuit returns the integer value of the output vectors"""
     # Make the circuit and simulate it
     result = _simulate(qc).most_frequent()
-    print(result)
     # Extract the output vectors (result is in big endian so we need to the vector order)
     outputs = []
     output_index = 0
