@@ -42,6 +42,8 @@ class QubitVector:
                 qc.i(i)
         prepare = qc.to_instruction()
         return prepare
+
+    # TODO: if this is moved outside of the class, they could take a circuit parameter and write the operation to the circuit, so we have a final circuit at the end. Could we use the circuit API to do that, and these would just be gates then? but I don't know about the qubit parameter of circuit.append, that's a bit tricky isn't it? Like how do we XOR two bitvectors and then XOR the result with the third one, the second gate must be misaligned from the first one... that should be done automagically
     
     def ROR(self, r):
         """Returns the right rotation by r qubits of the QubitVector"""
