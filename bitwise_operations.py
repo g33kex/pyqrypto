@@ -19,10 +19,16 @@ class bPrepare(QuantumCircuit):
 
 def ROR(register: QuantumRegister , r: int) -> QuantumRegister:
     """Returns the right rotation by r qubits of a quantum register."""
+    if r < 0:
+        raise CircuitError("Rotation must be by a positive amount.")
+    r = r % len(register)
     return QuantumRegister(bits=register[r:]+register[:r], name=register.name)
 
 def ROL(register: QuantumRegister, r: int) -> QuantumRegister:
     """Returns the left rotation by r qubits of a quantum register."""
+    if r < 0:
+        raise CircuitError("Rotation must be by a positive amount.")
+    r = r % len(register)
     return QuantumRegister(bits=register[-r:]+register[:-r], name=register.name)
 
 class bXOR(QuantumCircuit):
@@ -58,19 +64,6 @@ def make_circuit(circuit, inputs, input_registers, output_registers):
     # Prepare the input by initializing it manually because the initialization function of Qiskit seems to have a bug where specifying integers for register values yields to 0 output in the simulator (but the QASM is correct) TODO: investigate this bug further
     for i, input_register in enumerate(input_registers):
         qc.compose(bPrepare(len(input_register), inputs[i]), input_register, inplace=True, front=True)
-    # for input_register in input_registers:
-    #     for qubit in input_register:
-    #         qc.reset(qubit)
-    # for i, input_register in enumerate(input_registers):
-    #     bits = [int(i) for i in '{:0{n}b}'.format(inputs[i], n=len(input_register))][::-1]
-    #     for i, qubit in enumerate(input_register):
-    #         if bits[i]:
-    #             qc.h(qubit)
-    #         else:
-    #             qc.i(qubit)
-    # for input_register in input_registers:
-    #     for qubit in input_register:
-    #         qc.barrier(qubit)
     # Add measurements for the output
     output_index = 0
     for output_register in output_registers:
