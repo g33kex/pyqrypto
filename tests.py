@@ -1,7 +1,7 @@
 from qiskit import QuantumCircuit, QuantumRegister, AncillaRegister
 import random
 
-from bitwise_operations import bROR, bROL, bXOR, bAND, bAppend, make_circuit, run_circuit
+from bitwise_operations import bROR, bROL, bXOR, bAND, bRegister, bAppend, make_circuit, run_circuit
 
 # Utils
 def rol(x, r, n):
@@ -217,30 +217,48 @@ def showcase_basic_xor():
 if __name__ == '__main__':
     random.seed(42)
 
-    assert(test_prepare())
-    assert(test_xor())
-    assert(test_ror())
-    assert(test_rorrorxor())
-    assert(test_rorxorrolxor())
-    assert(test_complexxor())
+    # assert(test_prepare())
+    # assert(test_xor())
+    # assert(test_ror())
+    # assert(test_rorrorxor())
+    # assert(test_rorxorrolxor())
+    # assert(test_complexxor())
     
     # Showcase complex circuit
-    showcase_complex_circuit()
+    # showcase_complex_circuit()
 
     # # Showcase basic XOR
-    showcase_basic_xor()
+    # showcase_basic_xor()
 
-    # X = QuantumRegister(3, name='X')
-    # Y = QuantumRegister(3, name='Y')
-    # A = AncillaRegister(1, name='ancilla')
-    # 
-    # qc = QuantumCircuit(A, X, Y)
+    # Trying to simplify the interface
+    # A1 = bRegister(3, name='A')
+    # B1 = bRegister(3, name='B')
+    # C1 = bRegister(3, name='C')
+    # D1 = bRegister(3, name='D')
     #
-    # bAppend(qc, bAND(A, X, Y), [A, X, Y])
+    # A2 = A1^B1
+    # C2 = C1^D1
+    #
+    # A3 = A2^C2
+    # qc = QuantumCircuit(A1, B1, C1, D1)
+    # for operation in A3.operation:
+    #     bAppend(qc, operation)
     # print(qc)
-    #
-    # final_circuit = make_circuit(qc, [6, 7], [X, Y], [X, Y])
-    # print(final_circuit.decompose())
-    #
-    # result = run_circuit(final_circuit)
-    # print(result)
+
+    X1 = QuantumRegister(3, name='X')
+    Y = QuantumRegister(3, name='Y')
+    A = AncillaRegister(1, name='ancilla')
+
+    qc = QuantumCircuit(A, X1, Y)
+
+    # How to get back our Ancilla Qubit??
+    X2, A2 = bAppend(qc, bAND(A, X1, Y))
+    print(qc.decompose(reps=2))
+
+    final_circuit = make_circuit(qc, [5, 6], [X1, Y], [A2, X2, Y])
+    print(final_circuit.decompose())
+    with open('circuit.qasm', 'w') as f:
+        f.write(final_circuit.decompose(reps=8).qasm())
+
+    result = run_circuit(final_circuit, verbose=True)
+    print(result)
