@@ -5,6 +5,10 @@ from qiskit.circuit.exceptions import CircuitError
 import itertools
 import abc
 
+def int_to_bits(k: int, num_bits):
+    """Converts integer k into list of bits"""
+    return [int(i) for i in '{:0{n}b}'.format(k, n=num_bits)]
+
 class bOperation():
     """Abstract class defining an operation on vectors of qubits.
     
@@ -34,15 +38,15 @@ class bPrepare(QuantumCircuit, bOperation):
         
     def __init__(self, X: QuantumRegister, value: int):
         num_qubits = len(X)
-        circuit = QuantumCircuit(num_qubits, name='prepare {:0{n}b}'.format(value, n=num_qubits))
-        bits = [int(i) for i in '{:0{n}b}'.format(value, n=num_qubits)][::-1]
+        circuit = QuantumCircuit(num_qubits, name=f'bPrepare {value}')
+        bits = int_to_bits(value, num_qubits)[::-1]
         for i in range(num_qubits):
             if bits[i]:
                 circuit.x(i)
             else:
                 circuit.i(i)
 
-        super().__init__(*circuit.qregs, name=f'prepare {value}')
+        super().__init__(*circuit.qregs, name=f'bPrepare {value}')
         self.compose(circuit.to_gate(), qubits=self.qubits, inplace=True)
         self.inputs = [X]
         self.outputs = [X]
@@ -85,26 +89,74 @@ class bXOR(QuantumCircuit, bOperation):
         self.inputs = [X, Y]
         self.outputs = [X]
 
-class bAND(QuantumCircuit, bOperation):
-    """A circuit implementing a logical bitwise AND operation on a number of qubits. It needs one ancilla register with one Qubit."""
+class bXORc(QuantumCircuit, bOperation):
+    """A circuit implementing a logical bitwise XOR operation between a vector of qubits and a constant"""
 
-    def __init__(self, A: AncillaRegister, X: QuantumRegister, Y: QuantumRegister):
-        if len(X) != len(Y):
-            raise CircuitError("AND operation must be made on two QuantumRegisters of the same size.")
-        if len(A) != 1:
-            raise CircuitError("AND operation needs 1 ancilla Qubit.")
-
+    def __init__(self, X, c):
         num_qubits = len(X)
-        circuit = QuantumCircuit(num_qubits*2+1, name='bAND')
+        bits = int_to_bits(c, num_qubits)[::-1]
 
+        circuit = QuantumCircuit(num_qubits, name=f'bXOR {c}')
+
+        for i, bit in enumerate(bits):
+            if bit:
+                circuit.x(i)
+
+        super().__init__(num_qubits, name=f'bXOR {c}')
+        self.compose(circuit.to_gate(), qubits=self.qubits, inplace=True)
+
+        self.inputs = [X]
+        self.outputs = [X]
+
+# class bAND(QuantumCircuit, bOperation):
+#     """A circuit implementing a logical bitwise AND operation on a number of qubits. It needs one ancilla register with one Qubit."""
+#
+#     def __init__(self, A: AncillaRegister, X: QuantumRegister, Y: QuantumRegister):
+#         if len(X) != len(Y):
+#             raise CircuitError("AND operation must be made on two QuantumRegisters of the same size.")
+#         if len(A) != 1:
+#             raise CircuitError("AND operation needs 1 ancilla Qubit.")
+#
+#         num_qubits = len(X)
+#         circuit = QuantumCircuit(num_qubits*2+1, name='bAND')
+#
+#         for i in range(num_qubits):
+#             circuit.reset(i)
+#             circuit.ccx(i+1, num_qubits+i+1, i)
+#
+#         super().__init__(A, X, Y, name='bAND')
+#         self.compose(circuit.to_instruction(), qubits=self.qubits, inplace=True)
+#         self.inputs = [A, X, Y]
+#         self.outputs = [QuantumRegister(bits=[A[0]]+X[:-1], name=X.name), QuantumRegister(bits=[X[-1]], name=A.name)]
+
+class bADD(QuantumCircuit, bOperation):
+    """This implements the ripple-carry adder described in Takahashi et al. (2010)"""
+
+    def __init__(self, X, Y):
+        if len(X) != len(Y):
+            raise CircuitError("bADD operation must be between two QuantumRegisters of the same size.") 
+        num_qubits = len(X)
+        circuit = QuantumCircuit(num_qubits*2, name='bADD')
+
+        for i in range(1, num_qubits):
+            circuit.cx(num_qubits+i, i) 
+        for i in range(num_qubits-2, 0, -1):
+            circuit.cx(num_qubits+i, num_qubits+i+1)     
+        for i in range(num_qubits-1):
+            circuit.ccx(i, num_qubits+i, num_qubits+i+1)
+        for i in range(num_qubits-1, 0, -1):
+            circuit.cx(num_qubits+i, i)
+            circuit.ccx(i-1, num_qubits+i-1, num_qubits+i)
+        for i in range(1, num_qubits-1):
+            circuit.cx(num_qubits+i, num_qubits+i+1)
         for i in range(num_qubits):
-            circuit.reset(i)
-            circuit.ccx(i+1, num_qubits+i+1, i)
+            circuit.cx(num_qubits+i, i)
 
-        super().__init__(A, X, Y, name='bAND')
-        self.compose(circuit.to_instruction(), qubits=self.qubits, inplace=True)
-        self.inputs = [A, X, Y]
-        self.outputs = [QuantumRegister(bits=[A[0]]+X[:-1], name=X.name), QuantumRegister(bits=[X[-1]], name=A.name)]
+        super().__init__(num_qubits*2, name='bADD')
+        self.compose(circuit.to_gate(), qubits=self.qubits, inplace=True)
+
+        self.inputs = [X, Y]
+        self.outputs = [X]
 
 def bAppend(circuit: QuantumCircuit, operation: bOperation):
     """Append a bitwise operation to a Quantum Circuit operating on input registers."""
@@ -136,6 +188,7 @@ def make_circuit(circuit, inputs, input_registers, output_registers):
     # Add measurements for the output
     for output_register, classical_output_register in zip(output_registers, classical_output_registers):
         qc.measure(output_register, classical_output_register)
+
     return qc
 
 def run_circuit(circuit, verbose=False):

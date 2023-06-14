@@ -1,7 +1,10 @@
 from qiskit import QuantumCircuit, QuantumRegister, AncillaRegister
 import random
 
-from bitwise_operations import bROR, bROL, bXOR, bAND, bRegister, bAppend, make_circuit, run_circuit
+from bitwise_operations import bROR, bROL, bXOR, bXORc, bADD, bRegister, bAppend, make_circuit, run_circuit
+from alzette import Alzette, alzette
+
+nb_tests = 20
 
 # Utils
 def rol(x, r, n):
@@ -38,7 +41,7 @@ def test_circuit(circuit, classical_function, inputs, input_registers, output_re
 
 # Specific tests
 def test_xor():
-    for _ in range(20):
+    for _ in range(nb_tests):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -57,8 +60,27 @@ def test_xor():
     print("XOR test passed!")
     return True
 
+def test_xorc():
+    for _ in range(nb_tests):
+        n = random.randint(1, 10)
+        a = random.getrandbits(n)
+        c = random.getrandbits(n)
+
+        X1 = QuantumRegister(n)
+        
+        qc = QuantumCircuit(X1)
+        X2 = bAppend(qc, bXORc(X1, c))
+
+        result = test_circuit(qc, lambda x: [x^c], [a], [X1], [X2])
+
+        if not result:
+            print("XORc test failed!")
+            return False
+    print("XORc test passed!")
+    return True
+
 def test_prepare():
-    for _ in range(20):
+    for _ in range(nb_tests):
         n1 = random.randint(1, 10)
         n2 = random.randint(1, 10)
         a = random.getrandbits(n1)
@@ -78,7 +100,7 @@ def test_prepare():
     return True
 
 def test_ror():
-    for _ in range(20):
+    for _ in range(nb_tests):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         r = random.randint(1, 3*n)
@@ -96,7 +118,7 @@ def test_ror():
     return True
     
 def test_rorrorxor():
-    for _ in range(20):
+    for _ in range(nb_tests):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -119,7 +141,7 @@ def test_rorrorxor():
     return True
 
 def test_rorxorrolxor():
-    for _ in range(20):
+    for _ in range(nb_tests):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -144,7 +166,7 @@ def test_rorxorrolxor():
     return True
 
 def test_complexxor():
-    for _ in range(40):
+    for _ in range(nb_tests):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -171,6 +193,48 @@ def test_complexxor():
             print("COMPLEXXOR test failed!")
             return False
     print("COMPLEXXOR test passed!")
+    return True
+
+def test_alzette():
+    for _ in range(nb_tests):
+        n = random.randint(1, 10)
+        a = random.getrandbits(n)
+        b = random.getrandbits(n)
+        c = random.getrandbits(n)
+
+        X = QuantumRegister(n)
+        Y = QuantumRegister(n)
+
+        qc = QuantumCircuit(X, Y)
+        bAppend(qc, Alzette(X, Y, c))
+
+        result = test_circuit(qc, lambda x,y: alzette(x, y, c, n), [a, b], [X, Y], [X, Y])
+
+        if not result:
+            print("Alzette test failed!")
+            return False
+    print("Alzette test passed!")
+    return True
+
+def test_add():
+    for _ in range(nb_tests):
+        n = random.randint(1, 10)
+        a = random.getrandbits(n)
+        b = random.getrandbits(n)
+
+        X1 = QuantumRegister(n, name='X')
+        Y = QuantumRegister(n, name='Y')
+
+        qc = QuantumCircuit(X1, Y)
+
+        X2 = bAppend(qc, bADD(X1, Y))
+
+        result = test_circuit(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
+
+        if not result:
+            print("ADD test failed!")
+            return False
+    print("ADD test passed!")
     return True
 
 def showcase_complex_circuit():
@@ -213,22 +277,44 @@ def showcase_basic_xor():
     result = run_circuit(final_circuit)
     print(result)
         
+def showcase_add():
+    X1 = QuantumRegister(8, name='X')
+    Y = QuantumRegister(8, name='Y')
+
+    qc = QuantumCircuit(X1, Y)
+
+    X2 = bAppend(qc, bADD(X1, Y))
+
+    print(qc.decompose(reps=2))
+
+    final_circuit = make_circuit(qc, [74, 42], [X1, Y], [X2], filename='adder.qasm')
+    print(final_circuit)
+
+    result = run_circuit(final_circuit)
+
+    print(result)
 
 if __name__ == '__main__':
     random.seed(42)
 
-    # assert(test_prepare())
-    # assert(test_xor())
-    # assert(test_ror())
-    # assert(test_rorrorxor())
-    # assert(test_rorxorrolxor())
-    # assert(test_complexxor())
+    assert(test_prepare())
+    assert(test_xor())
+    assert(test_xorc())
+    assert(test_ror())
+    assert(test_rorrorxor())
+    assert(test_rorxorrolxor())
+    assert(test_complexxor())
+    assert(test_add())
+    assert(test_alzette())
     
     # Showcase complex circuit
     # showcase_complex_circuit()
 
-    # # Showcase basic XOR
+    # Showcase basic XOR
     # showcase_basic_xor()
+
+    #  Showcase ADD
+    # showcase_add()
 
     # Trying to simplify the interface
     # A1 = bRegister(3, name='A')
@@ -245,20 +331,20 @@ if __name__ == '__main__':
     #     bAppend(qc, operation)
     # print(qc)
 
-    X1 = QuantumRegister(3, name='X')
-    Y = QuantumRegister(3, name='Y')
-    A = AncillaRegister(1, name='ancilla')
-
-    qc = QuantumCircuit(A, X1, Y)
-
-    # How to get back our Ancilla Qubit??
-    X2, A2 = bAppend(qc, bAND(A, X1, Y))
-    print(qc.decompose(reps=2))
-
-    final_circuit = make_circuit(qc, [5, 6], [X1, Y], [A2, X2, Y])
-    print(final_circuit.decompose())
-    with open('circuit.qasm', 'w') as f:
-        f.write(final_circuit.decompose(reps=8).qasm())
-
-    result = run_circuit(final_circuit, verbose=True)
-    print(result)
+    # X1 = QuantumRegister(3, name='X')
+    # Y = QuantumRegister(3, name='Y')
+    # A = AncillaRegister(1, name='ancilla')
+    #
+    # qc = QuantumCircuit(A, X1, Y)
+    #
+    # # How to get back our Ancilla Qubit??
+    # X2, A2 = bAppend(qc, bAND(A, X1, Y))
+    # print(qc.decompose(reps=2))
+    #
+    # final_circuit = make_circuit(qc, [5, 6], [X1, Y], [A2, X2, Y])
+    # print(final_circuit.decompose())
+    # with open('circuit.qasm', 'w') as f:
+    #     f.write(final_circuit.decompose(reps=8).qasm())
+    #
+    # result = run_circuit(final_circuit, verbose=True)
+    # print(result)
