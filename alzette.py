@@ -1,15 +1,34 @@
-from bitwise_operations import bOperation, bROR, bADD, bXOR, bXORc, bAppend, make_circuit, run_circuit
+"""A reversible quantum implementation of n qubits Alzette from [Alzette2020]_.
+
+.. [Alzette2020] Beierle, C., Biryukov, A., Cardoso dos Santos, L., Großschädl, J., Perrin, L., Udovenko, A., ... & Wang, Q. (2020). Alzette: A 64-Bit ARX-box: (Feat. CRAX and TRAX). In Advances in Cryptology–CRYPTO 2020: 40th Annual International Cryptology Conference, CRYPTO 2020, Santa Barbara, CA, USA, August 17–21, 2020, Proceedings, Part III 40 (pp. 419-448). Springer International Publishing.
+"""
+from rOperations import rOperation, rROR, rADD, rXOR, rXORc, rAppend, make_circuit, run_circuit
 from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.circuit.exceptions import CircuitError
+from qiskit.circuit import Gate
+from typing import Optional, List
 import json
 
-def ror(x, r, n):
-    """Classical ror"""
+def ror(x: int, r: int, n: int) -> int:
+    """Classical implementation of the right rotation.
+
+    :param x: The integer to rotate
+    :param r: The rotation amount
+    :param n: The number of bits on which x is encoded.
+    :returns: The integer x rotated right by r bits.
+    """
     r = r % n
     return ((x >> r) | (x << (n - r))) & ((2**n) - 1)
 
-def alzette(x, y, c, n):
-    """Classical implementation of Alzette for reference"""
+def alzette(x: int, y: int, c: int, n: int) -> List[int]:
+    """Classical software implementation of Alzette.
+
+    :param x: The integer value of x.
+    :param y: The integer value of y.
+    :param c: The c constant in Alzette.
+    :param n: The number of bits on which x, y and n are encoded.
+    :returns: alzette(x, y)
+    """
     x = (x + ror(y, 31, n)) % 2**n
     y = y ^ ror(x, 24, n)
     x = x ^ c
@@ -24,32 +43,57 @@ def alzette(x, y, c, n):
     x = x ^ c
     return [x, y]
 
-class Alzette(QuantumCircuit, bOperation):
-    """A reversible quantum circuit implementing n bit Alzette"""
-    def __init__(self, X: QuantumRegister, Y: QuantumRegister, c: int):
+class Alzette(Gate, rOperation):
+    r"""A quantum gate implementing the ARX-box Alzette of two vectors of qubits.
+    :param X: X vector.
+    :param Y: Y vector.
+    :param c: Alzette constant.
+
+    :operation: :math:`(X, Y) \leftarrow \mathrm{Alzette}(X, Y)`
+
+    :math:`\mathrm{Alzette(X, Y)}` is defined in [Alzette2020]_ as the following operations:
+
+    .. math::
+        \begin{align*}
+            & \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 31) \\
+            & \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 24) \\
+            & \mathrm{X} \leftarrow \mathrm{X} \oplus c \\
+            & \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 17) \\
+            & \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 17) \\
+            & \mathrm{X} \leftarrow \mathrm{X} \oplus c \\
+            & \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 0) \\
+            & \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 31) \\
+            & \mathrm{X} \leftarrow \mathrm{X} \oplus c \\
+            & \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 24) \\
+            & \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 16) \\
+            & \mathrm{X} \leftarrow \mathrm{X} \oplus c
+        \end{align*}
+    """
+    def __init__(self, X: QuantumRegister, Y: QuantumRegister, c: int, label: Optional[str] = None):
         if len(X) != len(Y):
             raise CircuitError("X and Y must have the same size.")
-        num_qubits = len(X)
-
+        self.n = len(X)
+        self.c = c
         self.inputs = [X, Y]
-        circuit = QuantumCircuit(X, Y, name='Alzette')
-        X = bAppend(circuit, bADD(X, bAppend(circuit, bROR(Y, 31))))
-        Y = bAppend(circuit, bXOR(Y, bAppend(circuit, bROR(X, 24))))
-        X = bAppend(circuit, bXORc(X, c)) 
-        X = bAppend(circuit, bADD(X, bAppend(circuit, bROR(Y, 17))))
-        Y = bAppend(circuit, bXOR(Y, bAppend(circuit, bROR(X, 17))))
-        X = bAppend(circuit, bXORc(X, c)) 
-        X = bAppend(circuit, bADD(X, Y))
-        Y = bAppend(circuit, bXOR(Y, bAppend(circuit, bROR(X, 31))))
-        X = bAppend(circuit, bXORc(X, c)) 
-        X = bAppend(circuit, bADD(X, bAppend(circuit, bROR(Y, 24))))
-        Y = bAppend(circuit, bXOR(Y, bAppend(circuit, bROR(X, 16))))
-        X = bAppend(circuit, bXORc(X, c)) 
+        super().__init__("Alzette", self.n*2, [], label=label)
 
-        super().__init__(num_qubits*2, name='Alzette')
-        self.compose(circuit.to_instruction(), qubits=self.qubits, inplace=True)
+        qc = QuantumCircuit(X, Y, name='Alzette')
+
+        X = rAppend(qc, rADD(X, rAppend(qc, rROR(Y, 31))))
+        Y = rAppend(qc, rXOR(Y, rAppend(qc, rROR(X, 24))))
+        X = rAppend(qc, rXORc(X, self.c)) 
+        X = rAppend(qc, rADD(X, rAppend(qc, rROR(Y, 17))))
+        Y = rAppend(qc, rXOR(Y, rAppend(qc, rROR(X, 17))))
+        X = rAppend(qc, rXORc(X, self.c)) 
+        X = rAppend(qc, rADD(X, Y))
+        Y = rAppend(qc, rXOR(Y, rAppend(qc, rROR(X, 31))))
+        X = rAppend(qc, rXORc(X, self.c)) 
+        X = rAppend(qc, rADD(X, rAppend(qc, rROR(Y, 24))))
+        Y = rAppend(qc, rXOR(Y, rAppend(qc, rROR(X, 16))))
+        X = rAppend(qc, rXORc(X, self.c)) 
+
+        self._definition = qc
         self.outputs = [X, Y]
-
 
 if __name__ == '__main__':
 
@@ -63,7 +107,7 @@ if __name__ == '__main__':
 
 
     qc = QuantumCircuit(X, Y)
-    X, Y = bAppend(qc, Alzette(X, Y, c))
+    X, Y = rAppend(qc, Alzette(X, Y, c))
 
     decomposition_reps = 4
     circuit_depth = qc.decompose(reps=decomposition_reps).depth()
