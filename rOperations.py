@@ -1,10 +1,17 @@
-"""A library of vectorial operations that can be applied to quantum registers."""
+"""A library of vectorial operations that can be applied to quantum registers.
+
+In this library, a :py:class:`QuantumRegister` from `Qiskit <https://qiskit.org/>`_ is seen as a view on a vector of qubits. Operations can be applied directly between registers, for example a bitwise XOR or an addition. This is similar to how registers work on classical computers. Rotations, and permutations in general, can be made without using any quantum gate because they just return a new view on the qubits, i.e. a new :py:class:`QuantumRegister` that has the same logical qubits but in a different order.
+
+The aim of this library is to be able to implement classical algorithms on quantum computers, to benefit from the speedup given by methods such as Grover's algorithm.
+"""
 from __future__ import annotations
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, Aer, transpile
-from qiskit.circuit import Operation, CircuitInstruction, Gate, Register
+from qiskit.circuit import Gate
+from qiskit.result.counts import Counts
 from qiskit.circuit.exceptions import CircuitError
-import itertools
-from typing import Optional, List, Dict
+from itertools import chain
+from typing import Optional, List
+from abc import ABC
 
 
 def _int_to_bits(k: int, num_bits):
@@ -16,27 +23,98 @@ def _int_to_bits(k: int, num_bits):
     return [int(i) for i in '{:0{n}b}'.format(k, n=num_bits)]
 
 class rCircuit(QuantumCircuit):
-    """A wrapper for ``QuantumCircuit`` that implements the logic needed to chain operations on qubit vectors. When adding a new rOperation to the circuit it takes care of connecting the right outputs to the right inputs"""
-    def __init__(self, *regs: Register, name: Optional[str] = None):
-        super().__init__(*regs, name=name)
+    """A wrapper around :py:class:`QuantumCircuit` that implements the logic needed to chain operations on qubit vectors. It supports new operations that operate on whole quantum registers and handles rotations without using any gate by rewiring the circuit when needed. This being also a fully valid :py:class:`QuantumCircuit`, it is also possible to apply operations on single qubits as it is normally done in Qiskit.
 
-class rOperation():
-    """Abstract class defining an operation on vectors of qubits.
+    :param inputs: The quantum registers to use as the circuit inputs.
+    :param kwargs: Other parameters to pass to the underlying :py:class:`QuantumCircuit` object.
+    """
+    def __init__(self, *inputs: QuantumRegister, **kwargs):
+        super().__init__(*inputs, **kwargs)
+
+    def ror(self, X: QuantumRegister, r: int) -> QuantumRegister:
+        r"""Rotate right a register by a specified amount of qubits.
+
+        :param X: The register to rotate.
+        :param r: The number of qubits by which X should be rotated.
+        :returns: The rotated register :math:`X'`.
+
+        :operation: :math:`X' \leftarrow \mathrm{ror}(X, r)`
+        """
+        op = rROR(X, r)
+        return op.outputs[0]
+
+    def rol(self, X: QuantumRegister, r: int) -> QuantumRegister:
+        r"""Rotate left a register by a specified amount of qubits.
+
+        :param X: The register to rotate.
+        :param r: The number of qubits by which X should be rotated.
+        :returns: The rotated register :math:`X'`.
+
+        :operation: :math:`X' \leftarrow \mathrm{rol}(X, r)`
+        """
+        op = rROL(X, r)
+        return op.outputs[0]
+
+    def xor(self, X: QuantumRegister, Y: QuantumRegister | int) -> QuantumRegister:
+        r"""Apply a bitwise XOR between two registers or between one register and a constant and store the result in the first register.
+
+        :param X: The first register to XOR (the result will be stored in this register, overwriting its previous value).
+        :param Y: The second register to XOR or a constant.
+        :returns: The output register :math:`X`.
+
+        :operation: :math:`X \leftarrow X \oplus Y`
+
+        .. note::
+            If Y is a :py:class:`QuantumRegister`, this operation is a XOR between two registers, but if Y is an integer it becomes a XOR between a register and a constant.
+        """
+        if isinstance(Y, QuantumRegister):
+            op = rXOR(X, Y)
+            self.append(op, list(chain(X, Y)))
+        else:
+            op = rXORc(X, Y)
+            self.append(op, list(X))
+        return op.outputs[0]
+
+    def add(self, X: QuantumRegister, Y: QuantumRegister) -> QuantumRegister:
+        r"""Add two registers and store the result in the first register.
+
+        :param X: First register to add (the result will be stored in this register, overwriting its previous value).
+        :param Y: Second register to add.
+        :returns: The output register :math:`X`.
+
+        :operation: :math:`X \leftarrow X+Y`
+        """
+        op = rADD(X, Y)
+        self.append(op, list(chain(X, Y)))
+        return op.outputs[0]
+
+class rOperation(ABC):
+    """Abstract class defining an operation on registers of qubits.
     
     :ivar inputs: The inputs registers of the operation.
     :type inputs: List[QuantumRegister]
     :ivar outputs: The outputs registers of the operation.
     :type outputs: List[QuantumRegister]
     """
+    def __init__(self):
+        self._inputs = []
+        self._outputs = []
 
-    # def __xor__(self, other: rOperation):
-    #     if isinstance(other, Register):
-    #         if isinstance(self, Register):
-    #             return rXOR(self, other)
-    #         else:
-    #             return rXOR(*self.outputs, other)
-    #     else:
-    #         return rXOR(*self.outputs, *other.inputs)
+    @property
+    def outputs(self) -> list[QuantumRegister]:
+        return self._outputs
+
+    @property
+    def inputs(self) -> list[QuantumRegister]:
+        return self._inputs
+
+    @inputs.setter
+    def inputs(self, x) -> None:
+        self._inputs = x
+
+    @outputs.setter
+    def outputs(self, x) -> None:
+        self._outputs = x
 
 class rPrepare(QuantumCircuit, rOperation):
     r"""A circuit preparing a QuantumRegister to an initial classical integer value.
@@ -67,11 +145,12 @@ class rROR(rOperation):
 
     :param X: The register to rotate.
     :param r: The number of qubits by which X should be rotated.
+    :raises CircuitError: If r is negative.
 
     :operation: :math:`X' \leftarrow \mathrm{ror}(X, r)`
 
     .. warning::
-        The result will be stored in vector ``self.outputs[0]``.
+        The result will be stored in register :py:attr:`self.outputs[0]`.
     """
 
     def __init__(self, X: QuantumRegister, r: int) -> None:
@@ -92,7 +171,7 @@ class rROL(rOperation):
 
 
     .. warning::
-        The result will be stored in vector ``self.outputs[0]``.
+        The result will be stored in register :py:attr:`self.outputs[0]`.
     """
 
     def __init__(self, X: QuantumRegister, r: int) -> None:
@@ -103,9 +182,9 @@ class rROL(rOperation):
         self.outputs = [QuantumRegister(bits=X[-r:]+X[:-r], name=X.name)]
 
 class rXORc(Gate, rOperation):
-    r"""A gate implementing a logical bitwise XOR operation between a vector of qubits and a constant.
+    r"""A gate implementing a logical bitwise XOR operation between a register of qubits and a constant.
     
-    :param X: The vector to XOR with c.
+    :param X: The register to XOR with c.
     :param c: The constant to XOR with X.
     :param label: An optional label for the gate.
 
@@ -130,11 +209,12 @@ class rXORc(Gate, rOperation):
         self.definition = qc
 
 class rXOR(Gate, rOperation):
-    r"""A gate implementing a logical bitwise XOR operation between two vectors of qubits.
+    r"""A gate implementing a logical bitwise XOR operation between two registers.
 
-    :param X: The first vector to XOR.
-    :param Y: The second vector to XOR.
+    :param X: The first register to XOR.
+    :param Y: The second register to XOR.
     :param label: An optional label for the gate.
+    :raises CircuitError: If X and Y have a different size.
 
     :operation: :math:`X \leftarrow X \oplus Y`
     """
@@ -158,9 +238,10 @@ class rADD(Gate, rOperation):
     r"""A gate implementing the ripple-carry adder described in [TTK2009]_.
 
 
-    :param X: First vector to add.
-    :param Y: Second vector to add.
+    :param X: First register to add.
+    :param Y: Second register to add.
     :param label: An optional label for the gate.
+    :raises CircuitError: If X and Y have a different size.
 
     :operation: :math:`X \leftarrow X+Y`
 
@@ -193,17 +274,7 @@ class rADD(Gate, rOperation):
 
         self.definition = qc
 
-def rAppend(circuit: QuantumCircuit, operation: rOperation) -> QuantumRegister | List[QuantumRegister]:
-    """Append a register operation to a quantum circuit and wire it according to the input registers of the operation.
-
-    :param circuit: Quantum circuit to add the operation to.
-    :param operation: The operation to add to the circuit.
-    :returns: The new output registers of the circuit. This is a list if there are multiple output registers and a single QuantumRegister if there is only one."""
-    if isinstance(operation, (QuantumCircuit, Operation, CircuitInstruction)):
-        circuit.append(operation, itertools.chain(*operation.inputs))
-    return operation.outputs if len(operation.outputs)>1 else operation.outputs[0] if len(operation.outputs)>0 else None
-
-def simulate(circuit: QuantumCircuit) -> Dict[int, str]:
+def simulate(circuit: QuantumCircuit) -> Counts:
     """This helper function simulates the given circuit and returns the results.
 
     :param circuit: The circuit to simulate.
@@ -226,7 +297,7 @@ def make_circuit(circuit: QuantumCircuit, inputs: List[int], input_registers: Li
     """
     # Copy the circuit
     qc = circuit.copy()
-    # Add classical registers for the output vectors
+    # Add classical registers for the output registers
     classical_output_registers = []
     for output_register in output_registers:
         classical_output_register = ClassicalRegister(len(output_register))
@@ -242,7 +313,7 @@ def make_circuit(circuit: QuantumCircuit, inputs: List[int], input_registers: Li
     return qc
 
 def run_circuit(circuit: QuantumCircuit, verbose: bool = False) -> List[int]:
-    """This helper function simulates a given circuit and retrives the integer values of the classical registers.
+    """This helper function simulates a given circuit and retrieves the integer values of the classical registers.
 
     :param circuit: The circuit to run.
     :param verbose: Print the raw result given by the simulator.
@@ -253,7 +324,7 @@ def run_circuit(circuit: QuantumCircuit, verbose: bool = False) -> List[int]:
     if verbose:
         print("Circuit result:", raw_result)
     result = raw_result.most_frequent()
-    # Extract the output vectors (result is in big endian so we need to the vector order)
+    # Extract the output registers (result is in big endian so we need to reverse the register order)
     outputs = result.split()[::-1]
     # Convert the outputs to integers
     return [int(output, 2) for output in outputs]

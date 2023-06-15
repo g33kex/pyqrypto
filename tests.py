@@ -1,8 +1,9 @@
 from qiskit import QuantumCircuit, QuantumRegister
 import random
 
-from rOperations import rROR, rROL, rXOR, rADD, rXORc, rAppend, make_circuit, run_circuit
+from rOperations import make_circuit, run_circuit, rCircuit
 from alzette import Alzette, alzette
+from itertools import chain
 
 nb_tests = 20
 
@@ -40,45 +41,6 @@ def test_circuit(circuit, classical_function, inputs, input_registers, output_re
     return True
 
 # Specific tests
-def test_xor():
-    for _ in range(nb_tests):
-        n = random.randint(1, 10)
-        a = random.getrandbits(n)
-        b = random.getrandbits(n)
-
-        X = QuantumRegister(n)
-        Y = QuantumRegister(n)
-        
-        qc = QuantumCircuit(X, Y)
-        rAppend(qc, rXOR(X, Y))
-
-        result = test_circuit(qc, lambda x,y: [x^y], [a, b], [X, Y], [X])
-
-        if not result:
-            print("XOR test failed!")
-            return False
-    print("XOR test passed!")
-    return True
-
-def test_xorc():
-    for _ in range(nb_tests):
-        n = random.randint(1, 10)
-        a = random.getrandbits(n)
-        c = random.getrandbits(n)
-
-        X1 = QuantumRegister(n)
-        
-        qc = QuantumCircuit(X1)
-        X2 = rAppend(qc, rXORc(X1, c))
-
-        result = test_circuit(qc, lambda x: [x^c], [a], [X1], [X2])
-
-        if not result:
-            print("XORc test failed!")
-            return False
-    print("XORc test passed!")
-    return True
-
 def test_prepare():
     for _ in range(nb_tests):
         n1 = random.randint(1, 10)
@@ -107,16 +69,56 @@ def test_ror():
 
         X1 = QuantumRegister(n)
 
-        qc = QuantumCircuit(X1, name=f'ID')
-        X2 = rAppend(qc, rROR(X1, r))
+        qc = rCircuit(X1)
+        X2 = qc.ror(X1, r)
 
         result = test_circuit(qc, lambda x: [ror(x, r, n)], [a], [X1], [X2])
+
         if not result:
             print("ROR test failed!")
             return False
     print("ROR test passed!")
     return True
-    
+
+def test_xor():
+    for _ in range(nb_tests):
+        n = random.randint(1, 10)
+        a = random.getrandbits(n)
+        b = random.getrandbits(n)
+
+        X = QuantumRegister(n)
+        Y = QuantumRegister(n)
+        
+        qc = rCircuit(X, Y)
+        qc.xor(X, Y)
+
+        result = test_circuit(qc, lambda x,y: [x^y], [a, b], [X, Y], [X])
+
+        if not result:
+            print("XOR test failed!")
+            return False
+    print("XOR test passed!")
+    return True
+
+def test_xorc():
+    for _ in range(nb_tests):
+        n = random.randint(1, 10)
+        a = random.getrandbits(n)
+        c = random.getrandbits(n)
+
+        X1 = QuantumRegister(n)
+        
+        qc = rCircuit(X1)
+        X2 = qc.xor(X1, c)
+
+        result = test_circuit(qc, lambda x: [x^c], [a], [X1], [X2])
+
+        if not result:
+            print("XORc test failed!")
+            return False
+    print("XORc test passed!")
+    return True
+
 def test_rorrorxor():
     for _ in range(nb_tests):
         n = random.randint(1, 10)
@@ -126,14 +128,14 @@ def test_rorrorxor():
         r2 = random.randint(1, n*3)
 
         X1 = QuantumRegister(n)
-        Y = QuantumRegister(n)
+        Y1 = QuantumRegister(n)
 
-        qc = QuantumCircuit(X1, Y)
-        X2 = rAppend(qc, rROR(X1, r1))
-        Y2 = rAppend(qc, rROR(Y, r2))
-        rAppend(qc, rXOR(X2, Y2))
+        qc = rCircuit(X1, Y1)
+        X2 = qc.ror(X1, r1)
+        Y2 = qc.ror(Y1, r2)
+        qc.xor(X2, Y2)
 
-        result = test_circuit(qc, lambda x,y: [ror(x, r1, n)^ror(y, r2, n), y], [a, b], [X1, Y], [X2, Y])
+        result = test_circuit(qc, lambda x,y: [ror(x, r1, n)^ror(y, r2, n), y], [a, b], [X1, Y1], [X2, Y1])
         if not result:
             print("RORORXOR test failed!")
             return False
@@ -151,11 +153,10 @@ def test_rorxorrolxor():
         X1 = QuantumRegister(n)
         Y1 = QuantumRegister(n)
 
-        qc = QuantumCircuit(X1, Y1)
-        X2 = rAppend(qc, rROR(X1, r1))
-        rAppend(qc, rXOR(X2, Y1))
-        Y2 = rAppend(qc, rROL(Y1, r2))
-        rAppend(qc, rXOR(X2, Y2))
+        qc = rCircuit(X1, Y1)
+        X2 = qc.xor(qc.ror(X1, r1), Y1)
+        Y2 = qc.rol(Y1, r2)
+        qc.xor(X2, Y2)
 
         result = test_circuit(qc, lambda x,y: [ror(x, r1, n)^y^rol(y, r2, n), rol(y, r2, n)], [a, b], [X1, Y1], [X2, Y2])
 
@@ -179,13 +180,12 @@ def test_complexxor():
         Y1 = QuantumRegister(n, name='Y')
         Z = QuantumRegister(n, name='Z')
 
-        qc = QuantumCircuit(X1, Y1, Z)
-        X2 = rAppend(qc, rROR(X1, r1))
-
-        rAppend(qc, rXOR(X2, Y1))
-        Y2 = rAppend(qc, rROR(Y1, r2))
-        rAppend(qc, rXOR(Y2, Z))
-        rAppend(qc, rXOR(Z, rAppend(qc, rROL(X2, r3))))
+        qc = rCircuit(X1, Y1, Z)
+        X2 = qc.ror(X1, r1)
+        qc.xor(X2, Y1)
+        Y2 = qc.ror(Y1, r2)
+        qc.xor(Y2, Z)
+        qc.xor(Z, qc.rol(X2, r3))
 
         result = test_circuit(qc, lambda x,y,z: [ror(x, r1, n)^y, ror(y, r2, n)^z, z^rol(ror(x, r1, n)^y, r3, n)], [a, b, c], [X1, Y1, Z], [X2, Y2, Z])
 
@@ -206,7 +206,8 @@ def test_alzette():
         Y = QuantumRegister(n)
 
         qc = QuantumCircuit(X, Y)
-        rAppend(qc, Alzette(X, Y, c))
+        gate = Alzette(X, Y, c)
+        qc.append(gate, chain(*gate.outputs))
 
         result = test_circuit(qc, lambda x,y: alzette(x, y, c, n), [a, b], [X, Y], [X, Y])
 
@@ -225,9 +226,9 @@ def test_add():
         X1 = QuantumRegister(n, name='X')
         Y = QuantumRegister(n, name='Y')
 
-        qc = QuantumCircuit(X1, Y)
+        qc = rCircuit(X1, Y)
 
-        X2 = rAppend(qc, rADD(X1, Y))
+        X2 = qc.add(X1, Y)
 
         result = test_circuit(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
 
@@ -298,9 +299,9 @@ if __name__ == '__main__':
     random.seed(42)
 
     assert(test_prepare())
+    assert(test_ror())
     assert(test_xor())
     assert(test_xorc())
-    assert(test_ror())
     assert(test_rorrorxor())
     assert(test_rorxorrolxor())
     assert(test_complexxor())
