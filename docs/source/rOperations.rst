@@ -1,6 +1,6 @@
 rOperations
 -----------
 
-.. automodule:: rOperations
+.. automodule:: pyqrypto.rOperations
    :members:
    :show-inheritance:

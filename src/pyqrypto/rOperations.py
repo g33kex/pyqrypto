@@ -5,7 +5,8 @@ In this library, a :py:class:`QuantumRegister` from `Qiskit <https://qiskit.org/
 The aim of this library is to be able to implement classical algorithms on quantum computers, to benefit from the speedup given by methods such as Grover's algorithm.
 """
 from __future__ import annotations
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, Aer, transpile
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit_aer.backends import AerSimulator
 from qiskit.circuit import Gate
 from qiskit.result.counts import Counts
 from qiskit.circuit.exceptions import CircuitError
@@ -280,7 +281,8 @@ def simulate(circuit: QuantumCircuit) -> Counts:
     :param circuit: The circuit to simulate.
     :returns: The results of the simulation.
     """
-    backend_sim = Aer.get_backend('qasm_simulator')
+    backend_sim = AerSimulator()
+
     job_sim = backend_sim.run(transpile(circuit, backend_sim), shots=1024)
     result_sim = job_sim.result()
     counts = result_sim.get_counts(circuit)

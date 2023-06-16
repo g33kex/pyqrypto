@@ -1,8 +1,8 @@
 from qiskit import QuantumCircuit, QuantumRegister
 import random
 
-from rOperations import make_circuit, run_circuit, rCircuit
-from alzette import Alzette, alzette
+from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit
+from pyqrypto.alzette import Alzette, alzette
 from itertools import chain
 
 nb_tests = 20
@@ -17,7 +17,7 @@ def ror(x, r, n):
     return ((x >> r) | (x << (n - r))) & ((2**n) - 1)
 
 # Generic circuit test
-def test_circuit(circuit, classical_function, inputs, input_registers, output_registers, verbose=False):
+def circuit_test(circuit, classical_function, inputs, input_registers, output_registers, verbose=False):
     """Tests if a circuit's output corresponds to the classical function's output"""
     true_result = classical_function(*inputs)
 
@@ -53,13 +53,9 @@ def test_prepare():
 
         qc = QuantumCircuit(X, Y)
         
-        result = test_circuit(qc, lambda x,y: [x,y], [a, b], [X, Y], [X, Y])
+        result = circuit_test(qc, lambda x,y: [x,y], [a, b], [X, Y], [X, Y])
 
-        if not result:
-            print("Prepare test failed!")
-            return False
-    print("Prepare test passed!")
-    return True
+        assert(result)
 
 def test_ror():
     for _ in range(nb_tests):
@@ -72,13 +68,9 @@ def test_ror():
         qc = rCircuit(X1)
         X2 = qc.ror(X1, r)
 
-        result = test_circuit(qc, lambda x: [ror(x, r, n)], [a], [X1], [X2])
+        result = circuit_test(qc, lambda x: [ror(x, r, n)], [a], [X1], [X2])
 
-        if not result:
-            print("ROR test failed!")
-            return False
-    print("ROR test passed!")
-    return True
+        assert(result)
 
 def test_xor():
     for _ in range(nb_tests):
@@ -92,13 +84,9 @@ def test_xor():
         qc = rCircuit(X, Y)
         qc.xor(X, Y)
 
-        result = test_circuit(qc, lambda x,y: [x^y], [a, b], [X, Y], [X])
+        result = circuit_test(qc, lambda x,y: [x^y], [a, b], [X, Y], [X])
 
-        if not result:
-            print("XOR test failed!")
-            return False
-    print("XOR test passed!")
-    return True
+        assert(result)
 
 def test_xorc():
     for _ in range(nb_tests):
@@ -111,13 +99,9 @@ def test_xorc():
         qc = rCircuit(X1)
         X2 = qc.xor(X1, c)
 
-        result = test_circuit(qc, lambda x: [x^c], [a], [X1], [X2])
+        result = circuit_test(qc, lambda x: [x^c], [a], [X1], [X2])
 
-        if not result:
-            print("XORc test failed!")
-            return False
-    print("XORc test passed!")
-    return True
+        assert(result)
 
 def test_rorrorxor():
     for _ in range(nb_tests):
@@ -135,12 +119,9 @@ def test_rorrorxor():
         Y2 = qc.ror(Y1, r2)
         qc.xor(X2, Y2)
 
-        result = test_circuit(qc, lambda x,y: [ror(x, r1, n)^ror(y, r2, n), y], [a, b], [X1, Y1], [X2, Y1])
-        if not result:
-            print("RORORXOR test failed!")
-            return False
-    print("RORRORXOR test passed!")
-    return True
+        result = circuit_test(qc, lambda x,y: [ror(x, r1, n)^ror(y, r2, n), y], [a, b], [X1, Y1], [X2, Y1])
+
+        assert(result)
 
 def test_rorxorrolxor():
     for _ in range(nb_tests):
@@ -158,13 +139,9 @@ def test_rorxorrolxor():
         Y2 = qc.rol(Y1, r2)
         qc.xor(X2, Y2)
 
-        result = test_circuit(qc, lambda x,y: [ror(x, r1, n)^y^rol(y, r2, n), rol(y, r2, n)], [a, b], [X1, Y1], [X2, Y2])
+        result = circuit_test(qc, lambda x,y: [ror(x, r1, n)^y^rol(y, r2, n), rol(y, r2, n)], [a, b], [X1, Y1], [X2, Y2])
 
-        if not result:
-            print("RORXORROLXOR test failed!")
-            return False
-    print("RORXORROLXOR test passed!")
-    return True
+        assert(result)
 
 def test_complexxor():
     for _ in range(nb_tests):
@@ -187,13 +164,9 @@ def test_complexxor():
         qc.xor(Y2, Z)
         qc.xor(Z, qc.rol(X2, r3))
 
-        result = test_circuit(qc, lambda x,y,z: [ror(x, r1, n)^y, ror(y, r2, n)^z, z^rol(ror(x, r1, n)^y, r3, n)], [a, b, c], [X1, Y1, Z], [X2, Y2, Z])
+        result = circuit_test(qc, lambda x,y,z: [ror(x, r1, n)^y, ror(y, r2, n)^z, z^rol(ror(x, r1, n)^y, r3, n)], [a, b, c], [X1, Y1, Z], [X2, Y2, Z])
 
-        if not result:
-            print("COMPLEXXOR test failed!")
-            return False
-    print("COMPLEXXOR test passed!")
-    return True
+        assert(result)
 
 def test_alzette():
     for _ in range(nb_tests):
@@ -209,13 +182,9 @@ def test_alzette():
         gate = Alzette(X, Y, c)
         qc.append(gate, chain(*gate.outputs))
 
-        result = test_circuit(qc, lambda x,y: alzette(x, y, c, n), [a, b], [X, Y], [X, Y])
+        result = circuit_test(qc, lambda x,y: alzette(x, y, c, n), [a, b], [X, Y], [X, Y])
 
-        if not result:
-            print("Alzette test failed!")
-            return False
-    print("Alzette test passed!")
-    return True
+        assert(result)
 
 def test_add():
     for _ in range(nb_tests):
@@ -230,13 +199,9 @@ def test_add():
 
         X2 = qc.add(X1, Y)
 
-        result = test_circuit(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
+        result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
 
-        if not result:
-            print("ADD test failed!")
-            return False
-    print("ADD test passed!")
-    return True
+        assert(result)
 
 def showcase_complex_circuit():
     n=4
@@ -256,7 +221,7 @@ def showcase_complex_circuit():
     rAppend(qc, rXOR(Y2, Z))
     rAppend(qc, rXOR(Z, *rROL(X2, r3).outputs))
 
-    result = test_circuit(qc, lambda x,y,z: [ror(x, r1, n)^y, ror(y, r2, n)^z, z^rol(ror(x, r1, n)^y, r3, n)], [9, 11, 2], [X1, Y1, Z], [X2, Y2, Z], verbose=True)
+    result = circuit_test(qc, lambda x,y,z: [ror(x, r1, n)^y, ror(y, r2, n)^z, z^rol(ror(x, r1, n)^y, r3, n)], [9, 11, 2], [X1, Y1, Z], [X2, Y2, Z], verbose=True)
 
     if result:
         print("Test passed!")
@@ -297,16 +262,6 @@ def showcase_add():
 
 if __name__ == '__main__':
     random.seed(42)
-
-    assert(test_prepare())
-    assert(test_ror())
-    assert(test_xor())
-    assert(test_xorc())
-    assert(test_rorrorxor())
-    assert(test_rorxorrolxor())
-    assert(test_complexxor())
-    assert(test_add())
-    assert(test_alzette())
 
     # Showcase complex circuit
     # showcase_complex_circuit()

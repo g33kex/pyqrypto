@@ -1,6 +1,6 @@
 Alzette
 -------
 
-.. automodule:: alzette
+.. automodule:: pyqrypto.alzette
    :members:
    :show-inheritance:
