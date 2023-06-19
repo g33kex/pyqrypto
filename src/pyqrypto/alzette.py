@@ -76,7 +76,7 @@ class Alzette(Gate, rOperation):
             raise CircuitError("X and Y must have the same size.")
         self.n = len(X)
         self.c = c
-        self.inputs = [X, Y]
+        self._inputs = [X, Y]
         super().__init__("Alzette", self.n*2, [], label=label)
 
         qc = rCircuit(X, Y, name='Alzette')
@@ -95,7 +95,7 @@ class Alzette(Gate, rOperation):
         X = qc.xor(X, self.c)
 
         self._definition = qc
-        self.outputs = [X, Y]
+        self._outputs = [X, Y]
 
 if __name__ == '__main__':
 
@@ -115,10 +115,11 @@ if __name__ == '__main__':
     decomposition_reps = 2
     circuit_depth = qc.decompose(reps=decomposition_reps).depth()
     gate_counts = qc.decompose(reps=decomposition_reps).count_ops()
+    qc.decompose(reps=decomposition_reps).qasm(filename='alzette_only.qasm')
 
     final_circuit = make_circuit(qc, [a, b], [X, Y], [X, Y])
 
-    final_circuit.decompose(reps=4).qasm(filename='alzette.qasm')
+    final_circuit.decompose(reps=2).qasm(filename='alzette.qasm')
 
     result = run_circuit(final_circuit)
 

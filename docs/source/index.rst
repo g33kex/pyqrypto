@@ -1,7 +1,7 @@
-Welcome to Qrypto's documentation!
-==================================
+Welcome to pyqrypto's documentation!
+====================================
 
-**Qrypto** is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and its necessary gates.
+**pyrypto** is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and its necessary gates.
 
 Because of the underlying architecture, right and left rotations are implemented for free without using any gate. 
 
@@ -24,7 +24,7 @@ More gates are planned: shifts, AND, OR, two's complement, ...
 Examples
 --------
 
-Here is an example on how to use **Qrypto** to generate a simple circuit that operates on qubit vectors.
+Here is an example on how to use **pyqrypto** to generate a simple circuit that operates on qubit vectors.
 
 .. code-block:: python
 
