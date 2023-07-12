@@ -1,11 +1,11 @@
-from qiskit import QuantumCircuit, QuantumRegister
+from qiskit import QuantumCircuit, QuantumRegister, AncillaRegister
 import random
 
-from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit
-from pyqrypto.alzette import Alzette, alzette
+from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit, rDKRSCarryLookaheadAdder
+from pyqrypto.alzette import Alzette, c_alzette
 from itertools import chain
 
-nb_tests = 20
+nb_tests = 100
 
 # Utils
 def rol(x, r, n):
@@ -182,11 +182,16 @@ def test_alzette():
         gate = Alzette(X, Y, c)
         qc.append(gate, chain(*gate.outputs))
 
-        result = circuit_test(qc, lambda x,y: alzette(x, y, c, n), [a, b], [X, Y], [X, Y])
+        result = circuit_test(qc, lambda x,y: c_alzette(x, y, c, n), [a, b], [X, Y], [X, Y])
 
         assert(result)
 
-def test_add():
+def test_traxl():
+    for _ in range(nb_tests):
+        n = 32
+
+
+def test_ripple_add():
     for _ in range(nb_tests):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
@@ -197,9 +202,43 @@ def test_add():
 
         qc = rCircuit(X1, Y)
 
-        X2 = qc.add(X1, Y)
+        X2 = qc.add(X1, Y, mode='ripple')
 
         result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
+
+        assert(result)
+
+def rtest_lookahead_add():
+    for _ in range(nb_tests):
+        n = 6#random.randint(1, 10)
+        a = random.getrandbits(n)
+        b = random.getrandbits(n)
+
+        X1 = QuantumRegister(n, name='X')
+        Y = QuantumRegister(n, name='Y')
+        A = AncillaRegister(rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n))
+
+        qc = rCircuit(X1, Y, A)
+
+        X2 = qc.add(X1, Y, A, mode='lookahead')
+        print(f"n: {n}\tcost: {qc.quantum_cost}")
+
+        result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
+
+        assert(result)
+
+def test_addc():
+    for _ in range(nb_tests):
+        n = random.randint(1, 10)
+        a = random.getrandbits(n)
+        c = random.getrandbits(n)
+
+        X1 = QuantumRegister(n)
+        
+        qc = rCircuit(X1)
+        X2 = qc.add(X1, c)
+
+        result = circuit_test(qc, lambda x: [(x+c)%2**n], [a], [X1], [X2])
 
         assert(result)
 
@@ -262,7 +301,7 @@ def showcase_add():
 
 if __name__ == '__main__':
     random.seed(42)
-
+    rtest_lookahead_add()
     # Showcase complex circuit
     # showcase_complex_circuit()
 

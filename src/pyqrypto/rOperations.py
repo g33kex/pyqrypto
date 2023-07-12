@@ -5,31 +5,49 @@ In this library, a :class:`QuantumRegister` from `Qiskit <https://qiskit.org/>`_
 The aim of this library is to be able to implement classical algorithms on quantum computers, to benefit from the speedup given by methods such as Grover's algorithm.
 """
 from __future__ import annotations
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, AncillaRegister, transpile
 from qiskit.circuit.quantumcircuit import QubitSpecifier, ClbitSpecifier, Operation, CircuitInstruction
 from qiskit_aer.backends import AerSimulator
 from qiskit.circuit import Gate
-from qiskit.circuit.library import Barrier
+from qiskit.circuit.library import Barrier, CXGate, CCXGate
 from qiskit.result.counts import Counts
 from qiskit.circuit.exceptions import CircuitError
 from itertools import chain
 from typing import Optional, Sequence, Final
+import warnings
 from abc import ABC
+import math
 
 FEYNMAN_QC: Final[int] = 1
 """The quantum cost of the Feynman gate (CNOT)."""
 TOFFOLI_QC: Final[int] = 5
-"""The quantum cost of the Toffoli gate."""
-NOT_QC: Final[int] = 1
-"""The quantum cost of a NOT gate."""
+"""The quantum cost of the Toffoli gate (CCNOT)."""
+SINGLE_QC: Final[int] = 1
+"""The quantum cost of a single qubit gate."""
 
 def _int_to_bits(k: int, num_bits):
-    """Convert integer k into list of bits.
+    """Convert integer k into list of bits in LSB-first.
 
     :param k: The integer to convert to list of bits.
     :param num_bits: The numbers of bits to use to encode k.
     """
-    return [int(i) for i in '{:0{n}b}'.format(k, n=num_bits)]
+    # Make sure k is in range
+    if k >= 2**num_bits:
+        raise ValueError(f"{k} cannot be encoded on {num_bits} bits.")
+    return [int(i) for i in '{:0{n}b}'.format(k, n=num_bits)][::-1]
+
+def _hamming_weight(k: int):
+    """Compute the Hamming weight of an integer.
+
+    :param k: The integer to compute the Hamming weight of.
+    :returns: The Hamming weight of k.
+    """
+    c = 0
+    while k:
+        c += 1
+        k &= k - 1
+
+    return c
 
 class rCircuit(QuantumCircuit):
     """A wrapper around :class:`QuantumCircuit` that implements the logic needed to chain operations on qubit vectors. It supports new operations that operate on whole quantum registers and handles rotations without using any gate by rewiring the circuit when needed. This being also a fully valid :class:`QuantumCircuit`, it is also possible to apply operations on single qubits as it is normally done in Qiskit.
@@ -40,10 +58,28 @@ class rCircuit(QuantumCircuit):
     def __init__(self, *inputs: QuantumRegister, **kwargs):
         super().__init__(*inputs, **kwargs)
         self._quantum_cost = 0
+        self._circuit_depth = 0
 
     @property
     def quantum_cost(self):
+        """The quantum cost of this circuit based on the quantum cost of the register operations as defined in [FoM2009]_.
+
+        .. warning:: Operations that are not instances of :class:`rOperation` are not taken into account in this metric.
+
+        .. [FoM2009] Mohammadi, M., & Eshghi, M. (2009). On figures of merit in reversible and quantum logic designs. Quantum Information Processing, 8, 297-318.
+        """
         return self._quantum_cost
+
+    # @property
+    # def circuit_depth(self):
+    #     """The approximate depth of this circuit based on depth of the register operations as defined in [FoM2009]_.
+    #     This calculated as the sum of the depth of all register operations on the circuit, so the actual depth could be slightly lower
+    #     if some gates from one register operation can be computed in parallel as the gates of another register operation
+    #
+    #     .. warning:: Operations that are not instances of :class:`rOperation` are not taken into account in this metric.
+    #
+    #     .. [FoM2009] Mohammadi, M., & Eshghi, M. (2009). On figures of merit in reversible and quantum logic designs. Quantum Information Processing, 8, 297-318.
+    #     """
 
     def append(self, instruction: Operation | CircuitInstruction, qargs: Optional[Sequence[QubitSpecifier]] = None, cargs: Optional[Sequence[ClbitSpecifier]] = None):
         """Append one or more instructions to the end of the circuit, modifying the circuit in
@@ -99,21 +135,41 @@ class rCircuit(QuantumCircuit):
             op = rXOR(X, Y)
             self.append(op, list(chain(X, Y)))
         else:
-            op = rXORc(X, Y)
+            op = rConstantXOR(X, Y)
             self.append(op, list(X))
         return op.outputs[0]
 
-    def add(self, X: QuantumRegister, Y: QuantumRegister) -> QuantumRegister:
-        r"""Add two registers of size n and store the result in the first register.
+    def add(self, X: QuantumRegister, Y: QuantumRegister | int, A: Optional[AncillaRegister]=None, mode='ripple') -> QuantumRegister:
+        r"""Add modulo :math:`2^n` two registers of size n or a register of size n and a constant and store the result in the first register.
+
+        The adder can be implemented using different techniques:
+
+        - :py:data:`ripple`: requires 0 ancilla qubits, uses the ripple-carry method from [TTK2009]_.
+        - :py:data:`lookahead`: requires :math:`2n-w(n-1)-\lfloor \log(n-1) \rfloor-2` ancilla qubits, uses the carry-lookahead method from [DKRS2004]_.
 
         :param X: First register to add (the result will be stored in this register, overwriting its previous value).
-        :param Y: Second register to add.
+        :param Y: Second register to add or a constant.
         :returns: The output register :math:`X`.
 
         :operation: :math:`X \leftarrow X+Y \bmod 2^n`
+
+        .. note::
+            If Y is a :class:`QuantumRegister`, this operation is an addition between two registers, but if Y is an integer it becomes an addition between a register and a constant. In the latter case, the mode is always :py:data:`lookahead`.
         """
-        op = rADD(X, Y)
-        self.append(op, list(chain(X, Y)))
+        if isinstance(Y, QuantumRegister):
+            if mode == 'ripple':
+                op = rTTKRippleCarryAdder(X, Y)
+                self.append(op, list(chain(X, Y)))
+            elif mode == 'lookahead':
+                if A is None:
+                    raise CircuitError("Cannot make a carry-lookahead adder without ancilla qubits.")
+                op = rDKRSCarryLookaheadAdder(X, Y, A)
+                self.append(op, list(chain(X, Y, A)))
+            else:
+                raise CircuitError(f"Unknown adder mode {mode}.")
+        else:
+            op = rConstantDKRSCarryLookaheadAdder(X, Y)
+            self.append(op, list(X))
         return op.outputs[0]
 
 class rOperation(ABC):
@@ -125,8 +181,6 @@ class rOperation(ABC):
     :type outputs: Sequence[QuantumRegister]
     :ivar quantum_cost: The quantum cost of the operation as defined in [FoM2009]_.
     :type quantum_cost: int
-
-    .. [FoM2009] Mohammadi, M., & Eshghi, M. (2009). On figures of merit in reversible and quantum logic designs. Quantum Information Processing, 8, 297-318.
     """
     def __init__(self):
         self._inputs = []
@@ -157,7 +211,7 @@ class rPrepare(QuantumCircuit, rOperation):
     def __init__(self, X: QuantumRegister, value: int) -> None:
         num_qubits = len(X)
         qc = QuantumCircuit(num_qubits, name=f'rPrepare {value}')
-        bits = _int_to_bits(value, num_qubits)[::-1]
+        bits = _int_to_bits(value, num_qubits)
         for i in range(num_qubits):
             if bits[i]:
                 qc.x(i)
@@ -212,7 +266,7 @@ class rROL(rOperation):
         self._outputs = [QuantumRegister(bits=X[-r:]+X[:-r], name=X.name)]
         self._quantum_cost = 0
 
-class rXORc(Gate, rOperation):
+class rConstantXOR(Gate, rOperation):
     r"""A gate implementing a logical bitwise XOR operation between a register of qubits and a constant.
     
     :param X: The register to XOR with c.
@@ -229,7 +283,7 @@ class rXORc(Gate, rOperation):
         self._outputs = [X]
         super().__init__("rXORc", self.n, [], label=label)
 
-        bits = _int_to_bits(self.c, self.n)[::-1]
+        bits = _int_to_bits(self.c, self.n)
     
         qc = QuantumCircuit(self.n, name=f'rXOR {self.c}')
    
@@ -237,7 +291,7 @@ class rXORc(Gate, rOperation):
         for i, bit in enumerate(bits):
             if bit:
                 qc.x(i)
-                self._quantum_cost += NOT_QC
+                self._quantum_cost += SINGLE_QC
         
         self.definition = qc
 
@@ -260,21 +314,156 @@ class rXOR(Gate, rOperation):
         self._outputs = [X]
         super().__init__("rXOR", self.n*2, [], label=label)
 
-        qc = QuantumCircuit(self.n*2, name='rXOR')
+        #qc = QuantumCircuit(self.n*2, name='rXOR')
+        qc = QuantumCircuit(X, Y, name='rXOR')
 
         self._quantum_cost = 0
         for i in range(self.n):
-            qc.cx(self.n+i, i) 
+            qc.cx(Y[i], X[i]) 
             self._quantum_cost += FEYNMAN_QC
 
         self.definition = qc
 
-class rADD(Gate, rOperation):
+class rConstantDKRSCarryLookaheadAdder(Gate, rOperation):
+    r"""A gate implementing an addition modulo :math:`2^n` between a register of qubits and a constant.
+    
+    :param X: The register of size n to add c to.
+    :param c: The constant to add to X.
+    :param label: An optional label for the gate.
+
+    :operation: :math:`X \leftarrow X + c`
+    """
+    def __init__(self, X: QuantumRegister, c: int, label: Optional[str] = None) -> None:
+        self.n = len(X)
+        self.c = c
+        self._inputs = [X]
+        self._outputs = [X]
+        super().__init__("rADDc", self.n, [], label=label)
+
+        qc = QuantumCircuit(self.n, name=f'rADD {self.c}')
+   
+        self._quantum_cost = 0
+
+        if self.c != 0:
+            # Compute the bits of c and the bits of its two's complement
+            bits = _int_to_bits(self.c, self.n)
+            bits_reversed = _int_to_bits(2**self.n-self.c, self.n)
+
+            # If the two's complement of c has less bits at one that c, we substract the two's complement of c instead of adding c
+            reverse = False
+            if bits_reversed.count(1) < bits.count(1):
+                reverse = True
+                bits = bits_reversed
+
+            qc = QuantumCircuit(X, name="ADDc")
+
+            # It's easy to compute the carry if only one bit of the number to add is set to 1. So we decompose c into powers of 2.
+            # For instance x + 0b10110 = x + 0b10000 + 0b100 + 0b10
+            for i, b in enumerate(bits):
+                if b == 1:
+                    for j in range(len(X)-1, i, -1):
+                        gate = qc.mcx(list(range(i, j)), j)
+                        # if isinstance(gate[0].operation, CXGate):
+                        #     self._quantum_cost += FEYNMAN_QC
+                        # elif isinstance(gate[0].operation, CCXGate):
+                        #     self._quantum_cost += TOFFOLI_QC
+                        # else:
+                        #     for g in gate[0].operation.definition.decompose(reps=2).data:
+                        #         if isinstance(g.operation, CXGate):
+                        #             self._quantum_cost += FEYNMAN_QC
+                        #         elif isinstance(g.operation, CCXGate):
+                        #             self._quantum_cost += TOFFOLI_QC
+                        #         elif g.operation.num_qubits == 1:
+                        #             self._quantum_cost += SINGLE_QC
+                        #         else:
+                        #             warnings.warn(f"Quantum cost computation failed because of unknown gate {g.operation.name}.")
+                    qc.x(i)
+                    # self._quantum_cost += SINGLE_QC
+
+            # Substraction is just the reverse circuit of addition
+            if reverse:
+                qc = qc.reverse_ops()
+
+            warnings.warn("Cannot compute quantum cost when using MCX gates.")
+        self.definition = qc
+
+class rDKRSCarryLookaheadAdder(Gate, rOperation):
+    r"""A gate implementing the n qubits carry-lookahead adder modulo :math:`2^n` described in [DKRS2004]_. This implementation skips the output carry compution.
+
+
+    :param X: First register of size n to add.
+    :param Y: Second register of size n to add.
+    :param label: An optional label for the gate.
+    :raises CircuitError: If X and Y have a different size.
+
+    :operation: :math:`X \leftarrow X+Y \bmod 2^n`
+
+    .. [DKRS2004] Draper, T. G., Kutin, S. A., Rains, E. M., & Svore, K. M. (2004). A logarithmic-depth quantum carry-lookahead adder. arXiv preprint quant-ph/0406142.
+    """
+    @staticmethod
+    def get_num_ancilla_qubits(n: int) -> int:
+        """Get the number of required ancilla qubits without instantiating the class.
+
+        :param n: The number of qubits of the vectors to add.
+        :returns: The number of ancilla qubits needed for the computation.
+        """
+        if n<2:
+            return 0
+        return 2*n - _hamming_weight(n-1) - math.floor(math.log2(n-1))-2
+
+    def __init__(self, A: QuantumRegister, B: QuantumRegister, ancillas: AncillaRegister, label: Optional[str] = None) -> None:
+        self.n = len(A)
+        super().__init__("rADD", self.n*2+len(ancillas), [], label=label)
+        self._inputs = [A, B, ancillas]
+        self._outputs = [A]
+        if len(A) != len(B):
+            raise CircuitError("rADD operation must be between two QuantumRegisters of the same size.") 
+        qc = QuantumCircuit(self.n*2+len(A), name='rADD')
+
+        if len(A) != self.get_num_ancilla_qubits(self.n):
+            raise CircuitError("Wrong number of ancilla qubits.")
+
+
+        self._quantum_cost = 0
+
+        Z = AncillaRegister(bits=ancillas[0:self.n])
+        X = AncillaRegister(bits=ancillas[self.n::])
+        print(Z)
+        for i in range(self.n):
+            qc.ccx(A[i], B[i], Z[i+1])
+        for i in range(self.n):
+            qc.cx(A[i], B[i])
+
+
+        # 
+        # for i in range(1, self.n):
+        #     qc.cx(self.n+i, i) 
+        #     self._quantum_cost += FEYNMAN_QC
+        # for i in range(self.n-2, 0, -1):
+        #     qc.cx(self.n+i, self.n+i+1)     
+        #     self._quantum_cost += FEYNMAN_QC
+        # for i in range(self.n-1):
+        #     qc.ccx(i, self.n+i, self.n+i+1)
+        #     self._quantum_cost += TOFFOLI_QC
+        # for i in range(self.n-1, 0, -1):
+        #     qc.cx(self.n+i, i)
+        #     qc.ccx(i-1, self.n+i-1, self.n+i)
+        #     self._quantum_cost += TOFFOLI_QC + FEYNMAN_QC
+        # for i in range(1, self.n-1):
+        #     qc.cx(self.n+i, self.n+i+1)
+        #     self._quantum_cost += FEYNMAN_QC
+        # for i in range(self.n):
+        #     qc.cx(self.n+i, i)
+        #     self._quantum_cost += FEYNMAN_QC
+
+        self.definition = qc
+
+class rTTKRippleCarryAdder(Gate, rOperation):
     r"""A gate implementing the n qubits ripple-carry adder modulo :math:`2^n` described in [TTK2009]_. This implementation skips the output carry compution.
 
 
-    :param X: First register to add.
-    :param Y: Second register to add.
+    :param X: First register of size n to add.
+    :param Y: Second register of size n to add.
     :param label: An optional label for the gate.
     :raises CircuitError: If X and Y have a different size.
 
@@ -369,7 +558,7 @@ def run_circuit(circuit: QuantumCircuit, verbose: bool = False) -> Sequence[int]
     if verbose:
         print("Circuit result:", raw_result)
     result = raw_result.most_frequent()
-    # Extract the output registers (result is in big endian so we need to reverse the register order)
+    # Extract the output registers (result is MSB-first so we need to reverse the register order)
     outputs = result.split()[::-1]
     # Convert the outputs to integers
     return [int(output, 2) for output in outputs]
