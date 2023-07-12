@@ -210,13 +210,13 @@ class rPrepare(QuantumCircuit, rOperation):
         
     def __init__(self, X: QuantumRegister, value: int) -> None:
         num_qubits = len(X)
-        qc = QuantumCircuit(num_qubits, name=f'rPrepare {value}')
+        qc = QuantumCircuit(X, name=f'rPrepare {value}')
         bits = _int_to_bits(value, num_qubits)
         for i in range(num_qubits):
             if bits[i]:
-                qc.x(i)
+                qc.x(X[i])
             else:
-                qc.i(i)
+                qc.i(X[i])
 
         super().__init__(*qc.qregs, name=f'rPrepare {value}')
         self.compose(qc.to_gate(), qubits=self.qubits, inplace=True)
@@ -285,12 +285,12 @@ class rConstantXOR(Gate, rOperation):
 
         bits = _int_to_bits(self.c, self.n)
     
-        qc = QuantumCircuit(self.n, name=f'rXOR {self.c}')
+        qc = QuantumCircuit(X, name=f'rXOR {self.c}')
    
         self._quantum_cost = 0
         for i, bit in enumerate(bits):
             if bit:
-                qc.x(i)
+                qc.x(X[i])
                 self._quantum_cost += SINGLE_QC
         
         self.definition = qc
@@ -314,7 +314,6 @@ class rXOR(Gate, rOperation):
         self._outputs = [X]
         super().__init__("rXOR", self.n*2, [], label=label)
 
-        #qc = QuantumCircuit(self.n*2, name='rXOR')
         qc = QuantumCircuit(X, Y, name='rXOR')
 
         self._quantum_cost = 0
@@ -480,27 +479,27 @@ class rTTKRippleCarryAdder(Gate, rOperation):
         self._outputs = [X]
         super().__init__("rADD", self.n*2, [], label=label)
 
-        qc = QuantumCircuit(self.n*2, name='rADD')
+        qc = QuantumCircuit(X, Y, name='rADD')
 
         self._quantum_cost = 0
         for i in range(1, self.n):
-            qc.cx(self.n+i, i) 
+            qc.cx(Y[i], X[i]) 
             self._quantum_cost += FEYNMAN_QC
         for i in range(self.n-2, 0, -1):
-            qc.cx(self.n+i, self.n+i+1)     
+            qc.cx(Y[i], Y[i+1])     
             self._quantum_cost += FEYNMAN_QC
         for i in range(self.n-1):
-            qc.ccx(i, self.n+i, self.n+i+1)
+            qc.ccx(X[i], Y[i], Y[i+1])
             self._quantum_cost += TOFFOLI_QC
         for i in range(self.n-1, 0, -1):
-            qc.cx(self.n+i, i)
-            qc.ccx(i-1, self.n+i-1, self.n+i)
+            qc.cx(Y[i], X[i])
+            qc.ccx(X[i-1], Y[i-1], Y[i])
             self._quantum_cost += TOFFOLI_QC + FEYNMAN_QC
         for i in range(1, self.n-1):
-            qc.cx(self.n+i, self.n+i+1)
+            qc.cx(Y[i], Y[i+1])
             self._quantum_cost += FEYNMAN_QC
         for i in range(self.n):
-            qc.cx(self.n+i, i)
+            qc.cx(Y[i], X[i])
             self._quantum_cost += FEYNMAN_QC
 
         self.definition = qc
