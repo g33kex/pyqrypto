@@ -278,7 +278,7 @@ if __name__ == '__main__':
 
     qc = rCircuit(X, Y)
     gate = Alzette(X, Y, c)
-    qc.append(gate, list(chain(*gate.outputs)))
+    qc.append(gate, list(chain(*gate.inputs)))
 
     decomposition_reps = 2
     qc.decompose(reps=decomposition_reps).qasm(filename='alzette_only.qasm')

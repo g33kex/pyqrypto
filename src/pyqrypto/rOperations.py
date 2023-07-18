@@ -16,7 +16,7 @@ from itertools import chain
 from typing import Optional, Sequence, Final
 import warnings
 from abc import ABC
-import math
+from math import floor, log2
 
 FEYNMAN_QC: Final[int] = 1
 """The quantum cost of the Feynman gate (CNOT)."""
@@ -137,6 +137,18 @@ class rCircuit(QuantumCircuit):
         else:
             op = rConstantXOR(X, Y)
             self.append(op, list(X))
+        return op.outputs[0]
+
+    def neg(self, X: QuantumRegister) -> QuantumRegister:
+        r"""Apply a bitwise NOT on a register.
+
+        :param X: The register to apply the NOT to.
+        :returns: The output register :math:`X`.
+
+        :operation: :math:`X \leftarrow \neg X`
+        """
+        op = rNOT(X)
+        self.append(op, list(X))
         return op.outputs[0]
 
     def add(self, X: QuantumRegister, Y: QuantumRegister | int, A: Optional[AncillaRegister]=None, mode='ripple') -> QuantumRegister:
@@ -295,6 +307,30 @@ class rConstantXOR(Gate, rOperation):
         
         self.definition = qc
 
+class rNOT(Gate, rOperation):
+    r"""A gate implementing a bitwise NOT operation on a register
+
+    :param X: The register to apply NOT on.
+    :param label: An optional label for the gate.
+
+    :oopoeration: :math:`X \leftarrow \neg X`
+    """
+
+    def __init__(self, X: QuantumRegister, label: Optional[str] = None) -> None:
+        self.n = len(X)
+        self._inputs = [X]
+        self._outputs = [X]
+        super().__init__("rNOT", self.n, [], label=label)
+
+        qc = QuantumCircuit(X, name="rNOT")
+
+        self._quantum_cost = 0
+        for q in X:
+            qc.x(q)
+            self._quantum_cost += SINGLE_QC
+
+        self.definition = qc
+
 class rXOR(Gate, rOperation):
     r"""A gate implementing a logical bitwise XOR operation between two registers.
 
@@ -386,14 +422,59 @@ class rConstantDKRSCarryLookaheadAdder(Gate, rOperation):
             warnings.warn("Cannot compute quantum cost when using MCX gates.")
         self.definition = qc
 
+class rDKRSComputeCarry(Gate, rOperation):
+    r"""A gate implemented the carry computation described in [DKRS2004]_. The last carry is not computed.
+
+    :param P0: :math:`P_0[i] = p[i, i+1]`, 1 if and only if carry propagages from bit :math:`i` to bit :math:`i+1`.
+    :param G: :math:`G[i] = g[i-1, i]`, 1 if and only if a carry is generated between bit :math:`i-1` and bit :math:`i`.
+    :param ancillas: The ancilla qubits used for the computation. They umst be set to 0 before the circuit and will be reset to 0.
+    """
+
+    def __init__(self, P0, G, ancillas: AncillaRegister, label: Optional[str] = None) -> None:
+        self.n = len(P0)+1
+        super().__init__("rCarry", len(P0)+len(G)+len(ancillas), [], label=label)
+        self._inputs = [P0, G, ancillas]
+        self._outputs = [G]
+
+        qc = rCircuit(P0, G, ancillas, name='rCarry')
+
+        P = [P0]
+        ancilla_index=0
+        for t in range(1,floor(log2(self.n))):
+            Pt_size = floor(self.n/2**t)-1
+            P.append(QuantumRegister(bits=ancillas[ancilla_index:ancilla_index+Pt_size]))
+            ancilla_index+=Pt_size
+
+        self._quantum_cost = 0
+        # P-rounds
+        for t in range(1, floor(log2(self.n))):
+            for m in range(1, floor(self.n/2**t)):
+                qc.ccx(P[t-1][2*m-1], P[t-1][2*m], P[t][m-1])
+        # G-rounds
+        for t in range(1, floor(log2(self.n))+1):
+            for m in range(floor(self.n/2**t)):
+                qc.ccx(G[2**t*m+2**(t-1)-1],P[t-1][2*m],G[2**t*m+2**t-1])
+        # C rounds
+        for t in range(floor(log2(2*self.n/3)), 0, -1):
+            for m in range(1, floor((self.n-2**(t-1))/2**t)+1):
+                qc.ccx(G[2**t*m-1], P[t-1][2*m-1], G[2**t*m+2**(t-1)-1])
+
+        # P^-1 rounds
+        for t in range(floor(log2(self.n))-1, 0, -1):
+            for m in range(1, floor(self.n/2**t)):
+                qc.ccx(P[t-1][2*m-1], P[t-1][2*m], P[t][m-1])
+
+        self.definition = qc
+
 class rDKRSCarryLookaheadAdder(Gate, rOperation):
     r"""A gate implementing the n qubits carry-lookahead adder modulo :math:`2^n` described in [DKRS2004]_. This implementation skips the output carry compution.
 
 
-    :param X: First register of size n to add.
-    :param Y: Second register of size n to add.
+    :param A: First register of size n to add.
+    :param B: Second register of size n to add.
+    :param ancillas: The ancilla qubits used for the computation. They must be set to 0 before the circuit and will be reset to 0.
     :param label: An optional label for the gate.
-    :raises CircuitError: If X and Y have a different size.
+    :raises CircuitError: If A and B have a different size or if there is not the correct number of ancilla qubits.
 
     :operation: :math:`X \leftarrow X+Y \bmod 2^n`
 
@@ -408,7 +489,7 @@ class rDKRSCarryLookaheadAdder(Gate, rOperation):
         """
         if n<2:
             return 0
-        return 2*n - _hamming_weight(n-1) - math.floor(math.log2(n-1))-2
+        return 2*n - _hamming_weight(n-1) - floor(log2(n-1))-2
 
     def __init__(self, A: QuantumRegister, B: QuantumRegister, ancillas: AncillaRegister, label: Optional[str] = None) -> None:
         self.n = len(A)
@@ -417,21 +498,49 @@ class rDKRSCarryLookaheadAdder(Gate, rOperation):
         self._outputs = [A]
         if len(A) != len(B):
             raise CircuitError("rADD operation must be between two QuantumRegisters of the same size.") 
-        qc = QuantumCircuit(self.n*2+len(A), name='rADD')
+        qc = rCircuit(A, B, ancillas, name='rADD')
 
-        if len(A) != self.get_num_ancilla_qubits(self.n):
+        if len(ancillas) != self.get_num_ancilla_qubits(self.n):
             raise CircuitError("Wrong number of ancilla qubits.")
 
 
         self._quantum_cost = 0
 
-        Z = AncillaRegister(bits=ancillas[0:self.n])
-        X = AncillaRegister(bits=ancillas[self.n::])
-        print(Z)
-        for i in range(self.n):
-            qc.ccx(A[i], B[i], Z[i+1])
-        for i in range(self.n):
-            qc.cx(A[i], B[i])
+        Z = AncillaRegister(bits=ancillas[0:self.n-1])
+        X = AncillaRegister(bits=ancillas[self.n-1::])
+        for i in range(self.n-1): # Z[i] = g[i, i+1]
+            qc.ccx(B[i], A[i], Z[i])
+        qc.xor(A, B) # A[i] = p[i, i+1] and A[0] = s0
+
+        # Lookahead carry
+        if self.n>1:
+            # Compute carry
+            compute_carry = rDKRSComputeCarry(QuantumRegister(bits=A[1:-1]), Z, X)
+            qc.append(compute_carry, list(chain(*compute_carry.inputs)))
+        
+            # Compute sum
+            qc.xor(QuantumRegister(bits=A[1:]), Z) # A[i] = si
+            # Now do everything in reverse
+            qc.neg(QuantumRegister(bits=A[:-1])) # A = s'
+            qc.xor(QuantumRegister(bits=A[1:-1]), QuantumRegister(bits=B[1:-1]))
+
+            uncompute_carry = rDKRSComputeCarry(QuantumRegister(bits=A[1:-1]), Z, X).reverse_ops()
+            qc.append(uncompute_carry, list(chain(*uncompute_carry.inputs)))
+
+            qc.xor(QuantumRegister(bits=A[1:-1]), QuantumRegister(bits=B[1:-1]))
+            for i in range(self.n-1):
+                qc.ccx(B[i], A[i], Z[i])
+            qc.neg(QuantumRegister(bits=A[:-1]))
+
+
+
+    #     for i in range(1, n): # B[i] = si
+    #         qc.cx(Z[i], B[i]
+    # 
+    #     for i in range(0, n-1)
+    #
+        
+
 
 
         # 

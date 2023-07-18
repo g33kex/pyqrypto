@@ -4,8 +4,9 @@ import random
 from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit, rDKRSCarryLookaheadAdder
 from pyqrypto.alzette import Alzette, c_alzette
 from itertools import chain
+import matplotlib.pyplot as plt
 
-nb_tests = 100
+nb_tests = 1000
 
 # Utils
 def rol(x, r, n):
@@ -23,7 +24,7 @@ def circuit_test(circuit, classical_function, inputs, input_registers, output_re
 
     if verbose:
         print("Testing the following gate:")
-        print(circuit.decompose(reps=8))
+        print(circuit.decompose(reps=1))
 
     final_circuit = make_circuit(circuit, inputs, input_registers, output_registers)
     if verbose:
@@ -208,22 +209,37 @@ def test_ripple_add():
 
         assert(result)
 
-def rtest_lookahead_add():
+def test_lookahead_add():
     for _ in range(nb_tests):
-        n = 6#random.randint(1, 10)
+        #n = 10
+        #n = random.randint(1, 10)
+        n = 32
+        wire_order=None
+        # if n==10:
+        #     wire_order = [0,10,20,1,11,21,2,12,29,22,3,13,23,4,14,30,24,5,15,32,25,6,16,31,26,7,17,27,8,18,28,9,19]
+        # elif n==5:
+        #     wire_order = [0,5,10,1,6,11,2,7,14,12,3,8,13,4,9]
+
         a = random.getrandbits(n)
         b = random.getrandbits(n)
 
-        X1 = QuantumRegister(n, name='X')
-        Y = QuantumRegister(n, name='Y')
-        A = AncillaRegister(rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n))
+        print(f"Doing operation {a}+{b}={a+b}")
 
-        qc = rCircuit(X1, Y, A)
+        A = QuantumRegister(n, name='A')
+        B = QuantumRegister(n, name='B')
+        ancillas = AncillaRegister(rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n))
+        print("total_qubits",len(A)+len(B)+len(ancillas))
+        qc = rCircuit(A, B, ancillas)
 
-        X2 = qc.add(X1, Y, A, mode='lookahead')
+        qc.add(A, B, ancillas, mode='lookahead')
         print(f"n: {n}\tcost: {qc.quantum_cost}")
 
-        result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [X1, Y], [X2, Y])
+        #print(qc.decompose(gates_to_decompose=["rADD", "rCarry", "rCarry_reverse", "rXOR", 'rNOT'], reps=2).draw(wire_order=wire_order,output='mpl'))
+        #plt.show()
+
+        #print(qc.decompose(gates_to_decompose=["rADD", "rCarry", "rCarry_reverse", "rXOR", "rNOT"], reps=2))
+
+        result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [A, B], [A, B], verbose=False)
 
         assert(result)
 
@@ -301,7 +317,7 @@ def showcase_add():
 
 if __name__ == '__main__':
     random.seed(42)
-    rtest_lookahead_add()
+    test_lookahead_add()
     # Showcase complex circuit
     # showcase_complex_circuit()
 
