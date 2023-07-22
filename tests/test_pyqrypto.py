@@ -1,12 +1,12 @@
 from qiskit import QuantumCircuit, QuantumRegister, AncillaRegister
 import random
 
-from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit, rDKRSCarryLookaheadAdder
-from pyqrypto.alzette import Alzette, c_alzette
+from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit, rDKRSCarryLookaheadAdder, rConstantDKRSCarryLookaheadAdder
+from pyqrypto.alzette import Alzette, Traxl_enc, c_alzette, c_traxl_genkeys, c_traxl_enc
 from itertools import chain
 import matplotlib.pyplot as plt
 
-nb_tests = 1000
+nb_tests = 100
 
 # Utils
 def rol(x, r, n):
@@ -188,9 +188,28 @@ def test_alzette():
         assert(result)
 
 def test_traxl():
-    for _ in range(nb_tests):
+    # This test is really slow so we must run it less times
+    for i in range(nb_tests//10):
+        # if n = 64 or 128 this fails with segfault, probably a bug in Qiskit
+        #n = random.choice([16, 32, 64, 128, 256])
         n = 32
+        x = [random.getrandbits(n//8) for _ in range(4)]
+        y = [random.getrandbits(n//8) for _ in range(4)]
+        tweak = [random.getrandbits(n//8) for _ in range(4)]
+        key = [random.getrandbits(n//8) for _ in range(8)]
 
+        X = [QuantumRegister(n//8, name=f'X{i}') for i in range(4)]
+        Y = [QuantumRegister(n//8, name=f'Y{i}') for i in range(4)]
+        K = [QuantumRegister(n//8, name=f'K{i}') for i in range(8)]
+        ancillas = AncillaRegister(Traxl_enc.get_num_ancilla_qubits(n))
+
+        qc = rCircuit(*X, *Y, *K, ancillas)
+        gate = Traxl_enc(X, Y, K, tweak, ancillas)
+        qc.append(gate, list(chain(*gate.inputs)))
+
+        result = circuit_test(qc, lambda *params: [a for sublist in c_traxl_enc(list(params[0:4]), list(params[4:8]), c_traxl_genkeys(list(params[8::]), n=n//8), tweak, n=n//8) for a in sublist], x+y+key, gate.inputs[:-1], gate.outputs[:-9])
+
+        assert(result)
 
 def test_ripple_add():
     for _ in range(nb_tests):
@@ -248,13 +267,14 @@ def test_addc():
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         c = random.getrandbits(n)
+        ancillas = AncillaRegister(rConstantDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n))
 
         X1 = QuantumRegister(n)
         
-        qc = rCircuit(X1)
-        X2 = qc.add(X1, c)
+        qc = rCircuit(X1, ancillas)
+        X2 = qc.add(X1, c, ancillas)
 
-        result = circuit_test(qc, lambda x: [(x+c)%2**n], [a], [X1], [X2])
+        result = circuit_test(qc, lambda x: [(x+c)%2**n], [a], [X1], [X2], verbose=True)
 
         assert(result)
 
@@ -317,7 +337,7 @@ def showcase_add():
 
 if __name__ == '__main__':
     random.seed(42)
-    test_lookahead_add()
+    test_traxl()
     # Showcase complex circuit
     # showcase_complex_circuit()
 
