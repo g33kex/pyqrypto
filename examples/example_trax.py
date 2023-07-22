@@ -1,6 +1,6 @@
 from qiskit.circuit.quantumregister import AncillaRegister
-from pyqrypto.rOperations import rCircuit, make_circuit, run_circuit, rOperation
-from pyqrypto.alzette import c_traxl_genkeys, c_traxl_enc, Traxl_enc
+from pyqrypto.rOperations import rCircuit, make_circuit, run_circuit
+from pyqrypto.sparkle import c_traxl_genkeys, c_traxl_enc, Traxl_enc
 from qiskit import QuantumRegister
 from itertools import chain
 import random

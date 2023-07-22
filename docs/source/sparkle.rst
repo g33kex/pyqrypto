@@ -1,6 +1,6 @@
-Alzette
+Sparkle
 -------
 
-.. automodule:: pyqrypto.alzette
+.. automodule:: pyqrypto.sparkle
    :members:
    :show-inheritance:

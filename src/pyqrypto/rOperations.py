@@ -9,7 +9,7 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, AncillaRe
 from qiskit.circuit.quantumcircuit import QubitSpecifier, ClbitSpecifier, Operation, CircuitInstruction
 from qiskit_aer.backends import AerSimulator
 from qiskit.circuit import Gate
-from qiskit.circuit.library import Barrier, CXGate, CCXGate
+from qiskit.circuit.library import Barrier
 from qiskit.result.counts import Counts
 from qiskit.circuit.exceptions import CircuitError
 from itertools import chain
@@ -57,18 +57,6 @@ class rCircuit(QuantumCircuit):
     """
     def __init__(self, *inputs: QuantumRegister, **kwargs):
         super().__init__(*inputs, **kwargs)
-        self._quantum_cost = 0
-        self._circuit_depth = 0
-
-    @property
-    def quantum_cost(self):
-        """The quantum cost of this circuit based on the quantum cost of the register operations as defined in [FoM2009]_.
-
-        .. warning:: Operations that are not instances of :class:`rOperation` are not taken into account in this metric.
-
-        .. [FoM2009] Mohammadi, M., & Eshghi, M. (2009). On figures of merit in reversible and quantum logic designs. Quantum Information Processing, 8, 297-318.
-        """
-        return self._quantum_cost
 
     @property
     def stats(self):
@@ -112,20 +100,6 @@ class rCircuit(QuantumCircuit):
         stats['depth'] = decomposed_circuit.depth()
         
         return stats
-
-    def append(self, instruction: Operation | CircuitInstruction, qargs: Optional[Sequence[QubitSpecifier]] = None, cargs: Optional[Sequence[ClbitSpecifier]] = None):
-        """Append one or more instructions to the end of the circuit, modifying the circuit in
-        place. Also updates the quantum cost of the circuit if the instruction is a :class:`rOperation` or a basic gate.
-
-        :param instruction: The instruction to append.
-        :param qargs: Qubits to attach instruction to.
-        :param cargs: Classical bits to attach instruction to.
-        :returns: The instruction that was added to the circuit.
-        :raises CircuitError: If the operation passed is not an instance of :class:`Instruction`
-        """
-        super().append(instruction, qargs, cargs)
-        if isinstance(instruction, rOperation):
-            self._quantum_cost += instruction.quantum_cost
 
     def ror(self, X: QuantumRegister, r: int) -> QuantumRegister:
         r"""Rotate right a register by a specified amount of qubits.
@@ -227,13 +201,10 @@ class rOperation(ABC):
     :type inputs: Sequence[QuantumRegister]
     :ivar outputs: The outputs registers of the operation.
     :type outputs: Sequence[QuantumRegister]
-    :ivar quantum_cost: The quantum cost of the operation as defined in [FoM2009]_.
-    :type quantum_cost: int
     """
     def __init__(self):
         self._inputs = []
         self._outputs = []
-        self._quantum_cost = 0
 
     @property
     def outputs(self) -> list[QuantumRegister]:
@@ -242,10 +213,6 @@ class rOperation(ABC):
     @property
     def inputs(self) -> list[QuantumRegister]:
         return self._inputs
-
-    @property
-    def quantum_cost(self) -> int:
-        return self._quantum_cost
 
 class rPrepare(QuantumCircuit, rOperation):
     r"""A circuit preparing a QuantumRegister to an initial classical integer value.
@@ -290,7 +257,6 @@ class rROR(rOperation):
         r = r % len(X)
         self._inputs = [X]
         self._outputs = [QuantumRegister(bits=X[r:]+X[:r], name=X.name)]
-        self._quantum_cost = 0
 
 class rROL(rOperation):
     r"""Defines the left rotation operation on a QuantumRegister.
@@ -312,7 +278,6 @@ class rROL(rOperation):
         r = r % len(X)
         self._inputs = [X]
         self._outputs = [QuantumRegister(bits=X[-r:]+X[:-r], name=X.name)]
-        self._quantum_cost = 0
 
 class rConstantXOR(Gate, rOperation):
     r"""A gate implementing a logical bitwise XOR operation between a register of qubits and a constant.
@@ -335,11 +300,9 @@ class rConstantXOR(Gate, rOperation):
     
         qc = QuantumCircuit(X, name=f'rXOR {self.c}')
    
-        self._quantum_cost = 0
         for i, bit in enumerate(bits):
             if bit:
                 qc.x(X[i])
-                self._quantum_cost += SINGLE_QC
         
         self.definition = qc
 
@@ -360,10 +323,8 @@ class rNOT(Gate, rOperation):
 
         qc = QuantumCircuit(X, name="rNOT")
 
-        self._quantum_cost = 0
         for q in X:
             qc.x(q)
-            self._quantum_cost += SINGLE_QC
 
         self.definition = qc
 
@@ -388,10 +349,8 @@ class rXOR(Gate, rOperation):
 
         qc = QuantumCircuit(X, Y, name='rXOR')
 
-        self._quantum_cost = 0
         for i in range(self.n):
             qc.cx(Y[i], X[i]) 
-            self._quantum_cost += FEYNMAN_QC
 
         self.definition = qc
 
@@ -426,19 +385,14 @@ class rConstantDKRSCarryLookaheadAdder(Gate, rOperation):
 
         qc = rCircuit(A, ancillas, name=f'rADD {self.c}')
    
-        self._quantum_cost = 0
 
         if self.c != 0:
-
-            self._quantum_cost = 0
-
             bits = _int_to_bits(self.c, self.n)
             Z = AncillaRegister(bits=ancillas[0:self.n-1])
             X = AncillaRegister(bits=ancillas[self.n-1::])
             for i in range(self.n-1): # Z[i] = g[i, i+1]
                 if bits[i]:
                     qc.cx(A[i], Z[i])
-                    self._quantum_cost += FEYNMAN_QC
             qc.xor(A, c) # A[i] = p[i, i+1] and A[0] = s0
 
             # Lookahead carry
@@ -487,7 +441,6 @@ class rDKRSComputeCarry(Gate, rOperation):
             P.append(QuantumRegister(bits=ancillas[ancilla_index:ancilla_index+Pt_size]))
             ancilla_index+=Pt_size
 
-        self._quantum_cost = 0
         # P-rounds
         for t in range(1, floor(log2(self.n))):
             for m in range(1, floor(self.n/2**t)):
@@ -545,8 +498,6 @@ class rDKRSCarryLookaheadAdder(Gate, rOperation):
         if len(ancillas) != self.get_num_ancilla_qubits(self.n):
             raise CircuitError("Wrong number of ancilla qubits.")
 
-        self._quantum_cost = 0
-
         Z = AncillaRegister(bits=ancillas[0:self.n-1])
         X = AncillaRegister(bits=ancillas[self.n-1::])
         for i in range(self.n-1): # Z[i] = g[i, i+1]
@@ -599,26 +550,19 @@ class rTTKRippleCarryAdder(Gate, rOperation):
 
         qc = QuantumCircuit(X, Y, name='rADD')
 
-        self._quantum_cost = 0
         for i in range(1, self.n):
             qc.cx(Y[i], X[i]) 
-            self._quantum_cost += FEYNMAN_QC
         for i in range(self.n-2, 0, -1):
             qc.cx(Y[i], Y[i+1])     
-            self._quantum_cost += FEYNMAN_QC
         for i in range(self.n-1):
             qc.ccx(X[i], Y[i], Y[i+1])
-            self._quantum_cost += TOFFOLI_QC
         for i in range(self.n-1, 0, -1):
             qc.cx(Y[i], X[i])
             qc.ccx(X[i-1], Y[i-1], Y[i])
-            self._quantum_cost += TOFFOLI_QC + FEYNMAN_QC
         for i in range(1, self.n-1):
             qc.cx(Y[i], Y[i+1])
-            self._quantum_cost += FEYNMAN_QC
         for i in range(self.n):
             qc.cx(Y[i], X[i])
-            self._quantum_cost += FEYNMAN_QC
 
         self.definition = qc
 

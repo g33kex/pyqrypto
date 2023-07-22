@@ -1,8 +1,8 @@
-"""A reversible quantum implementation of n qubits Alzette from [Alzette2020]_.
+"""A reversible quantum implementation of the n qubits Alzette ARX box and the TRAX cipher from the Sparkle-suite as defined in [Alzette2020]_.
 
 .. [Alzette2020] Beierle, C., Biryukov, A., Cardoso dos Santos, L., Großschädl, J., Perrin, L., Udovenko, A., ... & Wang, Q. (2020). Alzette: A 64-Bit ARX-box: (Feat. CRAX and TRAX). In Advances in Cryptology–CRYPTO 2020: 40th Annual International Cryptology Conference, CRYPTO 2020, Santa Barbara, CA, USA, August 17–21, 2020, Proceedings, Part III 40 (pp. 419-448). Springer International Publishing.
 """
-from pyqrypto.rOperations import rCircuit, rOperation, make_circuit, run_circuit, rDKRSCarryLookaheadAdder 
+from pyqrypto.rOperations import rCircuit, rOperation, rDKRSCarryLookaheadAdder 
 from qiskit import QuantumRegister, AncillaRegister
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit import Gate
@@ -197,7 +197,6 @@ class Alzette(Gate, rOperation):
 
         self._definition = qc
         self._outputs = [X, Y]
-        self._quantum_cost = qc.quantum_cost
 
 
 class Traxl_enc(Gate, rOperation):
@@ -308,4 +307,3 @@ class Traxl_enc(Gate, rOperation):
 
         self._outputs = x+y+key+[ancillas]
         self._definition = qc
-        self._quantum_cost = qc.quantum_cost

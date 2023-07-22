@@ -1,7 +1,7 @@
 Welcome to pyqrypto's documentation!
 ====================================
 
-**pyrypto** is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and its necessary gates.
+**pyrypto** is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and the associated tweakable block cipher TRAX from the Sparkle-suite and their necessary gates.
 
 Because of the underlying architecture, right and left rotations are implemented for free without using any gate. 
 
@@ -12,14 +12,16 @@ Implemented Gates
 
 These are the quantum gates currently implemented by this projects.
 
+- ``TRAX`` - a tweakable block cipher
 - ``Alzette`` - a 64 bit ARX-box
-- ``ADD`` - ripple carry adder
+- ``TTKRippleCarryAdder`` - ripple carry adder
+- ``DKRSCarryLookaheadAdder`` - carry lookahead adder
+- ``ConstantDKRSCarryLookaheadAdder`` - carry lookahead adder with a constant
 - ``XOR`` - bitwise XOR
-- ``XORc`` - bitwise XOR with a constant
+- ``ConstantXOR`` - bitwise XOR with a constant
+- ``NOT`` - bitwise NOT
 - ``ROR`` - right rotation (gate free)
 - ``ROL`` - left rotation (gate free)
-
-More gates are planned: shifts, AND, OR, two's complement, ...
 
 Examples
 --------
@@ -67,7 +69,7 @@ Here is an example on how to use **pyqrypto** to generate a simple circuit that 
     #                      │  
     #Y_3: ─────────────────■──
 
-For an example on how to implement a more complex circuit, please read the source code of :py:class:`alzette.Alzette`. 
+For an example on how to implement a more complex circuit, please read the source code of :py:class:`sparkle.Alzette`. 
 
 This library also provides handy tools to add preparation steps and measurements to a circuit operating on registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.
 
@@ -130,5 +132,5 @@ Let's add a preparation and a measurement step to our previous example and simul
    :caption: Contents:
 
    rOperations
-   alzette
+   sparkle
 
