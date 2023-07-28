@@ -185,9 +185,8 @@ def test_ripple_add():
         assert(result)
 
 def test_lookahead_add():
-    for _ in range(1):
-        #n = random.randint(1, 64)
-        n = 32
+    for _ in range(nb_tests//5):
+        n = random.randint(1, 32)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
 
@@ -198,7 +197,10 @@ def test_lookahead_add():
         qc = rCircuit(A, B, ancillas)
         qc.add(A, B, ancillas, mode='lookahead')
 
-        result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [A, B], [A, B])
+        if ancillas:
+            result = circuit_test(qc, lambda x,y, _: [(x+y)%(2**n), y, 0], [a, b, 0], [A, B, ancillas], [A, B, ancillas], verbose=False)
+        else:
+            result = circuit_test(qc, lambda x,y: [(x+y)%(2**n), y], [a, b], [A, B], [A, B], verbose=False)
 
         assert(result)
 
@@ -214,7 +216,10 @@ def test_addc():
         qc = rCircuit(X1, ancillas)
         X2 = qc.add(X1, c, ancillas)
 
-        result = circuit_test(qc, lambda x: [(x+c)%2**n], [a], [X1], [X2], verbose=True)
+        if ancillas:
+            result = circuit_test(qc, lambda x, _: [(x+c)%2**n, 0], [a, 0], [X1, ancillas], [X2, ancillas])
+        else:
+            result = circuit_test(qc, lambda x: [(x+c)%2**n], [a], [X1], [X2])
 
         assert(result)
 
@@ -236,12 +241,25 @@ def test_alzette():
 
         assert(result)
 
+def test_ctraxl():
+    x = [0xaea9f4e8, 0xc926a22f, 0x9d1078f8, 0x8a779f98]
+    y = [0x24e002dc, 0x8f34f225, 0x13ff3742, 0x510e85ea]
+
+    key = [0x3b9c0bb1, 0xcc2106fb, 0x28bc5755, 0xb146dc0f, 0xe111aad7, 0xca29eea5, 0x612eef46, 0x5ace7bc]
+    tweak = [0x7c856a02, 0x62e011b3, 0xc016150f, 0xc0045ae6]
+
+    subkeys = c_traxl_genkeys(key, n=32)
+    res_x, res_y = c_traxl_enc(x, y, subkeys, tweak, n=32)
+    true_x = [0xef5eabc9, 0xc3deec85, 0x3be9c4fd, 0x7db95c88]
+    true_y = [0xf5ba2404, 0xf54fcd43, 0xcbcc4b1a, 0xe796aadf]
+
+    assert(res_x == true_x)
+    assert(res_y == true_y)
+
 def test_traxl():
     # This test is really slow so we must run it less times
-    for i in range(nb_tests//10):
-        # if n = 64 or 128 this fails with segfault, probably a bug in Qiskit
-        #n = random.choice([16, 32, 64, 128, 256])
-        n = 32
+    for _ in range(nb_tests//10):
+        n = random.choice([16, 32, 64, 128, 256])
         x = [random.getrandbits(n//8) for _ in range(4)]
         y = [random.getrandbits(n//8) for _ in range(4)]
         tweak = [random.getrandbits(n//8) for _ in range(4)]
@@ -259,6 +277,3 @@ def test_traxl():
         result = circuit_test(qc, lambda *params: [a for sublist in c_traxl_enc(list(params[0:4]), list(params[4:8]), c_traxl_genkeys(list(params[8::]), n=n//8), tweak, n=n//8) for a in sublist], x+y+key, gate.inputs[:-1], gate.outputs[:-9])
 
         assert(result)
-
-if __name__ == '__main__':
-    test_lookahead_add()

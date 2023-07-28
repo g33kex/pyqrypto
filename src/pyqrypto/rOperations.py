@@ -6,10 +6,9 @@ The aim of this library is to be able to implement classical algorithms on quant
 """
 from __future__ import annotations
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, AncillaRegister, transpile
-from qiskit.circuit.quantumcircuit import QubitSpecifier, ClbitSpecifier, Operation, CircuitInstruction
 from qiskit_aer.backends import AerSimulator
 from qiskit.circuit import Gate
-from qiskit.circuit.library import Barrier
+from qiskit.circuit.library import Barrier, CCXGate
 from qiskit.result.counts import Counts
 from qiskit.circuit.exceptions import CircuitError
 from itertools import chain
@@ -98,6 +97,12 @@ class rCircuit(QuantumCircuit):
                 warnings.warn(f"Cannot compute quantum cost for operation {operation}.")   
             stats['quantum_cost'] += k*count
         stats['depth'] = decomposed_circuit.depth()
+        # Some papers only count toffoli gates for the circuit depth...
+        ccx_only = decomposed_circuit.copy_empty_like()
+        for instruction, qargs, cargs in decomposed_circuit:
+            if isinstance(instruction, CCXGate):
+                ccx_only.append(instruction, qargs, cargs)
+        stats['toffoli_depth'] = ccx_only.depth()
         
         return stats
 
@@ -385,7 +390,6 @@ class rConstantDKRSCarryLookaheadAdder(Gate, rOperation):
 
         qc = rCircuit(A, ancillas, name=f'rADD {self.c}')
    
-
         if self.c != 0:
             bits = _int_to_bits(self.c, self.n)
             Z = AncillaRegister(bits=ancillas[0:self.n-1])
@@ -405,12 +409,14 @@ class rConstantDKRSCarryLookaheadAdder(Gate, rOperation):
                 qc.xor(QuantumRegister(bits=A[1:]), Z) # A[i] = si
                 # Now do everything in reverse
                 qc.neg(QuantumRegister(bits=A[:-1])) # A = s'
-                qc.xor(QuantumRegister(bits=A[1:-1]), self.c >> 1 & (2**(self.n-2)-1))
+                if len(A)>2:
+                    qc.xor(QuantumRegister(bits=A[1:-1]), self.c >> 1 & (2**(self.n-2)-1))
 
                 uncompute_carry = rDKRSComputeCarry(QuantumRegister(bits=A[1:-1]), Z, X).reverse_ops()
                 qc.append(uncompute_carry, list(chain(*uncompute_carry.inputs)))
 
-                qc.xor(QuantumRegister(bits=A[1:-1]), self.c >> 1 & (2**(self.n-2)-1))
+                if len(A)>2:
+                    qc.xor(QuantumRegister(bits=A[1:-1]), self.c >> 1 & (2**(self.n-2)-1))
                 for i in range(self.n-1):
                     if bits[i]:
                         qc.cx(A[i], Z[i])
@@ -440,6 +446,8 @@ class rDKRSComputeCarry(Gate, rOperation):
             Pt_size = floor(self.n/2**t)-1
             P.append(QuantumRegister(bits=ancillas[ancilla_index:ancilla_index+Pt_size]))
             ancilla_index+=Pt_size
+
+        #qc = rCircuit(*P, G, ancillas, name='rCarry') 
 
         # P-rounds
         for t in range(1, floor(log2(self.n))):

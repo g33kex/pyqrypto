@@ -150,7 +150,7 @@ class Alzette(Gate, rOperation):
         \end{align*}
     """
     @staticmethod
-    def get_num_ancilla_qubits(n: int=64, adder_mode='ripple') -> int:
+    def get_num_ancilla_qubits(n: int=32, adder_mode='ripple') -> int:
         """Get the number of required ancilla qubits without instantiating the class.
 
         :param n: The size of the two inputs of Alzette.
@@ -176,7 +176,7 @@ class Alzette(Gate, rOperation):
         if ancillas is not None:
             self._inputs.append(ancillas)
             self._outputs.append(ancillas)
-            super().__init__("Alzette", self.n*2*len(ancillas), [], label=label)
+            super().__init__("Alzette", self.n*2+len(ancillas), [], label=label)
             qc = rCircuit(X, Y, ancillas, name='Alzette')
         else:
             super().__init__("Alzette", self.n*2, [], label=label)
@@ -202,25 +202,60 @@ class Alzette(Gate, rOperation):
 class Traxl_enc(Gate, rOperation):
     """A quantum implementation of the encryption step of the TRAX-L cipher as defined in [Alzette2020]_ with a block size of n bits.
 
+    The Alzette rounds of TRAX can be implemented using different techniques:
+
+    - :py:data:`lookahead-parallel`: Run the 4 instances of Alzette in parallel using carry lookahead adders.
+    - :py:data:`lookahead-half-parallel`: Run 2 instances of Alzette in parallel using carry lookahead adders.
+    - :py:data:`lookahead-sequential`: Run the 4 instances of Alzette sequentially using carry lookahead adders.
+    - :py:data:`ripple`: Run the 4 instances of Alzette in parallel using ripple carry adders.
+
+    The key schedule can be implemented using different techniques:
+
+    - :py:data:`ripple`: Compute the key schedule using ripple carry adders for the non constant adders.
+    - :py:data:`lookahead`: Compute the key schedule using only carry lookahead adders.
+
+    Each combinaison of techniques involves a tradeoff between the circuit depth, the quantum cost and the number of needed ancilla qubits. Please read the `Grover on TRAX` paper for more information about this.
+
     :param x: A list of 4 registers of size n/8.
     :param y: A list of 4 registers of size n/8.
-    :param key: The encryption key, a list of 8 quantum registers of size n/8.
+    :param key: The encryption key, a list of 8 q puantum registers of size n/8.
     :param tweak: The tweak, a list of 4 integers on n/8 bits.
     :param ancillas: The ancillas qubits needed for the computation.
+    :param alzette_mode: The method to use to compute the Alzette rounds.
+    :param schedule_mode: The method to use to compute the key schedule.
     :param trax_nsteps: The number of rounds of TRAX.
     :param label: An optional label for the gate.
     """
+    @staticmethod
+    def _get_num_ancilla_registers(alzette_mode: str='lookahead-parallel', schedule_mode: str='lookahead'):
+        """Returns the numbers of ancilla registers used internally by Traxl_enc."""
+
+        if alzette_mode == 'lookahead-parallel':
+            num_ancilla_registers = 4
+        elif alzette_mode == 'lookahead-half-parallel':
+            num_ancilla_registers = 2
+        elif alzette_mode == 'lookahead-sequential' or alzette_mode == 'ripple':
+            num_ancilla_registers = 1
+        else:
+            raise CircuitError(f"Unknown alzette mode {alzette_mode}.")
+        if schedule_mode == 'lookahead':
+            num_ancilla_registers += 1
+        elif schedule_mode != 'ripple':
+            raise CircuitError(f"Unknown schedule mode {schedule_mode}.")
+
+        return num_ancilla_registers
 
     @staticmethod
-    def get_num_ancilla_qubits(n: int=256) -> int:
+    def get_num_ancilla_qubits(n: int=256, alzette_mode:str ='lookahead-parallel', schedule_mode: str='lookahead') -> int:
         """Get the number of required ancilla qubits without instantiating the class.
 
         :param n: The size of the block size the cipher is operating on.
+        :param alzette_mode: The method to use to compute the Alzette rounds.
         :returns: The number of ancilla qubits needed for the computation.
         """
-        return rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n//8)
+        return rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n//8)*Traxl_enc._get_num_ancilla_registers(alzette_mode, schedule_mode)
 
-    def __init__(self, x: List[QuantumRegister], y: List[QuantumRegister], key: List[QuantumRegister], tweak: List[int], ancillas: AncillaRegister, trax_nsteps: int=17, label: Optional[str] = None):
+    def __init__(self, x: List[QuantumRegister], y: List[QuantumRegister], key: List[QuantumRegister], tweak: List[int], ancillas: AncillaRegister, alzette_mode: str='lookahead-parallel', schedule_mode: str='lookahead', trax_nsteps: int=17, label: Optional[str] = None):
         if len(x) != 4 or len(y) != 4 or len(key) != 8:
             raise CircuitError("Wrong number of inputs.")
         self._inputs = x+y+key+[ancillas]
@@ -228,16 +263,19 @@ class Traxl_enc(Gate, rOperation):
 
         super().__init__("Traxl_enc", self.n * 16 + len(ancillas) , [], label=label)
 
-        if len(ancillas) != self.get_num_ancilla_qubits(self.n*8):
-            raise CircuitError(f"Circuit needs {self.get_num_ancilla_qubits(self.n)} ancilla qubits but {len(ancillas)} were given.")
+        if len(ancillas) != self.get_num_ancilla_qubits(self.n*8, alzette_mode, schedule_mode):
+            raise CircuitError(f"Circuit needs {self.get_num_ancilla_qubits(self.n*8, alzette_mode, schedule_mode)} ancilla qubits but {len(ancillas)} were given.")
 
         x = x.copy()
         y = y.copy()
         key = key.copy()
+        num_ancilla_registers = self._get_num_ancilla_registers(alzette_mode, schedule_mode)
+        ancilla_registers = [AncillaRegister(bits=ancillas[i*len(ancillas)//num_ancilla_registers:(i+1)*len(ancillas)//num_ancilla_registers]) for i in range(num_ancilla_registers)]
 
         qc = rCircuit(*self.inputs, name='Traxl_enc')
-        s = 0
+
         for s in range(trax_nsteps):
+
             # Add tweak if step counter is odd
             if ((s % 2) == 1):
                 qc.xor(x[0], tweak[0])
@@ -245,11 +283,22 @@ class Traxl_enc(Gate, rOperation):
                 qc.xor(x[1], tweak[2])
                 qc.xor(y[1], tweak[3])
 
+
             # Add subkeys and execute ALZETTEs
             for b in range(4):
                 qc.xor(x[b], key[2*b])
                 qc.xor(y[b], key[2*b+1])
-                qc.append(Alzette(x[b], y[b], (RCON[(4*s+b)%8]%2**self.n), adder_mode='ripple'), list(chain(x[b], y[b])))
+                if alzette_mode == 'ripple':
+                    qc.append(Alzette(x[b], y[b], (RCON[(4*s+b)%8]%2**self.n), adder_mode='ripple'), list(chain(x[b], y[b])))
+                elif alzette_mode == 'lookahead-sequential':
+                    qc.append(Alzette(x[b], y[b], (RCON[(4*s+b)%8]%2**self.n), ancilla_registers[0], adder_mode='lookahead'), list(chain(x[b], y[b], ancilla_registers[0])))
+                elif alzette_mode == 'lookahead-half-parallel':
+                    qc.append(Alzette(x[b], y[b], (RCON[(4*s+b)%8]%2**self.n), ancilla_registers[b//2], adder_mode='lookahead'), list(chain(x[b], y[b], ancilla_registers[b//2])))
+                elif alzette_mode == 'lookahead-parallel':
+                    qc.append(Alzette(x[b], y[b], (RCON[(4*s+b)%8]%2**self.n), ancilla_registers[b], adder_mode='lookahead'), list(chain(x[b], y[b], ancilla_registers[b])))
+                else:
+                    raise CircuitError(f"Unknown alzette mode {alzette_mode}.")
+            
 
             # Linear layer (Sparkle256 permutation)
             half = self.n//2
@@ -288,17 +337,34 @@ class Traxl_enc(Gate, rOperation):
             x[0], x[1], x[2], x[3] = x[3], x[2], x[0], x[1]
             y[0], y[1], y[2], y[3] = y[3], y[2], y[0], y[1]
 
+
             # Compute key schedule
-            qc.add(key[0], key[1], ancillas, mode='lookahead')
-            qc.add(key[0], (RCON[(2*s)%8]%2**self.n), ancillas)
+            if schedule_mode == 'lookahead':
+                qc.add(key[0], key[1], ancilla_registers[-1], mode='lookahead')
+                qc.add(key[0], (RCON[(2*s)%8]%2**self.n), ancilla_registers[-1])
+            elif schedule_mode == 'ripple':
+                qc.add(key[0], key[1], mode='ripple')
+                qc.add(key[0], (RCON[(2*s)%8]%2**self.n), ancilla_registers[0])
+            else:
+                raise CircuitError(f"Unknown schedule mode {schedule_mode}.")
+
             qc.xor(key[2], key[3])
             qc.xor(key[2], s%2**self.n)
-            qc.add(key[4], key[5], ancillas, mode='lookahead')
-            qc.add(key[4], (RCON[(2*s+1)%8]%2**self.n), ancillas)
+
+            if schedule_mode == 'lookahead':
+                qc.add(key[4], key[5], ancilla_registers[-1], mode='lookahead')
+                qc.add(key[4], (RCON[(2*s+1)%8]%2**self.n), ancilla_registers[-1])
+            elif schedule_mode == 'ripple':
+                qc.add(key[4], key[5], mode='ripple')
+                qc.add(key[4], (RCON[(2*s+1)%8]%2**self.n), ancilla_registers[-1])
+            else:
+                raise CircuitError(f"Unknown schedule mode {schedule_mode}.")
+
             qc.xor(key[6], key[7])
             qc.xor(key[6], ((s << self.n//2) % 2**self.n))
 
             key.append(key.pop(0))
+
 
         # Add last round subkeys
         for b in range(4):

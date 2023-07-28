@@ -69,7 +69,7 @@ Here is an example on how to use **pyqrypto** to generate a simple circuit that 
     #                      │  
     #Y_3: ─────────────────■──
 
-For an example on how to implement a more complex circuit, please read the source code of :py:class:`sparkle.Alzette`. 
+For an example on how to implement a more complex circuit, please read the source code of :py:class:`pyqrypto.sparkle.Alzette`. 
 
 This library also provides handy tools to add preparation steps and measurements to a circuit operating on registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.
 
