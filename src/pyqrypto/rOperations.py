@@ -71,6 +71,7 @@ class rCircuit(QuantumCircuit):
         """
         stats = {}
         stats['ancilla'] = self.num_ancillas
+        stats['qubits'] = self.num_qubits-self.num_ancillas
 
         # Decompose all rOperations in the circuit
         decomposed_circuit = self.decompose(gates_to_decompose=[rOperation])
