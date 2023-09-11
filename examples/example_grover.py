@@ -1,23 +1,47 @@
 # This program builds a quantum circuit to do a Grover search on TRAX
 from qiskit_algorithms import AmplificationProblem, Grover
-from qiskit.primitives import Sampler
-from qiskit import QuantumRegister, AncillaRegister
+from qiskit import QuantumRegister, AncillaRegister, QuantumCircuit
 from pyqrypto.rOperations import make_circuit, rCircuit, rPrepare
 from qiskit.circuit.library import ZGate, GroverOperator
 from itertools import chain
 from pyqrypto.sparkle import Traxl_enc, c_traxl_genkeys, c_traxl_enc
 import random
+from math import pi, ceil, sqrt
 random.seed(42)
 
-def grover_on_trax(simulate:bool=False) -> AmplificationProblem:
+def grover_oracle(n, X, Y, K, ancillas, tweak, ciphertext_x, ciphertext_y):
+    """Build a phase oracle that encrypts the plaintext and compares it with a given ciphertext."""
+    oracle = rCircuit(*X, *Y, *K, ancillas)
+    
+    # Encrypt X and Y using key K
+    gate = Traxl_enc(X, Y, K, tweak, ancillas)
+    oracle.append(gate, list(chain(*gate.inputs)))
+
+    # Flip the phase of the solution when all X and Y are 1
+    # This is a multi-controlled mixed-polarity Z gate
+    for i in range(4):
+        # X and Y are all 1 if and only if they're equal to the ciphertext
+        oracle.xor(X[i], ciphertext_x[i]^(2**(n//8)-1))
+        oracle.xor(Y[i], ciphertext_y[i]^(2**(n//8)-1))
+    mcz = ZGate().control(len(list(chain(*X, *Y)))-1)
+    oracle.append(mcz, list(chain(*X, *Y)))
+    for i in range(4):
+        oracle.xor(X[i], ciphertext_x[i]^(2**(n//8)-1))
+        oracle.xor(Y[i], ciphertext_y[i]^(2**(n//8)-1))
+    
+    # Undo the encryption of the plaintext
+    oracle.append(gate.inverse(), list(chain(*gate.inputs)))
+
+    return oracle
+
+def grover_on_trax(n=256, iterations=None) -> QuantumCircuit:
     """Construct a circuit that performs a grover search on TRAX with a known plaintext/ciphertext pair.
-
-    :param simulate: Build a toy version of the circuit and simulate it.
-    :returns: The circuit as an AmplificationProblem.
+    
+    :param n: Size of the key.
+    :param iterations: Number of iterations of Grover, if None uses the optimal number of iterations.
+    :returns: The circuit performing the search.
     """
-
-    # Set TRAX size, key and tweak
-    n = 16
+    # Set key and tweak
     key = [random.getrandbits(n//8) for _ in range(8)]
     tweak = [random.getrandbits(n//8) for _ in range(4)]
 
@@ -36,61 +60,35 @@ def grover_on_trax(simulate:bool=False) -> AmplificationProblem:
     ancillas = AncillaRegister(Traxl_enc.get_num_ancilla_qubits(n))
 
     # Build Grover oracle
-    oracle = rCircuit(*X, *Y, *K, ancillas)
+    oracle = grover_oracle(n, X, Y, K, ancillas, tweak, ciphertext_x, ciphertext_y)
+
+    # State preparation
+    state_preparation = rCircuit(*X, *Y, *K, ancillas)
 
     # Prepare X and Y with plaintext
     for i in range(4):
-        oracle.compose(rPrepare(X[i], plaintext_x[i]), X[i], inplace=True)
-        oracle.compose(rPrepare(Y[i], plaintext_y[i]), Y[i], inplace=True)
-    if simulate:
-        # Simplify the problem by setting all of the key except n//8 bits
-        for i in range(1, 8):
-            oracle.compose(rPrepare(K[i], key[i]), K[i], inplace=True)
+        state_preparation.compose(rPrepare(X[i], plaintext_x[i]), X[i], inplace=True)
+        state_preparation.compose(rPrepare(Y[i], plaintext_y[i]), Y[i], inplace=True)
 
-    # Encrypt X and Y using key K
-    gate = Traxl_enc(X, Y, K, tweak, ancillas)
-    oracle.append(gate, list(chain(*gate.inputs)))
-
-    # Flip the phase of the solution when all X and Y are 1
-    # This is a multi-controlled mixed-polarity Z gate
-    for i in range(4):
-        # X and Y are all 1 if and only if they're equal to the ciphertext
-        oracle.xor(X[i], ciphertext_x[i]^(2**(n//8)-1))
-        oracle.xor(Y[i], ciphertext_y[i]^(2**(n//8)-1))
-    if simulate:
-        # Only test the first n//8 bits of the ciphertext for the simulation
-        mcz = ZGate().control(len(list(chain(X[0])))-1)
-        oracle.append(mcz, list(chain(X[0])))
-    else:
-        mcz = ZGate().control(len(list(chain(*X, *Y)))-1)
-        oracle.append(mcz, list(chain(*X, *Y)))
-    for i in range(4):
-        oracle.xor(X[i], ciphertext_x[i]^(2**(n//8)-1))
-        oracle.xor(Y[i], ciphertext_y[i]^(2**(n//8)-1))
-    
-    # Undo the encryption of the plaintext
-    oracle.append(gate.inverse(), list(chain(*gate.inputs)))
+    # Put key in uniform superposition
+    for qubit in chain(*K):
+        state_preparation.h(qubit)
 
     # Build the Grover operator
-    if simulate:
-        grover_operator = GroverOperator(oracle, reflection_qubits=list(map(lambda q: oracle.find_bit(q)[0], chain(K[0]))))
-    else:
-        grover_operator = GroverOperator(oracle, reflection_qubits=list(map(lambda q: oracle.find_bit(q)[0], chain(*K))))
+    grover_operator = GroverOperator(oracle, reflection_qubits=list(map(lambda q: oracle.find_bit(q)[0], chain(*K))))
 
-    print(grover_operator)
-    circuit = make_circuit(gro
+    print(grover_operator.decompose())
 
-    # problem = AmplificationProblem(oracle, grover_operator=grover_operator)
-    #
-    # print(problem.grover_operator.decompose())
-    #
-    # if simulate:
-    #     # Run Grover
-    #     grover = Grover(sampler=Sampler())
-    #     result = grover.amplify(problem)
-    #
-    #     print(result)
-    #
-    # return problem
+    problem = AmplificationProblem(oracle, state_preparation=state_preparation, grover_operator=grover_operator, objective_qubits=list(map(lambda q: oracle.find_bit(q)[0], chain(*K))))
 
-grover_on_trax(simulate=True)
+    if iterations is None:
+        iterations = Grover.optimal_num_iterations(1, n)
+
+    circuit = Grover().construct_circuit(problem, iterations, measurement=True)
+
+    return circuit
+
+if __name__ == '__main__':
+    circuit = grover_on_trax(16, 3)
+    print(circuit.decompose(reps=2))
+
