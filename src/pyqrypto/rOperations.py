@@ -448,8 +448,6 @@ class rDKRSComputeCarry(Gate, rOperation):
             P.append(QuantumRegister(bits=ancillas[ancilla_index:ancilla_index+Pt_size]))
             ancilla_index+=Pt_size
 
-        #qc = rCircuit(*P, G, ancillas, name='rCarry') 
-
         # P-rounds
         for t in range(1, floor(log2(self.n))):
             for m in range(1, floor(self.n/2**t)):
