@@ -5,9 +5,7 @@ pycrypto
 
 ## Documentation
 
-See the `docs` folder.
-
-TODO: upload documentation on github.io
+Read the documentation [here](https://g33kex.github.io/pyqrypto/build/html/index.html)
 
 ## Packaging
 
@@ -25,5 +23,3 @@ pip install -r reqs.development
 cd docs
 make html
 ```
-
-
