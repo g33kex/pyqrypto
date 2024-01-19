@@ -5,7 +5,7 @@ pycrypto
 
 ## Documentation
 
-Read the documentation [here](https://g33kex.github.io/pyqrypto/build/html/index.html)
+Read the documentation [here](https://g33kex.github.io/pyqrypto/build/html/index.html).
 
 ## Packaging
 
