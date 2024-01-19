@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "pyqrypto"
 version = "0.1"
 authors = [ { name = "Vi Retault", email="g33kex@pm.me" } ]
-description = "A library of reversible quantum circuits that perform classical cryptography"
+description = "A library for building reversible quantum circuits that perform classical cryptography"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
