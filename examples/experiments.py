@@ -116,7 +116,7 @@ def compare_sparkle(n=32):
             num_ancilla_registers = 4
         ancilla_registers = [AncillaRegister(rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n)) for _ in range(num_ancilla_registers)]
         qc = rCircuit(*x, *y, *ancilla_registers)
-         # Add subkeys and execute ALZETTEs
+
         s = 0
         for b in range(4):
              if alzette_mode == 'ripple':
@@ -128,7 +128,6 @@ def compare_sparkle(n=32):
              elif alzette_mode == 'lookahead-parallel':
                  qc.append(Alzette(x[b], y[b], (RCON[(4*s+b)%8]%2**n), ancilla_registers[b], adder_mode='lookahead'), list(chain(x[b], y[b], ancilla_registers[b])))
         
-
         print(f"Alzette {alzette_mode}:", qc.stats)
         # Linear layer (Sparkle256 permutation)
         half = n//2
