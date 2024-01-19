@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to pyqrypto’s documentation! &mdash; pyqrypto 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="rOperations" href="rOperations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            pyqrypto
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rOperations.html">rOperations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparkle.html">Sparkle</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pyqrypto</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to pyqrypto’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/g33kex/pyqrypto/blob/main/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-pyqrypto-s-documentation">
+<h1>Welcome to pyqrypto’s documentation!<a class="headerlink" href="#welcome-to-pyqrypto-s-documentation" title="Permalink to this heading">¶</a></h1>
+<p><strong>pyrypto</strong> is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and the associated tweakable block cipher TRAX from the <a class="reference external" href="https://sparkle-lwc.github.io/">Sparkle-suite</a> and their necessary gates. It is easily expandable to more ciphers.</p>
+<p>This library provides high level operations on quantum registers by tracking the individual qubits. Because of this, permutations can be implemented for free. Additionally, the quantum cost of a circuit containing these operations can be automatically computed.</p>
+<p>This library is based on <a class="reference external" href="https://qiskit.org/">Qiskit</a>.</p>
+<section id="implemented-gates">
+<h2>Implemented Gates<a class="headerlink" href="#implemented-gates" title="Permalink to this heading">¶</a></h2>
+<p>These are the quantum gates currently implemented by this project.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Traxl_enc" title="pyqrypto.sparkle.Traxl_enc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Traxl_enc</span></code></a> - TRAX-L encryption</p></li>
+<li><p><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Alzette" title="pyqrypto.sparkle.Alzette"><code class="xref py py-class docutils literal notranslate"><span class="pre">Alzette</span></code></a> - a 64 bit ARX-box</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rTTKRippleCarryAdder" title="pyqrypto.rOperations.rTTKRippleCarryAdder"><code class="xref py py-class docutils literal notranslate"><span class="pre">rTTKRippleCarryAdder</span></code></a> - ripple carry adder</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder" title="pyqrypto.rOperations.rDKRSCarryLookaheadAdder"><code class="xref py py-class docutils literal notranslate"><span class="pre">rDKRSCarryLookaheadAdder</span></code></a> - carry lookahead adder</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">rConstantDKRSCarryLookaheadAdder`</span></code> - carry lookahead adder with a constant</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rXOR" title="pyqrypto.rOperations.rXOR"><code class="xref py py-class docutils literal notranslate"><span class="pre">rXOR</span></code></a> - bitwise XOR</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rConstantXOR" title="pyqrypto.rOperations.rConstantXOR"><code class="xref py py-class docutils literal notranslate"><span class="pre">rConstantXOR</span></code></a> - bitwise XOR with a constant</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rNOT" title="pyqrypto.rOperations.rNOT"><code class="xref py py-class docutils literal notranslate"><span class="pre">rNOT</span></code></a> - bitwise NOT</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rROR" title="pyqrypto.rOperations.rROR"><code class="xref py py-class docutils literal notranslate"><span class="pre">rROR</span></code></a> - right rotation (gate free)</p></li>
+<li><p><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rROL" title="pyqrypto.rOperations.rROL"><code class="xref py py-class docutils literal notranslate"><span class="pre">rROL</span></code></a> - left rotation (gate free)</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>Here is an example on how to use <strong>pyqrypto</strong> to generate a simple circuit that operates on qubit vectors.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rOperations</span> <span class="kn">import</span> <span class="n">rCircuit</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumRegister</span>
+
+<span class="c1"># Create two 4 qubit registers</span>
+<span class="n">X1</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="n">Y1</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create a register circuit from registers X and Y.</span>
+<span class="c1"># A register circuit can operate on quantum registers instead of on individual qubits.</span>
+<span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Register Circuit&#39;</span><span class="p">)</span>
+
+<span class="c1"># Rotate left register X by 3 qubits.</span>
+<span class="c1"># A register can be seen as a &quot;view&quot; on logical qubits,</span>
+<span class="c1"># so rotating a register just yields another view on these qubits with swapped indexes.</span>
+<span class="n">X2</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">ror</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s XOR X2 Y1. The result will be stored in X3.</span>
+<span class="c1"># Note here that X3 = X2 because xor doesn&#39;t modify the view.</span>
+<span class="n">X3</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">Y1</span><span class="p">)</span>
+
+<span class="c1"># If we print the resulting circuit, we can see the XOR was done on a rotated version of X1.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc</span><span class="o">.</span><span class="n">decompose</span><span class="p">())</span>
+<span class="c1">#          ┌───┐</span>
+<span class="c1">#X_0: ─────┤ X ├──────────</span>
+<span class="c1">#          └─┬─┘┌───┐</span>
+<span class="c1">#X_1: ───────┼──┤ X ├─────</span>
+<span class="c1">#            │  └─┬─┘┌───┐</span>
+<span class="c1">#X_2: ───────┼────┼──┤ X ├</span>
+<span class="c1">#     ┌───┐  │    │  └─┬─┘</span>
+<span class="c1">#X_3: ┤ X ├──┼────┼────┼──</span>
+<span class="c1">#     └─┬─┘  │    │    │</span>
+<span class="c1">#Y_0: ──■────┼────┼────┼──</span>
+<span class="c1">#            │    │    │</span>
+<span class="c1">#Y_1: ───────■────┼────┼──</span>
+<span class="c1">#                 │    │</span>
+<span class="c1">#Y_2: ────────────■────┼──</span>
+<span class="c1">#                      │</span>
+<span class="c1">#Y_3: ─────────────────■──</span>
+</pre></div>
+</div>
+<p>For an example on how to implement a more complex circuit, please read the source code of <a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Alzette" title="pyqrypto.sparkle.Alzette"><code class="xref py py-class docutils literal notranslate"><span class="pre">Alzette</span></code></a>.</p>
+<p>This library also provides handy tools to add preparation steps and measurements to a circuit operating on registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.</p>
+<p>Let’s add a preparation and a measurement step to our previous example and simulate it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rOperations</span> <span class="kn">import</span> <span class="n">make_circuit</span><span class="p">,</span> <span class="n">run_circuit</span>
+
+<span class="c1"># Create a final circuit with measurement and preparation steps</span>
+<span class="c1"># Let&#39;s initialize X1 to 4 and Y1 to 11</span>
+<span class="c1"># Let&#39;s also measure X2 and Y1 at the end of the circuit</span>
+<span class="c1"># It is possible to measure any QuantumRegistrer that has its qubits in the circuit</span>
+<span class="c1"># This means we can measure the final state of any &quot;view&quot; of the qubits</span>
+<span class="c1"># However note that the qubits will be in their final state during the measurement</span>
+<span class="c1"># If we tried to measure X1, we wouldn&#39;t get the initial value of X1</span>
+<span class="c1"># but the value of X2 left rotated by 3 bits</span>
+<span class="c1"># This is because the value of X1 was overwritten by the XOR operation.</span>
+<span class="c1"># This is why it is important to keep track of your registers during operations!</span>
+<span class="n">final_circuit</span> <span class="o">=</span> <span class="n">make_circuit</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="p">[</span><span class="n">X1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">],</span> <span class="p">[</span><span class="n">X2</span><span class="p">,</span> <span class="n">Y1</span><span class="p">])</span>
+
+<span class="c1"># We can print the final circuit</span>
+<span class="c1"># As you can see the measurements are done on</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">final_circuit</span><span class="p">)</span>
+<span class="c1">#      ┌─────────────┐ ┌───────┐   ┌─┐</span>
+<span class="c1"># X_0: ┤0            ├─┤1      ├───┤M├──────────────────</span>
+<span class="c1">#      │             │ │       │   └╥┘┌─┐</span>
+<span class="c1"># X_1: ┤1            ├─┤2      ├────╫─┤M├───────────────</span>
+<span class="c1">#      │  rPrepare 4 │ │       │    ║ └╥┘┌─┐</span>
+<span class="c1"># X_2: ┤2            ├─┤3      ├────╫──╫─┤M├────────────</span>
+<span class="c1">#      │             │ │       │┌─┐ ║  ║ └╥┘</span>
+<span class="c1"># X_3: ┤3            ├─┤0      ├┤M├─╫──╫──╫─────────────</span>
+<span class="c1">#      ├─────────────┴┐│  Rxor │└╥┘ ║  ║  ║ ┌─┐</span>
+<span class="c1"># Y_0: ┤0             ├┤4      ├─╫──╫──╫──╫─┤M├─────────</span>
+<span class="c1">#      │              ││       │ ║  ║  ║  ║ └╥┘┌─┐</span>
+<span class="c1"># Y_1: ┤1             ├┤5      ├─╫──╫──╫──╫──╫─┤M├──────</span>
+<span class="c1">#      │  rPrepare 11 ││       │ ║  ║  ║  ║  ║ └╥┘┌─┐</span>
+<span class="c1"># Y_2: ┤2             ├┤6      ├─╫──╫──╫──╫──╫──╫─┤M├───</span>
+<span class="c1">#      │              ││       │ ║  ║  ║  ║  ║  ║ └╥┘┌─┐</span>
+<span class="c1"># Y_3: ┤3             ├┤7      ├─╫──╫──╫──╫──╫──╫──╫─┤M├</span>
+<span class="c1">#      └──────────────┘└───────┘ ║  ║  ║  ║  ║  ║  ║ └╥┘</span>
+<span class="c1">#c0: 4/══════════════════════════╩══╩══╩══╩══╬══╬══╬══╬═</span>
+<span class="c1">#                                0  1  2  3  ║  ║  ║  ║</span>
+<span class="c1">#c1: 4/══════════════════════════════════════╩══╩══╩══╩═</span>
+<span class="c1">#                                            0  1  2  3</span>
+
+<span class="c1"># We can generate the QASM of that circuit and save it to a file</span>
+<span class="c1"># This can be used to run the circuit on an actual quantum computer</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">qasm</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;circuit.qasm&#39;</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s run this circuit in a simulation and gather the result</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">run_circuit</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+
+<span class="c1"># We can verify that ror(4, 3)^11 = 3, and that Y1 was unchanged.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="c1"># [3, 11]</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rOperations.html">rOperations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.FEYNMAN_QC"><code class="docutils literal notranslate"><span class="pre">FEYNMAN_QC</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.SINGLE_QC"><code class="docutils literal notranslate"><span class="pre">SINGLE_QC</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.TOFFOLI_QC"><code class="docutils literal notranslate"><span class="pre">TOFFOLI_QC</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.make_circuit"><code class="docutils literal notranslate"><span class="pre">make_circuit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rCircuit"><code class="docutils literal notranslate"><span class="pre">rCircuit</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder"><code class="docutils literal notranslate"><span class="pre">rConstantDKRSCarryLookaheadAdder</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rConstantXOR"><code class="docutils literal notranslate"><span class="pre">rConstantXOR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder"><code class="docutils literal notranslate"><span class="pre">rDKRSCarryLookaheadAdder</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rDKRSComputeCarry"><code class="docutils literal notranslate"><span class="pre">rDKRSComputeCarry</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rNOT"><code class="docutils literal notranslate"><span class="pre">rNOT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rOperation"><code class="docutils literal notranslate"><span class="pre">rOperation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rPrepare"><code class="docutils literal notranslate"><span class="pre">rPrepare</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rROL"><code class="docutils literal notranslate"><span class="pre">rROL</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rROR"><code class="docutils literal notranslate"><span class="pre">rROR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rTTKRippleCarryAdder"><code class="docutils literal notranslate"><span class="pre">rTTKRippleCarryAdder</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rXOR"><code class="docutils literal notranslate"><span class="pre">rXOR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.run_circuit"><code class="docutils literal notranslate"><span class="pre">run_circuit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rOperations.html#pyqrypto.rOperations.simulate"><code class="docutils literal notranslate"><span class="pre">simulate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sparkle.html">Sparkle</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Alzette"><code class="docutils literal notranslate"><span class="pre">Alzette</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.RCON"><code class="docutils literal notranslate"><span class="pre">RCON</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Traxl_enc"><code class="docutils literal notranslate"><span class="pre">Traxl_enc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_alzette"><code class="docutils literal notranslate"><span class="pre">c_alzette()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_rol"><code class="docutils literal notranslate"><span class="pre">c_rol()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_ror"><code class="docutils literal notranslate"><span class="pre">c_ror()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_traxl_enc"><code class="docutils literal notranslate"><span class="pre">c_traxl_enc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_traxl_genkeys"><code class="docutils literal notranslate"><span class="pre">c_traxl_genkeys()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_traxm_enc"><code class="docutils literal notranslate"><span class="pre">c_traxm_enc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_traxs_enc"><code class="docutils literal notranslate"><span class="pre">c_traxs_enc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rOperations.html" class="btn btn-neutral float-right" title="rOperations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Vi Retault.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

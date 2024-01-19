@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sparkle &mdash; pyqrypto 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="rOperations" href="rOperations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqrypto
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="rOperations.html">rOperations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sparkle</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.Alzette"><code class="docutils literal notranslate"><span class="pre">Alzette</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyqrypto.sparkle.Alzette.get_num_ancilla_qubits"><code class="docutils literal notranslate"><span class="pre">Alzette.get_num_ancilla_qubits()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.RCON"><code class="docutils literal notranslate"><span class="pre">RCON</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.Traxl_enc"><code class="docutils literal notranslate"><span class="pre">Traxl_enc</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyqrypto.sparkle.Traxl_enc.get_num_ancilla_qubits"><code class="docutils literal notranslate"><span class="pre">Traxl_enc.get_num_ancilla_qubits()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_alzette"><code class="docutils literal notranslate"><span class="pre">c_alzette()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_rol"><code class="docutils literal notranslate"><span class="pre">c_rol()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_ror"><code class="docutils literal notranslate"><span class="pre">c_ror()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_traxl_enc"><code class="docutils literal notranslate"><span class="pre">c_traxl_enc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_traxl_genkeys"><code class="docutils literal notranslate"><span class="pre">c_traxl_genkeys()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_traxm_enc"><code class="docutils literal notranslate"><span class="pre">c_traxm_enc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyqrypto.sparkle.c_traxs_enc"><code class="docutils literal notranslate"><span class="pre">c_traxs_enc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqrypto</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Sparkle</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/g33kex/pyqrypto/blob/main/docs/source/sparkle.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqrypto.sparkle">
+<span id="sparkle"></span><h1>Sparkle<a class="headerlink" href="#module-pyqrypto.sparkle" title="Permalink to this heading">¶</a></h1>
+<p>A reversible quantum implementation of the n-qubits Alzette ARX box and the TRAX cipher from the Sparkle-suite as defined in <a class="reference internal" href="#alzette2020" id="id1"><span>[Alzette2020]</span></a>.</p>
+<div role="list" class="citation-list">
+<div class="citation" id="alzette2020" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Alzette2020<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>)</span>
+<p>Beierle, C., Biryukov, A., Cardoso dos Santos, L., Großschädl, J., Perrin, L., Udovenko, A., … &amp; Wang, Q. (2020). Alzette: A 64-Bit ARX-box: (Feat. CRAX and TRAX). In Advances in Cryptology–CRYPTO 2020: 40th Annual International Cryptology Conference, CRYPTO 2020, Santa Barbara, CA, USA, August 17–21, 2020, Proceedings, Part III 40 (pp. 419-448). Springer International Publishing.</p>
+</div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.Alzette">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">Alzette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QuantumRegister</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QuantumRegister</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancillas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AncillaRegister</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adder_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ripple'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#Alzette"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.Alzette" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Gate</span></code>, <a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rOperation" title="pyqrypto.rOperations.rOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">rOperation</span></code></a></p>
+<p>A quantum gate implementing the ARX-box Alzette of two vectors of qubits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – X vector.</p></li>
+<li><p><strong>Y</strong> – Y vector.</p></li>
+<li><p><strong>c</strong> – Alzette constant.</p></li>
+<li><p><strong>ancillas</strong> – The anquilla register needed if <code class="xref py py-obj docutils literal notranslate"><span class="pre">adder_mode</span></code> is <code class="xref py py-data docutils literal notranslate"><span class="pre">lookahead</span></code>.</p></li>
+<li><p><strong>adder_mode</strong> – See <a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rCircuit.add" title="pyqrypto.rOperations.rCircuit.add"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyqrypto.rOperations.rCircuit.add()</span></code></a>.</p></li>
+<li><p><strong>label</strong> – An optional label for the gate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>CiruitError</strong> – If X and Y have a different size.</p>
+</dd>
+<dt class="field-odd">Operation<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((X, Y) \leftarrow \mathrm{Alzette}(X, Y)\)</span></p>
+</dd>
+</dl>
+<p><span class="math notranslate nohighlight">\(\mathrm{Alzette(X, Y)}\)</span> is defined in <a class="reference internal" href="#alzette2020" id="id2"><span>[Alzette2020]</span></a> as the following operations:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    &amp; \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 31) \\
+    &amp; \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 24) \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} \oplus c \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 17) \\
+    &amp; \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 17) \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} \oplus c \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 0) \\
+    &amp; \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 31) \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} \oplus c \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} + (\mathrm{Y} \ggg 24) \\
+    &amp; \mathrm{Y} \leftarrow \mathrm{Y} \oplus (\mathrm{X} \ggg 16) \\
+    &amp; \mathrm{X} \leftarrow \mathrm{X} \oplus c
+\end{align*}\end{split}\]</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.Alzette.get_num_ancilla_qubits">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_num_ancilla_qubits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adder_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ripple'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#Alzette.get_num_ancilla_qubits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.Alzette.get_num_ancilla_qubits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of required ancilla qubits without instantiating the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – The size of the two inputs of Alzette.</p></li>
+<li><p><strong>adder_mode</strong> – See <a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rCircuit.add" title="pyqrypto.rOperations.rCircuit.add"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyqrypto.rOperations.rCircuit.add()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of ancilla qubits needed for the computation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.RCON">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">RCON</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[3084996962,</span> <span class="pre">3211876480,</span> <span class="pre">951376470,</span> <span class="pre">844003128,</span> <span class="pre">3138487787,</span> <span class="pre">1333558103,</span> <span class="pre">3485442504,</span> <span class="pre">3266521405]</span></em><a class="headerlink" href="#pyqrypto.sparkle.RCON" title="Permalink to this definition">¶</a></dt>
+<dd><p>The round constants for TRAX.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.Traxl_enc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">Traxl_enc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">QuantumRegister</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">QuantumRegister</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">QuantumRegister</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweak</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancillas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AncillaRegister</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alzette_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'lookahead-parallel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schedule_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'lookahead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">17</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#Traxl_enc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.Traxl_enc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Gate</span></code>, <a class="reference internal" href="rOperations.html#pyqrypto.rOperations.rOperation" title="pyqrypto.rOperations.rOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">rOperation</span></code></a></p>
+<p>A quantum implementation of the encryption step of the TRAX-L cipher as defined in <a class="reference internal" href="#alzette2020" id="id3"><span>[Alzette2020]</span></a> with a block size of n bits.</p>
+<p>The Alzette rounds of TRAX can be implemented using different techniques:</p>
+<ul class="simple">
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">lookahead-parallel</span></code>: Run the 4 instances of Alzette in parallel using carry lookahead adders.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">lookahead-half-parallel</span></code>: Run 2 instances of Alzette in parallel using carry lookahead adders.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">lookahead-sequential</span></code>: Run the 4 instances of Alzette sequentially using carry lookahead adders.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">ripple</span></code>: Run the 4 instances of Alzette in parallel using ripple carry adders.</p></li>
+</ul>
+<p>The key schedule can be implemented using different techniques:</p>
+<ul class="simple">
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">ripple</span></code>: Compute the key schedule using ripple carry adders for the non constant adders.</p></li>
+<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">lookahead</span></code>: Compute the key schedule using only carry lookahead adders.</p></li>
+</ul>
+<p>Each combinaison of techniques involves a tradeoff between the circuit depth, the quantum cost and the number of needed ancilla qubits. Please read the <cite>Grover on TRAX</cite> paper for more information about this.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – A list of 4 registers of size n/8.</p></li>
+<li><p><strong>y</strong> – A list of 4 registers of size n/8.</p></li>
+<li><p><strong>key</strong> – The encryption key, a list of 8 q puantum registers of size n/8.</p></li>
+<li><p><strong>tweak</strong> – The tweak, a list of 4 integers on n/8 bits.</p></li>
+<li><p><strong>ancillas</strong> – The ancillas qubits needed for the computation.</p></li>
+<li><p><strong>alzette_mode</strong> – The method to use to compute the Alzette rounds.</p></li>
+<li><p><strong>schedule_mode</strong> – The method to use to compute the key schedule.</p></li>
+<li><p><strong>nsteps</strong> – The number of rounds of TRAX.</p></li>
+<li><p><strong>label</strong> – An optional label for the gate.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.Traxl_enc.get_num_ancilla_qubits">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_num_ancilla_qubits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alzette_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'lookahead-parallel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schedule_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'lookahead'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#Traxl_enc.get_num_ancilla_qubits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.Traxl_enc.get_num_ancilla_qubits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of required ancilla qubits without instantiating the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – The size of the block size the cipher is operating on.</p></li>
+<li><p><strong>alzette_mode</strong> – The method to use to compute the Alzette rounds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of ancilla qubits needed for the computation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_alzette">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_alzette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_alzette"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_alzette" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical software implementation of Alzette.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – The integer value of x.</p></li>
+<li><p><strong>y</strong> – The integer value of y.</p></li>
+<li><p><strong>c</strong> – The c constant in Alzette.</p></li>
+<li><p><strong>n</strong> – The number of bits on which x, y and n are encoded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>alzette(x, y).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_rol">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_rol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_rol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_rol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical implementation of the left rotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – The integer to rotate.</p></li>
+<li><p><strong>r</strong> – The rotation amount.</p></li>
+<li><p><strong>n</strong> – The number of bits on which x is encoded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The integer x rotated right by r bits.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_ror">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_ror</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_ror"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_ror" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical implementation of the right rotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – The integer to rotate.</p></li>
+<li><p><strong>r</strong> – The rotation amount.</p></li>
+<li><p><strong>n</strong> – The number of bits on which x is encoded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The integer x rotated right by r bits.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_traxl_enc">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_traxl_enc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subkeys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweak</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">17</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_traxl_enc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_traxl_enc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical implementation of TRAX-L.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – [<span class="math notranslate nohighlight">\(x_0\)</span>, <span class="math notranslate nohighlight">\(x_1\)</span>, <span class="math notranslate nohighlight">\(x_2\)</span>, <span class="math notranslate nohighlight">\(x_3\)</span>] where <span class="math notranslate nohighlight">\(x_i\)</span> is a <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit integer.</p></li>
+<li><p><strong>y</strong> – [<span class="math notranslate nohighlight">\(y_0\)</span>, <span class="math notranslate nohighlight">\(y_1\)</span>, <span class="math notranslate nohighlight">\(y_2\)</span>, <span class="math notranslate nohighlight">\(y_3\)</span>] where <span class="math notranslate nohighlight">\(y_i\)</span> is a <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit integer.</p></li>
+<li><p><strong>subkeys</strong> – A list of 8*( <code class="xref py py-data docutils literal notranslate"><span class="pre">nsteps</span></code> +1) <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit subkey parts.</p></li>
+<li><p><strong>tweak</strong> – A list of the 4 <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit tweak parts.</p></li>
+<li><p><strong>n</strong> – Size of each key part.</p></li>
+<li><p><strong>nsteps</strong> – Number of rounds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Encrypted (x,y).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_traxl_genkeys">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_traxl_genkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">17</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_traxl_genkeys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_traxl_genkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical implementation of TRAX-L key generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – A list of the 8 <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit key parts.</p></li>
+<li><p><strong>n</strong> – Size of each key part.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Nsteps<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of rounds.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of 8*( <code class="xref py py-data docutils literal notranslate"><span class="pre">nsteps</span></code> +1) <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit subkey parts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_traxm_enc">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_traxm_enc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subkeys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_traxm_enc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_traxm_enc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical implementation of TRAX-M.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – [<span class="math notranslate nohighlight">\(x_0\)</span>, <span class="math notranslate nohighlight">\(x_1\)</span>] where <span class="math notranslate nohighlight">\(x_i\)</span> is a <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit integer.</p></li>
+<li><p><strong>y</strong> – [<span class="math notranslate nohighlight">\(y_0\)</span>, <span class="math notranslate nohighlight">\(y_1\)</span>] where <span class="math notranslate nohighlight">\(y_i\)</span> is a <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit integer.</p></li>
+<li><p><strong>subkeys</strong> – A list of 4*( <code class="xref py py-data docutils literal notranslate"><span class="pre">nsteps</span></code> +1) <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit subkey parts.</p></li>
+<li><p><strong>tweak</strong> – A list of the 2 <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit tweak parts.</p></li>
+<li><p><strong>n</strong> – Size of each key part.</p></li>
+<li><p><strong>nsteps</strong> – Number of rounds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Encrypted (x,y).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqrypto.sparkle.c_traxs_enc">
+<span class="sig-prename descclassname"><span class="pre">pyqrypto.sparkle.</span></span><span class="sig-name descname"><span class="pre">c_traxs_enc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subkeys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqrypto/sparkle.html#c_traxs_enc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqrypto.sparkle.c_traxs_enc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classical implementation of TRAX-S.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – A <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit integer.</p></li>
+<li><p><strong>y</strong> – A <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit integer.</p></li>
+<li><p><strong>subkeys</strong> – A list of 2*( <code class="xref py py-data docutils literal notranslate"><span class="pre">nsteps</span></code> +1) <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit subkey parts.</p></li>
+<li><p><strong>tweak</strong> – A list of the 2 <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code>-bit tweak parts.</p></li>
+<li><p><strong>n</strong> – Size of each key part.</p></li>
+<li><p><strong>nsteps</strong> – Number of rounds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Encrypted (x,y).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rOperations.html" class="btn btn-neutral float-left" title="rOperations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Vi Retault.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
