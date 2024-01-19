@@ -1,4 +1,4 @@
-"""A reversible quantum implementation of the n qubits Alzette ARX box and the TRAX cipher from the Sparkle-suite as defined in [Alzette2020]_.
+"""A reversible quantum implementation of the n-qubits Alzette ARX box and the TRAX cipher from the Sparkle-suite as defined in [Alzette2020]_.
 
 .. [Alzette2020] Beierle, C., Biryukov, A., Cardoso dos Santos, L., Großschädl, J., Perrin, L., Udovenko, A., ... & Wang, Q. (2020). Alzette: A 64-Bit ARX-box: (Feat. CRAX and TRAX). In Advances in Cryptology–CRYPTO 2020: 40th Annual International Cryptology Conference, CRYPTO 2020, Santa Barbara, CA, USA, August 17–21, 2020, Proceedings, Part III 40 (pp. 419-448). Springer International Publishing.
 """
@@ -6,7 +6,7 @@ from pyqrypto.rOperations import rCircuit, rOperation, rDKRSCarryLookaheadAdder
 from qiskit import QuantumRegister, AncillaRegister
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit import Gate
-from typing import Optional, List, Final
+from typing import Optional, List, Tuple, Final
 from itertools import chain
 
 RCON: Final[List[int]] = [0xB7E15162, 0xBF715880, 0x38B4DA56, 0x324E7738, 0xBB1185EB, 0x4F7C7B57, 0xCFBFA1C8, 0xC2B3293D]
@@ -15,8 +15,8 @@ RCON: Final[List[int]] = [0xB7E15162, 0xBF715880, 0x38B4DA56, 0x324E7738, 0xBB11
 def c_ror(x: int, r: int, n: int) -> int:
     """Classical implementation of the right rotation.
 
-    :param x: The integer to rotate
-    :param r: The rotation amount
+    :param x: The integer to rotate.
+    :param r: The rotation amount.
     :param n: The number of bits on which x is encoded.
     :returns: The integer x rotated right by r bits.
     """
@@ -26,8 +26,8 @@ def c_ror(x: int, r: int, n: int) -> int:
 def c_rol(x, r, n):
     """Classical implementation of the left rotation.
 
-    :param x: The integer to rotate
-    :param r: The rotation amount
+    :param x: The integer to rotate.
+    :param r: The rotation amount.
     :param n: The number of bits on which x is encoded.
     :returns: The integer x rotated right by r bits.
     """
@@ -41,7 +41,7 @@ def c_alzette(x: int, y: int, c: int, n: int) -> List[int]:
     :param y: The integer value of y.
     :param c: The c constant in Alzette.
     :param n: The number of bits on which x, y and n are encoded.
-    :returns: alzette(x, y)
+    :returns: alzette(x, y).
     """
     x = (x + c_ror(y, 31, n)) % 2**n
     y = y ^ c_ror(x, 24, n)
@@ -60,15 +60,17 @@ def c_alzette(x: int, y: int, c: int, n: int) -> List[int]:
 def c_ell(x, n):
     return (c_ror(((x) ^ (((x) << n//2)) % 2**n), n//2, n))
 
-def c_traxl_genkeys(key: List[int], n: int=32, trax_nsteps: int=17) -> List[int]:
+def c_traxl_genkeys(key: List[int], n: int=32, nsteps: int=17) -> List[int]:
     """Classical implementation of TRAX-L key generation.
 
-    :param key: A list of the 8 n-bit integer key parts
-    :returns: A list of 8*( :py:data:`trax_nsteps` +1) subkeys
+    :param key: A list of the 8 :py:data:`n`-bit key parts.
+    :param n: Size of each key part.
+    :nsteps: Number of rounds.
+    :returns: A list of 8*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
     """
-    subkeys = [0]*8*(trax_nsteps+1)
+    subkeys = [0]*8*(nsteps+1)
     key_ = key.copy()
-    for s in range(trax_nsteps+1):
+    for s in range(nsteps+1):
         # assign 8 sub-keys
         for b in range(8):
             subkeys[8*s+b] = key_[b]
@@ -81,11 +83,21 @@ def c_traxl_genkeys(key: List[int], n: int=32, trax_nsteps: int=17) -> List[int]
         key_.append(key_.pop(0))
     return subkeys
 
-def c_traxl_enc(x, y, subkeys, tweak, n:int=32, trax_nsteps: int=17):
+def c_traxl_enc(x: List[int], y: List[int], subkeys: List[int], tweak: List[int], n:int=32, nsteps: int=17) -> Tuple[List[int], List[int]]:
+    """Classical implementation of TRAX-L.
+
+    :param x: [:math:`x_0`, :math:`x_1`, :math:`x_2`, :math:`x_3`] where :math:`x_i` is a :py:data:`n`-bit integer.
+    :param y: [:math:`y_0`, :math:`y_1`, :math:`y_2`, :math:`y_3`] where :math:`y_i` is a :py:data:`n`-bit integer.
+    :param subkeys: A list of 8*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
+    :param tweak: A list of the 4 :py:data:`n`-bit tweak parts.
+    :param n: Size of each key part.
+    :param nsteps: Number of rounds.
+    :returns: Encrypted (x,y).
+    """
     x = x.copy()
     y = y.copy()
 
-    for s in range(trax_nsteps):
+    for s in range(nsteps):
         # Add tweak if step counter is odd
         if ((s % 2) == 1):
             x[0] ^= tweak[0]
@@ -99,24 +111,92 @@ def c_traxl_enc(x, y, subkeys, tweak, n:int=32, trax_nsteps: int=17):
             y[b] ^= subkeys[8*s+2*b+1]
             x[b], y[b] = c_alzette(x[b], y[b], (RCON[(4*s+b)%8] % 2**n), n)
 
-        # Linear layer (Sparkle256 permutation)
+        # Linear layer (see Sparkle256 permutation)
         tmpx = c_ell(x[2]^x[3], n)
         y[0] ^= tmpx
         y[1] ^= tmpx
-       # 
+
         tmpy = c_ell(y[2] ^ y[3], n)
         x[0] ^= tmpy
         x[1] ^= tmpy
-       #  
+
         x[0], x[1], x[2], x[3] = x[3], x[2], x[0], x[1]
         y[0], y[1], y[2], y[3] = y[3], y[2], y[0], y[1]
 
     # Add subkeys to state for final key addition
     for b in range(4):
-        x[b] ^= subkeys[8*trax_nsteps+2*b]
-        y[b] ^= subkeys[8*trax_nsteps+2*b+1]
+        x[b] ^= subkeys[8*nsteps+2*b]
+        y[b] ^= subkeys[8*nsteps+2*b+1]
 
     return x, y
+
+def c_traxm_enc(x, y, subkeys, tweak, n:int=32, nsteps: int=12):
+    """Classical implementation of TRAX-M.
+
+    :param x: [:math:`x_0`, :math:`x_1`] where :math:`x_i` is a :py:data:`n`-bit integer.
+    :param y: [:math:`y_0`, :math:`y_1`] where :math:`y_i` is a :py:data:`n`-bit integer.
+    :param subkeys: A list of 4*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
+    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
+    :param n: Size of each key part.
+    :param nsteps: Number of rounds.
+    :returns: Encrypted (x,y).
+    """
+    x = x.copy()
+    y = y.copy()
+
+    for s in range(nsteps):
+        # Add tweak if step counter is odd
+        if ((s % 2) == 1):
+            x[0] ^= tweak[0]
+            y[0] ^= tweak[1]
+
+        # Add subkeys to state and execute ALZETTEs
+        for b in range(2):
+            x[b] ^= subkeys[4*s+2*b]
+            y[b] ^= subkeys[4*s+2*b+1]
+            x[b], y[b] = c_alzette(x[b], y[b], (RCON[(2*s+b)%8] % 2**n), n)
+
+        # Linear layer
+        x[0], y[0], x[1], y[1] = (x[0] ^ x[1], y[0] ^ y[1], x[0], y[0])
+
+    # Add subkeys to state for final key addition
+    for b in range(2):
+        x[b] ^= subkeys[4*nsteps+2*b]
+        y[b] ^= subkeys[4*nsteps+2*b+1]
+
+    return x, y
+
+def c_traxs_enc(x, y, subkeys, tweak, n:int=32, nsteps: int=10):
+    """Classical implementation of TRAX-S.
+
+    :param x: A :py:data:`n`-bit integer.
+    :param y: A :py:data:`n`-bit integer.
+    :param subkeys: A list of 2*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
+    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
+    :param n: Size of each key part.
+    :param nsteps: Number of rounds.
+    :returns: Encrypted (x,y).
+    """
+    x = x.copy()
+    y = y.copy()
+
+    for s in range(nsteps):
+        # Add tweak if step counter is odd
+        if ((s % 2) == 1):
+            x ^= tweak[0]
+            y ^= tweak[1]
+
+        # Add subkeys to state and execute ALZETTEs
+        x ^= subkeys[2*s]
+        y ^= subkeys[2*s+1]
+        x, y = c_alzette(x, y, (RCON[s%8] % 2**n), n)
+
+    # Add subkeys to state for final key addition
+    x ^= subkeys[2*nsteps]
+    y ^= subkeys[2*nsteps+1]
+
+    return x, y
+
 
 class Alzette(Gate, rOperation):
     r"""A quantum gate implementing the ARX-box Alzette of two vectors of qubits.
@@ -223,7 +303,7 @@ class Traxl_enc(Gate, rOperation):
     :param ancillas: The ancillas qubits needed for the computation.
     :param alzette_mode: The method to use to compute the Alzette rounds.
     :param schedule_mode: The method to use to compute the key schedule.
-    :param trax_nsteps: The number of rounds of TRAX.
+    :param nsteps: The number of rounds of TRAX.
     :param label: An optional label for the gate.
     """
     @staticmethod
@@ -255,7 +335,7 @@ class Traxl_enc(Gate, rOperation):
         """
         return rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n//8)*Traxl_enc._get_num_ancilla_registers(alzette_mode, schedule_mode)
 
-    def __init__(self, x: List[QuantumRegister], y: List[QuantumRegister], key: List[QuantumRegister], tweak: List[int], ancillas: AncillaRegister, alzette_mode: str='lookahead-parallel', schedule_mode: str='lookahead', trax_nsteps: int=17, label: Optional[str] = None):
+    def __init__(self, x: List[QuantumRegister], y: List[QuantumRegister], key: List[QuantumRegister], tweak: List[int], ancillas: AncillaRegister, alzette_mode: str='lookahead-parallel', schedule_mode: str='lookahead', nsteps: int=17, label: Optional[str] = None):
         if len(x) != 4 or len(y) != 4 or len(key) != 8:
             raise CircuitError("Wrong number of inputs.")
         self._inputs = x+y+key+[ancillas]
@@ -274,7 +354,7 @@ class Traxl_enc(Gate, rOperation):
 
         qc = rCircuit(*self.inputs, name='Traxl_enc')
 
-        for s in range(trax_nsteps):
+        for s in range(nsteps):
 
             # Add tweak if step counter is odd
             if ((s % 2) == 1):
