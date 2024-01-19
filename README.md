@@ -1,7 +1,7 @@
 pycrypto
 ========
 
-**pycrypto** is cryptography library implemented as quantum circuits using [Qiskit](https://qiskit.org/). It allows to easily implement classical cryptography functions to quantum computers to run quantum attacks on them, such as Grover's algorithm.
+**pycrypto** is cryptography library composed of quantum circuits defined with [Qiskit](https://qiskit.org/). It allows to easily implement classical cryptography functions on quantum computers to run quantum attacks on them, such as quantum brute-force with Grover's algorithm.
 
 ## Documentation
 

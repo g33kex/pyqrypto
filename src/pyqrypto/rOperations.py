@@ -98,7 +98,7 @@ class rCircuit(QuantumCircuit):
                 warnings.warn(f"Cannot compute quantum cost for operation {operation}.")   
             stats['quantum_cost'] += k*count
         stats['depth'] = decomposed_circuit.depth()
-        # Some papers only count toffoli gates for the circuit depth...
+        # Some papers only count toffoli gates for the circuit depth
         ccx_only = decomposed_circuit.copy_empty_like()
         for instruction, qargs, cargs in decomposed_circuit:
             if isinstance(instruction, CCXGate):

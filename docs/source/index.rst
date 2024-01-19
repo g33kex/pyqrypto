@@ -1,27 +1,27 @@
 Welcome to pyqrypto's documentation!
 ====================================
 
-**pyrypto** is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and the associated tweakable block cipher TRAX from the Sparkle-suite and their necessary gates.
+**pyrypto** is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and the associated tweakable block cipher TRAX from the `Sparkle-suite <https://sparkle-lwc.github.io/>`_ and their necessary gates. It is easily expandable to more ciphers.
 
-Because of the underlying architecture, right and left rotations are implemented for free without using any gate. 
+This library provides high level operations on quantum registers by tracking the individual qubits. Because of this, permutations can be implemented for free. Additionally, the quantum cost of a circuit containing these operations can be automatically computed.
 
 This library is based on `Qiskit <https://qiskit.org/>`_.
 
 Implemented Gates
 -----------------
 
-These are the quantum gates currently implemented by this projects.
+These are the quantum gates currently implemented by this project.
 
-- ``TRAX`` - a tweakable block cipher
-- ``Alzette`` - a 64 bit ARX-box
-- ``TTKRippleCarryAdder`` - ripple carry adder
-- ``DKRSCarryLookaheadAdder`` - carry lookahead adder
-- ``ConstantDKRSCarryLookaheadAdder`` - carry lookahead adder with a constant
-- ``XOR`` - bitwise XOR
-- ``ConstantXOR`` - bitwise XOR with a constant
-- ``NOT`` - bitwise NOT
-- ``ROR`` - right rotation (gate free)
-- ``ROL`` - left rotation (gate free)
+- :py:class:`~pyqrypto.sparkle.Traxl_enc` - TRAX-L encryption
+- :py:class:`~pyqrypto.sparkle.Alzette` - a 64 bit ARX-box
+- :py:class:`~pyqrypto.rOperations.rTTKRippleCarryAdder` - ripple carry adder
+- :py:class:`~pyqrypto.rOperations.rDKRSCarryLookaheadAdder` - carry lookahead adder
+- :py:class:`~pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder`` - carry lookahead adder with a constant
+- :py:class:`~pyqrypto.rOperations.rXOR` - bitwise XOR
+- :py:class:`~pyqrypto.rOperations.rConstantXOR` - bitwise XOR with a constant
+- :py:class:`~pyqrypto.rOperations.rNOT` - bitwise NOT
+- :py:class:`~pyqrypto.rOperations.rROR` - right rotation (gate free)
+- :py:class:`~pyqrypto.rOperations.rROL` - left rotation (gate free)
 
 Examples
 --------
@@ -69,7 +69,7 @@ Here is an example on how to use **pyqrypto** to generate a simple circuit that 
     #                      │  
     #Y_3: ─────────────────■──
 
-For an example on how to implement a more complex circuit, please read the source code of :py:class:`pyqrypto.sparkle.Alzette`. 
+For an example on how to implement a more complex circuit, please read the source code of :py:class:`~pyqrypto.sparkle.Alzette`. 
 
 This library also provides handy tools to add preparation steps and measurements to a circuit operating on registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.
 
