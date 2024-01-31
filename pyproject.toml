@@ -11,15 +11,20 @@ readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: GNU General Public License (GPL)",
-    "Operating System :: OS Independent"
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Security :: Cryptography"
 ]
 dependencies = [
   'qiskit >= 0.43.1'
 ]
-# [project.urls]
-# "Homepage" = "https://github.com/g33kex/
+keywords = ["cryptography", "qiskit", "quantum"]
+
+[project.urls]
+Repository = "https://github.com/g33kex/pyqrypto.git"
+Documentation = "https://g33kex.github.io/pyqrypto"
 
 [tool.pytest.ini_options]
 pythonpath = "src"
