@@ -573,13 +573,13 @@ class rTTKRippleCarryAdder(Gate, rOperation):
 
         self.definition = qc
 
-def simulate(circuit: QuantumCircuit) -> Counts:
+def simulate(circuit: QuantumCircuit, method='statevector', device='CPU') -> Counts:
     """This helper function simulates the given circuit and returns the results.
 
     :param circuit: The circuit to simulate.
     :returns: The results of the simulation.
     """
-    backend_sim = AerSimulator()
+    backend_sim = AerSimulator(method=method, device=device)
 
     job_sim = backend_sim.run(transpile(circuit, backend_sim), shots=1024)
     result_sim = job_sim.result()
@@ -614,7 +614,7 @@ def make_circuit(circuit: QuantumCircuit, inputs: Sequence[int], input_registers
 
     return qc
 
-def run_circuit(circuit: QuantumCircuit, verbose: bool = False) -> Sequence[int]:
+def run_circuit(circuit: QuantumCircuit, verbose: bool = False, method='statevector', device='CPU') -> Sequence[int]:
     """This helper function simulates a given circuit and retrieves the integer values of the classical registers.
 
     :param circuit: The circuit to run.
@@ -622,7 +622,7 @@ def run_circuit(circuit: QuantumCircuit, verbose: bool = False) -> Sequence[int]
     :returns: A list of the integers stored in the classical registers of the circuit after the circuit has been simulated. It takes into account only the most frequent result.
     """
     # Simulate the circuit
-    raw_result = simulate(circuit)
+    raw_result = simulate(circuit, method, device)
     if verbose:
         print("Circuit result:", raw_result)
     result = raw_result.most_frequent()

@@ -29,7 +29,7 @@ def circuit_test(circuit, classical_function, inputs, input_registers, output_re
         print("Assembling it into the following circuit:")
         print(final_circuit)
         final_circuit.decompose().qasm(filename='circuit.qasm')
-    result = run_circuit(final_circuit)
+    result = run_circuit(final_circuit, device='GPU')
 
     if verbose:
         print("True result:\t", true_result)
