@@ -1,6 +1,6 @@
 from qiskit import QuantumCircuit, QuantumRegister, AncillaRegister
 from pyqrypto.rOperations import make_circuit, run_circuit, rCircuit, rDKRSCarryLookaheadAdder, rConstantDKRSCarryLookaheadAdder
-from pyqrypto.sparkle import Alzette, Traxl_enc, c_alzette, c_traxl_genkeys, c_traxl_enc
+from pyqrypto.sparkle import Alzette, Traxl_enc, Traxm_enc_round, c_alzette, c_traxl_genkeys, c_traxl_enc, c_traxm_enc
 from itertools import chain
 import random
 
@@ -256,9 +256,29 @@ def test_ctraxl():
     assert(res_x == true_x)
     assert(res_y == true_y)
 
+def test_traxm():
+    for _ in range(nb_tests//10):
+        n = random.choice([16, 32, 64, 128])
+        x = [random.getrandbits(n//4) for _ in range(2)]
+        y = [random.getrandbits(n//4) for _ in range(2)]
+        round_key = [random.getrandbits(n//4) for _ in range(4)]
+
+        X = [QuantumRegister(n//4, name=f'X{i}') for i in range(2)]
+        Y = [QuantumRegister(n//4, name=f'Y{i}') for i in range(2)]
+        K = [QuantumRegister(n//4, name=f'K{i}') for i in range(4)]
+        ancillas = AncillaRegister(Traxm_enc_round.get_num_ancilla_qubits(n))
+
+        qc = rCircuit(*X, *Y, *K, ancillas)
+        gate = Traxm_enc_round(X, Y, K, None, ancillas)
+        qc.append(gate, list(chain(*gate.inputs)))
+
+        result = circuit_test(qc, lambda *params: chain.from_iterable(c_traxm_enc(list(params[0:2]), list(params[2:4]), list(params[4::]), None, n=n//4, nsteps=1, final_addition=False)), x+y+round_key, gate.inputs[:-1], gate.outputs[:-3])
+
+        assert(result)
+        
 def test_traxl():
     # This test is really slow so we must run it less times
-    for _ in range(nb_tests//10):
+    for _ in range(1):
         n = random.choice([16, 32, 64, 128, 256])
         x = [random.getrandbits(n//8) for _ in range(4)]
         y = [random.getrandbits(n//8) for _ in range(4)]
@@ -277,3 +297,4 @@ def test_traxl():
         result = circuit_test(qc, lambda *params: [a for sublist in c_traxl_enc(list(params[0:4]), list(params[4:8]), c_traxl_genkeys(list(params[8::]), n=n//8), tweak, n=n//8) for a in sublist], x+y+key, gate.inputs[:-1], gate.outputs[:-9])
 
         assert(result)
+

@@ -83,6 +83,76 @@ def c_traxl_genkeys(key: List[int], n: int=32, nsteps: int=17) -> List[int]:
         key_.append(key_.pop(0))
     return subkeys
 
+def c_traxs_enc(x, y, subkeys, tweak, n:int=32, nsteps: int=10):
+    """Classical implementation of TRAX-S.
+
+    :param x: A :py:data:`n`-bit integer.
+    :param y: A :py:data:`n`-bit integer.
+    :param subkeys: A list of 2*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
+    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
+    :param n: Size of each key part.
+    :param nsteps: Number of rounds.
+    :returns: Encrypted (x,y).
+    """
+    x = x.copy()
+    y = y.copy()
+
+    for s in range(nsteps):
+        # Add tweak if step counter is odd
+        if ((s % 2) == 1):
+            x ^= tweak[0]
+            y ^= tweak[1]
+
+        # Add subkeys to state and execute ALZETTEs
+        x ^= subkeys[2*s]
+        y ^= subkeys[2*s+1]
+        x, y = c_alzette(x, y, (RCON[s%8] % 2**n), n)
+
+    # Add subkeys to state for final key addition
+    x ^= subkeys[2*nsteps]
+    y ^= subkeys[2*nsteps+1]
+
+    return x, y
+
+def c_traxm_enc(x, y, subkeys, tweak, n:int=32, nsteps: int=12, final_addition=True):
+    """Classical implementation of TRAX-M.
+
+    :param x: [:math:`x_0`, :math:`x_1`] where :math:`x_i` is a :py:data:`n`-bit integer.
+    :param y: [:math:`y_0`, :math:`y_1`] where :math:`y_i` is a :py:data:`n`-bit integer.
+    :param subkeys: A list of 4*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
+    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
+    :param n: Size of each key part.
+    :param nsteps: Number of rounds.
+    :param final_addition: Whether to do the final key addition
+    :returns: Encrypted (x,y).
+    """
+    x = x.copy()
+    y = y.copy()
+
+    for s in range(nsteps):
+        # Add tweak if step counter is odd
+        if ((s % 2) == 1):
+            x[0] ^= tweak[0]
+            y[0] ^= tweak[1]
+
+        # Add subkeys to state and execute ALZETTEs
+        for b in range(2):
+            x[b] ^= subkeys[4*s+2*b]
+            y[b] ^= subkeys[4*s+2*b+1]
+            x[b], y[b] = c_alzette(x[b], y[b], (RCON[(2*s+b)%8] % 2**n), n)
+
+        # Linear layer
+        x[0], y[0], x[1], y[1] = (x[0] ^ x[1], y[0] ^ y[1], x[0], y[0])
+
+    # Add subkeys to state for final key addition
+    if final_addition:
+        for b in range(2):
+            x[b] ^= subkeys[4*nsteps+2*b]
+            y[b] ^= subkeys[4*nsteps+2*b+1]
+
+    return x, y
+
+
 def c_traxl_enc(x: List[int], y: List[int], subkeys: List[int], tweak: List[int], n:int=32, nsteps: int=17) -> Tuple[List[int], List[int]]:
     """Classical implementation of TRAX-L.
 
@@ -129,74 +199,6 @@ def c_traxl_enc(x: List[int], y: List[int], subkeys: List[int], tweak: List[int]
         y[b] ^= subkeys[8*nsteps+2*b+1]
 
     return x, y
-
-def c_traxm_enc(x, y, subkeys, tweak, n:int=32, nsteps: int=12):
-    """Classical implementation of TRAX-M.
-
-    :param x: [:math:`x_0`, :math:`x_1`] where :math:`x_i` is a :py:data:`n`-bit integer.
-    :param y: [:math:`y_0`, :math:`y_1`] where :math:`y_i` is a :py:data:`n`-bit integer.
-    :param subkeys: A list of 4*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
-    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
-    :param n: Size of each key part.
-    :param nsteps: Number of rounds.
-    :returns: Encrypted (x,y).
-    """
-    x = x.copy()
-    y = y.copy()
-
-    for s in range(nsteps):
-        # Add tweak if step counter is odd
-        if ((s % 2) == 1):
-            x[0] ^= tweak[0]
-            y[0] ^= tweak[1]
-
-        # Add subkeys to state and execute ALZETTEs
-        for b in range(2):
-            x[b] ^= subkeys[4*s+2*b]
-            y[b] ^= subkeys[4*s+2*b+1]
-            x[b], y[b] = c_alzette(x[b], y[b], (RCON[(2*s+b)%8] % 2**n), n)
-
-        # Linear layer
-        x[0], y[0], x[1], y[1] = (x[0] ^ x[1], y[0] ^ y[1], x[0], y[0])
-
-    # Add subkeys to state for final key addition
-    for b in range(2):
-        x[b] ^= subkeys[4*nsteps+2*b]
-        y[b] ^= subkeys[4*nsteps+2*b+1]
-
-    return x, y
-
-def c_traxs_enc(x, y, subkeys, tweak, n:int=32, nsteps: int=10):
-    """Classical implementation of TRAX-S.
-
-    :param x: A :py:data:`n`-bit integer.
-    :param y: A :py:data:`n`-bit integer.
-    :param subkeys: A list of 2*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.
-    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
-    :param n: Size of each key part.
-    :param nsteps: Number of rounds.
-    :returns: Encrypted (x,y).
-    """
-    x = x.copy()
-    y = y.copy()
-
-    for s in range(nsteps):
-        # Add tweak if step counter is odd
-        if ((s % 2) == 1):
-            x ^= tweak[0]
-            y ^= tweak[1]
-
-        # Add subkeys to state and execute ALZETTEs
-        x ^= subkeys[2*s]
-        y ^= subkeys[2*s+1]
-        x, y = c_alzette(x, y, (RCON[s%8] % 2**n), n)
-
-    # Add subkeys to state for final key addition
-    x ^= subkeys[2*nsteps]
-    y ^= subkeys[2*nsteps+1]
-
-    return x, y
-
 
 class Alzette(Gate, rOperation):
     r"""A quantum gate implementing the ARX-box Alzette of two vectors of qubits.
@@ -278,9 +280,97 @@ class Alzette(Gate, rOperation):
         self._definition = qc
         self._outputs = [X, Y]
 
+class Traxm_enc_round(Gate, rOperation):
+    """A quantum implementation of a round of the encryption step of the TRAX-M as defined in [Alzette2020] with a block size of n bits.
+    The default block size for this cipher is 128 bits.
+    Only a single round is implemented because there is no standard key schedule for this cipher.
+
+
+    The Alzette rounds of TRAX can be implemented using different techniques:
+
+    - :py:data:`lookahead-parallel`: Run the 2 instances of Alzette in parallel using carry lookahead adders.
+    - :py:data:`lookahead-sequential`: Run the 2 instances of Alzette sequentially using carry lookahead adders.
+    - :py:data:`ripple`: Run the 2 instances of Alzette in parallel using ripple carry adders.
+
+    :param x: A list of 2 quantum registers of size n/4.
+    :param y: A list of 2 quantum registers of size n/4.
+    :param key: The round key, a list of 4 quantum registers of size n/4.
+    :param tweak: The tweak, a list of 2 integers on n/4 bits. None if the tweak souldn't be added at that round.
+    :param ancillas: The ancillas qubits needed for the computation.
+    :param alzette_mode: The method to use to compute the Alzette rounds.
+    :param round_constants: A list of the two round constants to use for this round.
+    :param label: An optional label for the gate.
+    """
+
+    @staticmethod
+    def _get_num_ancilla_registers(alzette_mode: str='lookahead-parallel'):
+        """Returns the numbers of ancilla registers used internally by Traxm_enc_round."""
+
+        if alzette_mode == 'lookahead-parallel':
+            num_ancilla_registers = 2
+        elif alzette_mode == 'lookahead-sequential' or alzette_mode == 'ripple':
+            num_ancilla_registers = 1
+        else:
+            raise CircuitError(f"Unknown alzette mode {alzette_mode}.")
+
+        return num_ancilla_registers
+
+    @staticmethod
+    def get_num_ancilla_qubits(n: int=128, alzette_mode:str ='lookahead-parallel') -> int:
+        """Get the number of required ancilla qubits without instantiating the class.
+
+        :param n: The size of the block size the cipher is operating on.
+        :param alzette_mode: The method to use to compute the Alzette rounds.
+        :returns: The number of ancilla qubits needed for the computation.
+        """
+        return rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n//4)*Traxm_enc_round._get_num_ancilla_registers(alzette_mode)
+
+    def __init__(self, x: List[QuantumRegister], y: List[QuantumRegister], round_key: List[QuantumRegister], tweak: Optional[List[int]], ancillas: AncillaRegister, alzette_mode: str='lookahead-parallel', round_constants: List[int] = [RCON[0], RCON[1]], label: Optional[str] = None):
+        if len(x) != 2 or len(y) != 2 or len(round_key) != 4 or (tweak is not None and len(tweak) != 2):
+            raise CircuitError("Wrong number of inputs.")
+        self._inputs = x+y+round_key+[ancillas]
+        self.n = len(x[0]) # Number of qubits in each register (by default 32)
+
+        super().__init__("Traxm_enc_round", self.n * 8 + len(ancillas) , [], label=label)
+
+        x = x.copy()
+        y = y.copy()
+        round_key = round_key.copy()
+        num_ancilla_registers = self._get_num_ancilla_registers(alzette_mode)
+        ancilla_registers = [AncillaRegister(bits=ancillas[i*len(ancillas)//num_ancilla_registers:(i+1)*len(ancillas)//num_ancilla_registers]) for i in range(num_ancilla_registers)]
+
+        qc = rCircuit(*self.inputs, name='Trax_enc_round')
+
+        # Add tweak if it exists
+        if tweak is not None:
+            qc.xor(x[0], tweak[0])
+            qc.xor(y[0], tweak[1])
+
+        # Add subkeys and execute ALZETTEs
+        for b in range(2):
+            qc.xor(x[b], round_key[2*b])
+            qc.xor(y[b], round_key[2*b+1])
+
+            if alzette_mode == 'ripple':
+                qc.append(Alzette(x[b], y[b], (round_constants[b]%2**self.n), adder_mode='ripple'), list(chain(x[b], y[b])))
+            elif alzette_mode == 'lookahead-sequential':
+                qc.append(Alzette(x[b], y[b], (round_constants[b]%2**self.n), ancilla_registers[0], adder_mode='lookahead'), list(chain(x[b], y[b], ancilla_registers[0])))
+            elif alzette_mode == 'lookahead-parallel':
+                qc.append(Alzette(x[b], y[b], (round_constants[b]%2**self.n), ancilla_registers[b], adder_mode='lookahead'), list(chain(x[b], y[b], ancilla_registers[b])))
+            else:
+                raise CircuitError(f"Unknown alzette mode {alzette_mode}.")
+    
+        # Linear layer
+        qc.xor(x[1], x[0])
+        qc.xor(y[1], y[0])
+        x[0], y[0], x[1], y[1] = x[1], y[1], x[0], y[0]
+
+        self._outputs = x+y+round_key+[ancillas]
+        self._definition = qc
 
 class Traxl_enc(Gate, rOperation):
     """A quantum implementation of the encryption step of the TRAX-L cipher as defined in [Alzette2020]_ with a block size of n bits.
+    The default block size for this cipher is 256 bits.
 
     The Alzette rounds of TRAX can be implemented using different techniques:
 
@@ -296,9 +386,9 @@ class Traxl_enc(Gate, rOperation):
 
     Each combinaison of techniques involves a tradeoff between the circuit depth, the quantum cost and the number of needed ancilla qubits. Please read the `Grover on TRAX` paper for more information about this.
 
-    :param x: A list of 4 registers of size n/8.
-    :param y: A list of 4 registers of size n/8.
-    :param key: The encryption key, a list of 8 q puantum registers of size n/8.
+    :param x: A list of 4 quantum registers of size n/8.
+    :param y: A list of 4 quantum registers of size n/8.
+    :param key: The encryption key, a list of 8 quantum registers of size n/8.
     :param tweak: The tweak, a list of 4 integers on n/8 bits.
     :param ancillas: The ancillas qubits needed for the computation.
     :param alzette_mode: The method to use to compute the Alzette rounds.
@@ -336,10 +426,10 @@ class Traxl_enc(Gate, rOperation):
         return rDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n//8)*Traxl_enc._get_num_ancilla_registers(alzette_mode, schedule_mode)
 
     def __init__(self, x: List[QuantumRegister], y: List[QuantumRegister], key: List[QuantumRegister], tweak: List[int], ancillas: AncillaRegister, alzette_mode: str='lookahead-parallel', schedule_mode: str='lookahead', nsteps: int=17, label: Optional[str] = None):
-        if len(x) != 4 or len(y) != 4 or len(key) != 8:
+        if len(x) != 4 or len(y) != 4 or len(key) != 8 or len(tweak) != 4:
             raise CircuitError("Wrong number of inputs.")
         self._inputs = x+y+key+[ancillas]
-        self.n = len(x[0])
+        self.n = len(x[0]) # Number of qubits in each register (by default 32)
 
         super().__init__("Traxl_enc", self.n * 16 + len(ancillas) , [], label=label)
 

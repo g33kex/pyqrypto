@@ -1,5 +1,5 @@
 from qiskit import QuantumRegister
-from pyqrypto.alzette import Alzette, c_alzette
+from pyqrypto.sparkle import Alzette, c_alzette
 from pyqrypto.rOperations import rCircuit, make_circuit, run_circuit
 from itertools import chain
 import json
@@ -32,5 +32,4 @@ print(f"Classical result: {c_alzette(a, b, c, n)}")
 print(f"Quantum simulated result: {result}")
 print("Circuit depth:", circuit_depth)
 print("Circuit gate count:", json.dumps(gate_counts))
-print("Circuit quantum cost:", qc.quantum_cost)
 print("Circuit stats:", qc.stats)
