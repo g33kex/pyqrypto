@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyqrypto.sparkle &mdash; pyqrypto 0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -82,7 +84,9 @@
 <span class="n">RCON</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0xB7E15162</span><span class="p">,</span> <span class="mh">0xBF715880</span><span class="p">,</span> <span class="mh">0x38B4DA56</span><span class="p">,</span> <span class="mh">0x324E7738</span><span class="p">,</span> <span class="mh">0xBB1185EB</span><span class="p">,</span> <span class="mh">0x4F7C7B57</span><span class="p">,</span> <span class="mh">0xCFBFA1C8</span><span class="p">,</span> <span class="mh">0xC2B3293D</span><span class="p">]</span>
 <span class="sd">&quot;&quot;&quot;The round constants for TRAX.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="c_ror"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_ror">[docs]</a><span class="k">def</span> <span class="nf">c_ror</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="c_ror">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_ror">[docs]</a>
+<span class="k">def</span> <span class="nf">c_ror</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of the right rotation.</span>
 
 <span class="sd">    :param x: The integer to rotate.</span>
@@ -93,7 +97,10 @@
     <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">%</span> <span class="n">n</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">r</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">r</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="c_rol"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_rol">[docs]</a><span class="k">def</span> <span class="nf">c_rol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+<div class="viewcode-block" id="c_rol">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_rol">[docs]</a>
+<span class="k">def</span> <span class="nf">c_rol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of the left rotation.</span>
 
 <span class="sd">    :param x: The integer to rotate.</span>
@@ -104,7 +111,10 @@
     <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">%</span> <span class="n">n</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="n">r</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">r</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="c_alzette"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_alzette">[docs]</a><span class="k">def</span> <span class="nf">c_alzette</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="c_alzette">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_alzette">[docs]</a>
+<span class="k">def</span> <span class="nf">c_alzette</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical software implementation of Alzette.</span>
 
 <span class="sd">    :param x: The integer value of x.</span>
@@ -127,10 +137,13 @@
     <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">^</span> <span class="n">c</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span></div>
 
+
 <span class="k">def</span> <span class="nf">c_ell</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">c_ror</span><span class="p">(((</span><span class="n">x</span><span class="p">)</span> <span class="o">^</span> <span class="p">(((</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">))</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
 
-<div class="viewcode-block" id="c_traxl_genkeys"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxl_genkeys">[docs]</a><span class="k">def</span> <span class="nf">c_traxl_genkeys</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<div class="viewcode-block" id="c_traxl_genkeys">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxl_genkeys">[docs]</a>
+<span class="k">def</span> <span class="nf">c_traxl_genkeys</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of TRAX-L key generation.</span>
 
 <span class="sd">    :param key: A list of the 8 :py:data:`n`-bit key parts.</span>
@@ -153,7 +166,86 @@
         <span class="n">key_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">subkeys</span></div>
 
-<div class="viewcode-block" id="c_traxl_enc"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxl_enc">[docs]</a><span class="k">def</span> <span class="nf">c_traxl_enc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">subkeys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">tweak</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="c_traxs_enc">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxs_enc">[docs]</a>
+<span class="k">def</span> <span class="nf">c_traxs_enc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">subkeys</span><span class="p">,</span> <span class="n">tweak</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of TRAX-S.</span>
+
+<span class="sd">    :param x: A :py:data:`n`-bit integer.</span>
+<span class="sd">    :param y: A :py:data:`n`-bit integer.</span>
+<span class="sd">    :param subkeys: A list of 2*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.</span>
+<span class="sd">    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.</span>
+<span class="sd">    :param n: Size of each key part.</span>
+<span class="sd">    :param nsteps: Number of rounds.</span>
+<span class="sd">    :returns: Encrypted (x,y).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span><span class="p">):</span>
+        <span class="c1"># Add tweak if step counter is odd</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">s</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Add subkeys to state and execute ALZETTEs</span>
+        <span class="n">x</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">s</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">c_alzette</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">RCON</span><span class="p">[</span><span class="n">s</span><span class="o">%</span><span class="mi">8</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="c1"># Add subkeys to state for final key addition</span>
+    <span class="n">x</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">nsteps</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="c_traxm_enc">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxm_enc">[docs]</a>
+<span class="k">def</span> <span class="nf">c_traxm_enc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">subkeys</span><span class="p">,</span> <span class="n">tweak</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">final_addition</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of TRAX-M.</span>
+
+<span class="sd">    :param x: [:math:`x_0`, :math:`x_1`] where :math:`x_i` is a :py:data:`n`-bit integer.</span>
+<span class="sd">    :param y: [:math:`y_0`, :math:`y_1`] where :math:`y_i` is a :py:data:`n`-bit integer.</span>
+<span class="sd">    :param subkeys: A list of 4*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.</span>
+<span class="sd">    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.</span>
+<span class="sd">    :param n: Size of each key part.</span>
+<span class="sd">    :param nsteps: Number of rounds.</span>
+<span class="sd">    :param final_addition: Whether to do the final key addition</span>
+<span class="sd">    :returns: Encrypted (x,y).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span><span class="p">):</span>
+        <span class="c1"># Add tweak if step counter is odd</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">s</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Add subkeys to state and execute ALZETTEs</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_alzette</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">(</span><span class="n">RCON</span><span class="p">[(</span><span class="mi">2</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># Linear layer</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Add subkeys to state for final key addition</span>
+    <span class="k">if</span> <span class="n">final_addition</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="c_traxl_enc">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxl_enc">[docs]</a>
+<span class="k">def</span> <span class="nf">c_traxl_enc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">subkeys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">tweak</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of TRAX-L.</span>
 
 <span class="sd">    :param x: [:math:`x_0`, :math:`x_1`, :math:`x_2`, :math:`x_3`] where :math:`x_i` is a :py:data:`n`-bit integer.</span>
@@ -200,75 +292,10 @@
 
     <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
 
-<div class="viewcode-block" id="c_traxm_enc"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxm_enc">[docs]</a><span class="k">def</span> <span class="nf">c_traxm_enc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">subkeys</span><span class="p">,</span> <span class="n">tweak</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of TRAX-M.</span>
 
-<span class="sd">    :param x: [:math:`x_0`, :math:`x_1`] where :math:`x_i` is a :py:data:`n`-bit integer.</span>
-<span class="sd">    :param y: [:math:`y_0`, :math:`y_1`] where :math:`y_i` is a :py:data:`n`-bit integer.</span>
-<span class="sd">    :param subkeys: A list of 4*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.</span>
-<span class="sd">    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.</span>
-<span class="sd">    :param n: Size of each key part.</span>
-<span class="sd">    :param nsteps: Number of rounds.</span>
-<span class="sd">    :returns: Encrypted (x,y).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span><span class="p">):</span>
-        <span class="c1"># Add tweak if step counter is odd</span>
-        <span class="k">if</span> <span class="p">((</span><span class="n">s</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1"># Add subkeys to state and execute ALZETTEs</span>
-        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-            <span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="p">]</span>
-            <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_alzette</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">(</span><span class="n">RCON</span><span class="p">[(</span><span class="mi">2</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
-
-        <span class="c1"># Linear layer</span>
-        <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="c1"># Add subkeys to state for final key addition</span>
-    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="p">]</span>
-        <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
-
-<div class="viewcode-block" id="c_traxs_enc"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.c_traxs_enc">[docs]</a><span class="k">def</span> <span class="nf">c_traxs_enc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">subkeys</span><span class="p">,</span> <span class="n">tweak</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classical implementation of TRAX-S.</span>
-
-<span class="sd">    :param x: A :py:data:`n`-bit integer.</span>
-<span class="sd">    :param y: A :py:data:`n`-bit integer.</span>
-<span class="sd">    :param subkeys: A list of 2*( :py:data:`nsteps` +1) :py:data:`n`-bit subkey parts.</span>
-<span class="sd">    :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.</span>
-<span class="sd">    :param n: Size of each key part.</span>
-<span class="sd">    :param nsteps: Number of rounds.</span>
-<span class="sd">    :returns: Encrypted (x,y).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span><span class="p">):</span>
-        <span class="c1"># Add tweak if step counter is odd</span>
-        <span class="k">if</span> <span class="p">((</span><span class="n">s</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">x</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">y</span> <span class="o">^=</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1"># Add subkeys to state and execute ALZETTEs</span>
-        <span class="n">x</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">s</span><span class="p">]</span>
-        <span class="n">y</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">c_alzette</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">RCON</span><span class="p">[</span><span class="n">s</span><span class="o">%</span><span class="mi">8</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
-
-    <span class="c1"># Add subkeys to state for final key addition</span>
-    <span class="n">x</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">nsteps</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">^=</span> <span class="n">subkeys</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
-
-
-<div class="viewcode-block" id="Alzette"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Alzette">[docs]</a><span class="k">class</span> <span class="nc">Alzette</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+<div class="viewcode-block" id="Alzette">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Alzette">[docs]</a>
+<span class="k">class</span> <span class="nc">Alzette</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A quantum gate implementing the ARX-box Alzette of two vectors of qubits.</span>
 
 <span class="sd">    :param X: X vector.</span>
@@ -299,7 +326,9 @@
 <span class="sd">            &amp; \mathrm{X} \leftarrow \mathrm{X} \oplus c</span>
 <span class="sd">        \end{align*}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Alzette.get_num_ancilla_qubits"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Alzette.get_num_ancilla_qubits">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Alzette.get_num_ancilla_qubits">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Alzette.get_num_ancilla_qubits">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">adder_mode</span><span class="o">=</span><span class="s1">&#39;ripple&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of required ancilla qubits without instantiating the class.</span>
 
@@ -313,6 +342,7 @@
             <span class="k">return</span> <span class="n">rDKRSCarryLookaheadAdder</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown adder mode </span><span class="si">{</span><span class="n">adder_mode</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AncillaRegister</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adder_mode</span><span class="o">=</span><span class="s1">&#39;ripple&#39;</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">):</span>
@@ -349,8 +379,105 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="Traxl_enc"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Traxl_enc">[docs]</a><span class="k">class</span> <span class="nc">Traxl_enc</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+<div class="viewcode-block" id="Traxm_enc_round">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Traxm_enc_round">[docs]</a>
+<span class="k">class</span> <span class="nc">Traxm_enc_round</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A quantum implementation of a round of the encryption step of the TRAX-M as defined in [Alzette2020] with a block size of n bits.</span>
+<span class="sd">    The default block size for this cipher is 128 bits.</span>
+<span class="sd">    Only a single round is implemented because there is no standard key schedule for this cipher.</span>
+
+
+<span class="sd">    The Alzette rounds of TRAX can be implemented using different techniques:</span>
+
+<span class="sd">    - :py:data:`lookahead-parallel`: Run the 2 instances of Alzette in parallel using carry lookahead adders.</span>
+<span class="sd">    - :py:data:`lookahead-sequential`: Run the 2 instances of Alzette sequentially using carry lookahead adders.</span>
+<span class="sd">    - :py:data:`ripple`: Run the 2 instances of Alzette in parallel using ripple carry adders.</span>
+
+<span class="sd">    :param x: A list of 2 quantum registers of size n/4.</span>
+<span class="sd">    :param y: A list of 2 quantum registers of size n/4.</span>
+<span class="sd">    :param key: The round key, a list of 4 quantum registers of size n/4.</span>
+<span class="sd">    :param tweak: The tweak, a list of 2 integers on n/4 bits. None if the tweak souldn&#39;t be added at that round.</span>
+<span class="sd">    :param ancillas: The ancillas qubits needed for the computation.</span>
+<span class="sd">    :param alzette_mode: The method to use to compute the Alzette rounds.</span>
+<span class="sd">    :param round_constants: A list of the two round constants to use for this round.</span>
+<span class="sd">    :param label: An optional label for the gate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_num_ancilla_registers</span><span class="p">(</span><span class="n">alzette_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the numbers of ancilla registers used internally by Traxm_enc_round.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">alzette_mode</span> <span class="o">==</span> <span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">:</span>
+            <span class="n">num_ancilla_registers</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">alzette_mode</span> <span class="o">==</span> <span class="s1">&#39;lookahead-sequential&#39;</span> <span class="ow">or</span> <span class="n">alzette_mode</span> <span class="o">==</span> <span class="s1">&#39;ripple&#39;</span><span class="p">:</span>
+            <span class="n">num_ancilla_registers</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown alzette mode </span><span class="si">{</span><span class="n">alzette_mode</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">num_ancilla_registers</span>
+
+<div class="viewcode-block" id="Traxm_enc_round.get_num_ancilla_qubits">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Traxm_enc_round.get_num_ancilla_qubits">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">alzette_mode</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span><span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of required ancilla qubits without instantiating the class.</span>
+
+<span class="sd">        :param n: The size of the block size the cipher is operating on.</span>
+<span class="sd">        :param alzette_mode: The method to use to compute the Alzette rounds.</span>
+<span class="sd">        :returns: The number of ancilla qubits needed for the computation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">rDKRSCarryLookaheadAdder</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="n">Traxm_enc_round</span><span class="o">.</span><span class="n">_get_num_ancilla_registers</span><span class="p">(</span><span class="n">alzette_mode</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">round_key</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">tweak</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">alzette_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">,</span> <span class="n">round_constants</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">RCON</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">RCON</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">round_key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span> <span class="ow">or</span> <span class="p">(</span><span class="n">tweak</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">tweak</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Wrong number of inputs.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">round_key</span><span class="o">+</span><span class="p">[</span><span class="n">ancillas</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># Number of qubits in each register (by default 32)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;Traxm_enc_round&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span> <span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">round_key</span> <span class="o">=</span> <span class="n">round_key</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">num_ancilla_registers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_num_ancilla_registers</span><span class="p">(</span><span class="n">alzette_mode</span><span class="p">)</span>
+        <span class="n">ancilla_registers</span> <span class="o">=</span> <span class="p">[</span><span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span><span class="o">//</span><span class="n">num_ancilla_registers</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span><span class="o">//</span><span class="n">num_ancilla_registers</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_ancilla_registers</span><span class="p">)]</span>
+
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Trax_enc_round&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Add tweak if it exists</span>
+        <span class="k">if</span> <span class="n">tweak</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tweak</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Add subkeys and execute ALZETTEs</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">round_key</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="p">])</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">round_key</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">alzette_mode</span> <span class="o">==</span> <span class="s1">&#39;ripple&#39;</span><span class="p">:</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Alzette</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">(</span><span class="n">round_constants</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">%</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span> <span class="n">adder_mode</span><span class="o">=</span><span class="s1">&#39;ripple&#39;</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">])))</span>
+            <span class="k">elif</span> <span class="n">alzette_mode</span> <span class="o">==</span> <span class="s1">&#39;lookahead-sequential&#39;</span><span class="p">:</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Alzette</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">(</span><span class="n">round_constants</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">%</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span> <span class="n">ancilla_registers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">adder_mode</span><span class="o">=</span><span class="s1">&#39;lookahead&#39;</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">ancilla_registers</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+            <span class="k">elif</span> <span class="n">alzette_mode</span> <span class="o">==</span> <span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">:</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Alzette</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">(</span><span class="n">round_constants</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">%</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span> <span class="n">ancilla_registers</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">adder_mode</span><span class="o">=</span><span class="s1">&#39;lookahead&#39;</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">ancilla_registers</span><span class="p">[</span><span class="n">b</span><span class="p">])))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown alzette mode </span><span class="si">{</span><span class="n">alzette_mode</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    
+        <span class="c1"># Linear layer</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">round_key</span><span class="o">+</span><span class="p">[</span><span class="n">ancillas</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
+
+<div class="viewcode-block" id="Traxl_enc">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Traxl_enc">[docs]</a>
+<span class="k">class</span> <span class="nc">Traxl_enc</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A quantum implementation of the encryption step of the TRAX-L cipher as defined in [Alzette2020]_ with a block size of n bits.</span>
+<span class="sd">    The default block size for this cipher is 256 bits.</span>
 
 <span class="sd">    The Alzette rounds of TRAX can be implemented using different techniques:</span>
 
@@ -366,9 +493,9 @@
 
 <span class="sd">    Each combinaison of techniques involves a tradeoff between the circuit depth, the quantum cost and the number of needed ancilla qubits. Please read the `Grover on TRAX` paper for more information about this.</span>
 
-<span class="sd">    :param x: A list of 4 registers of size n/8.</span>
-<span class="sd">    :param y: A list of 4 registers of size n/8.</span>
-<span class="sd">    :param key: The encryption key, a list of 8 q puantum registers of size n/8.</span>
+<span class="sd">    :param x: A list of 4 quantum registers of size n/8.</span>
+<span class="sd">    :param y: A list of 4 quantum registers of size n/8.</span>
+<span class="sd">    :param key: The encryption key, a list of 8 quantum registers of size n/8.</span>
 <span class="sd">    :param tweak: The tweak, a list of 4 integers on n/8 bits.</span>
 <span class="sd">    :param ancillas: The ancillas qubits needed for the computation.</span>
 <span class="sd">    :param alzette_mode: The method to use to compute the Alzette rounds.</span>
@@ -395,7 +522,9 @@
 
         <span class="k">return</span> <span class="n">num_ancilla_registers</span>
 
-<div class="viewcode-block" id="Traxl_enc.get_num_ancilla_qubits"><a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Traxl_enc.get_num_ancilla_qubits">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Traxl_enc.get_num_ancilla_qubits">
+<a class="viewcode-back" href="../../sparkle.html#pyqrypto.sparkle.Traxl_enc.get_num_ancilla_qubits">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">alzette_mode</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span><span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">,</span> <span class="n">schedule_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;lookahead&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of required ancilla qubits without instantiating the class.</span>
 
@@ -405,11 +534,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">rDKRSCarryLookaheadAdder</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">Traxl_enc</span><span class="o">.</span><span class="n">_get_num_ancilla_registers</span><span class="p">(</span><span class="n">alzette_mode</span><span class="p">,</span> <span class="n">schedule_mode</span><span class="p">)</span></div>
 
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">tweak</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">alzette_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;lookahead-parallel&#39;</span><span class="p">,</span> <span class="n">schedule_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;lookahead&#39;</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tweak</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Wrong number of inputs.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">key</span><span class="o">+</span><span class="p">[</span><span class="n">ancillas</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># Number of qubits in each register (by default 32)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;Traxl_enc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span> <span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
@@ -523,6 +653,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">key</span><span class="o">+</span><span class="p">[</span><span class="n">ancillas</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
 </pre></div>
 
            </div>

@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to pyqrypto’s documentation! &mdash; pyqrypto 0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -70,12 +72,12 @@
            <div itemprop="articleBody">
              
   <section id="welcome-to-pyqrypto-s-documentation">
-<h1>Welcome to pyqrypto’s documentation!<a class="headerlink" href="#welcome-to-pyqrypto-s-documentation" title="Permalink to this heading">¶</a></h1>
+<h1>Welcome to pyqrypto’s documentation!<a class="headerlink" href="#welcome-to-pyqrypto-s-documentation" title="Link to this heading">¶</a></h1>
 <p><strong>pyrypto</strong> is a library of reversible quantum circuits for basic functions used in classical cryptography. As of now it implements the ARX-box Alzette and the associated tweakable block cipher TRAX from the <a class="reference external" href="https://sparkle-lwc.github.io/">Sparkle-suite</a> and their necessary gates. It is easily expandable to more ciphers.</p>
 <p>This library provides high level operations on quantum registers by tracking the individual qubits. Because of this, permutations can be implemented for free. Additionally, the quantum cost of a circuit containing these operations can be automatically computed.</p>
 <p>This library is based on <a class="reference external" href="https://qiskit.org/">Qiskit</a>.</p>
 <section id="implemented-gates">
-<h2>Implemented Gates<a class="headerlink" href="#implemented-gates" title="Permalink to this heading">¶</a></h2>
+<h2>Implemented Gates<a class="headerlink" href="#implemented-gates" title="Link to this heading">¶</a></h2>
 <p>These are the quantum gates currently implemented by this project.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Traxl_enc" title="pyqrypto.sparkle.Traxl_enc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Traxl_enc</span></code></a> - TRAX-L encryption</p></li>
@@ -91,7 +93,7 @@
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Here is an example on how to use <strong>pyqrypto</strong> to generate a simple circuit that operates on qubit vectors.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rOperations</span> <span class="kn">import</span> <span class="n">rCircuit</span>
 <span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumRegister</span>
@@ -215,6 +217,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Alzette"><code class="docutils literal notranslate"><span class="pre">Alzette</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.RCON"><code class="docutils literal notranslate"><span class="pre">RCON</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Traxl_enc"><code class="docutils literal notranslate"><span class="pre">Traxl_enc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Traxm_enc_round"><code class="docutils literal notranslate"><span class="pre">Traxm_enc_round</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_alzette"><code class="docutils literal notranslate"><span class="pre">c_alzette()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_rol"><code class="docutils literal notranslate"><span class="pre">c_rol()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.c_ror"><code class="docutils literal notranslate"><span class="pre">c_ror()</span></code></a></li>

@@ -573,15 +573,22 @@ class rTTKRippleCarryAdder(Gate, rOperation):
 
         self.definition = qc
 
-def simulate(circuit: QuantumCircuit, method='statevector', device='CPU') -> Counts:
+def simulate(circuit: QuantumCircuit, method='automatic', device='CPU') -> Counts:
     """This helper function simulates the given circuit and returns the results.
 
     :param circuit: The circuit to simulate.
-    :returns: The results of the simulation.
+    :param method: The method to use for the simulator.
+    :param device: The device to run the simulation on (CPU or GPU).
+    :returns: The result counts of the simulation.
     """
-    backend_sim = AerSimulator(method=method, device=device)
 
-    job_sim = backend_sim.run(transpile(circuit, backend_sim), shots=1024)
+    # Manually set max_memory_mb to INT_MAX as workaround for https://github.com/Qiskit/qiskit-aer/issues/2056
+    backend_sim = AerSimulator(method=method, device=device, n_qubits=circuit.num_qubits, max_memory_mb=2**64-1)
+
+    # Transpile the circuit to convert rOperations into basis gates
+    transpiled_circuit = transpile(circuit, backend_sim)
+
+    job_sim = backend_sim.run(transpiled_circuit, shots=1024)
     result_sim = job_sim.result()
     counts = result_sim.get_counts(circuit)
     return counts
@@ -614,11 +621,13 @@ def make_circuit(circuit: QuantumCircuit, inputs: Sequence[int], input_registers
 
     return qc
 
-def run_circuit(circuit: QuantumCircuit, verbose: bool = False, method='statevector', device='CPU') -> Sequence[int]:
+def run_circuit(circuit: QuantumCircuit, verbose: bool = False, method='automatic', device='CPU') -> Sequence[int]:
     """This helper function simulates a given circuit and retrieves the integer values of the classical registers.
 
     :param circuit: The circuit to run.
     :param verbose: Print the raw result given by the simulator.
+    :param method: The method to use for the simulator.
+    :param device: The device to run the simulation on (CPU or GPU).
     :returns: A list of the integers stored in the classical registers of the circuit after the circuit has been simulated. It takes into account only the most frequent result.
     """
     # Simulate the circuit

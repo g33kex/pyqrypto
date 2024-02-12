@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyqrypto.rOperations &mdash; pyqrypto 0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -118,7 +120,9 @@
 
     <span class="k">return</span> <span class="n">c</span>
 
-<div class="viewcode-block" id="rCircuit"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit">[docs]</a><span class="k">class</span> <span class="nc">rCircuit</span><span class="p">(</span><span class="n">QuantumCircuit</span><span class="p">):</span>
+<div class="viewcode-block" id="rCircuit">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit">[docs]</a>
+<span class="k">class</span> <span class="nc">rCircuit</span><span class="p">(</span><span class="n">QuantumCircuit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper around :class:`QuantumCircuit` that implements the logic needed to chain operations on qubit vectors. It supports new operations that operate on whole quantum registers and handles rotations without using any gate by rewiring the circuit when needed. This being also a fully valid :class:`QuantumCircuit`, it is also possible to apply operations on single qubits as it is normally done in Qiskit.</span>
 
 <span class="sd">    :param inputs: The quantum registers to use as the circuit inputs.</span>
@@ -177,7 +181,9 @@
         
         <span class="k">return</span> <span class="n">stats</span>
 
-<div class="viewcode-block" id="rCircuit.ror"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.ror">[docs]</a>    <span class="k">def</span> <span class="nf">ror</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
+<div class="viewcode-block" id="rCircuit.ror">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.ror">[docs]</a>
+    <span class="k">def</span> <span class="nf">ror</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rotate right a register by a specified amount of qubits.</span>
 
 <span class="sd">        :param X: The register to rotate.</span>
@@ -189,7 +195,10 @@
         <span class="n">op</span> <span class="o">=</span> <span class="n">rROR</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="rCircuit.rol"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.rol">[docs]</a>    <span class="k">def</span> <span class="nf">rol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
+
+<div class="viewcode-block" id="rCircuit.rol">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.rol">[docs]</a>
+    <span class="k">def</span> <span class="nf">rol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rotate left a register by a specified amount of qubits.</span>
 
 <span class="sd">        :param X: The register to rotate.</span>
@@ -201,7 +210,10 @@
         <span class="n">op</span> <span class="o">=</span> <span class="n">rROL</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="rCircuit.xor"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.xor">[docs]</a>    <span class="k">def</span> <span class="nf">xor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
+
+<div class="viewcode-block" id="rCircuit.xor">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.xor">[docs]</a>
+    <span class="k">def</span> <span class="nf">xor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Apply a bitwise XOR between two registers or between one register and a constant and store the result in the first register.</span>
 
 <span class="sd">        :param X: The first register to XOR (the result will be stored in this register, overwriting its previous value).</span>
@@ -221,7 +233,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="rCircuit.neg"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.neg">[docs]</a>    <span class="k">def</span> <span class="nf">neg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
+
+<div class="viewcode-block" id="rCircuit.neg">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.neg">[docs]</a>
+    <span class="k">def</span> <span class="nf">neg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Apply a bitwise NOT on a register.</span>
 
 <span class="sd">        :param X: The register to apply the NOT to.</span>
@@ -233,7 +248,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="rCircuit.add"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AncillaRegister</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;ripple&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
+
+<div class="viewcode-block" id="rCircuit.add">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.add">[docs]</a>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AncillaRegister</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;ripple&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Add modulo :math:`2^n` two registers of size n or a register of size n and a constant and store the result in the first register.</span>
 
 <span class="sd">        The adder can be implemented using different techniques:</span>
@@ -268,9 +286,13 @@
                 <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Cannot make a constant adder without ancilla qubits.&quot;</span><span class="p">)</span>
             <span class="n">op</span> <span class="o">=</span> <span class="n">rConstantDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+</div>
 
-<div class="viewcode-block" id="rOperation"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rOperation">[docs]</a><span class="k">class</span> <span class="nc">rOperation</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rOperation">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rOperation">[docs]</a>
+<span class="k">class</span> <span class="nc">rOperation</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class defining an operation on registers of qubits.</span>
 <span class="sd">    </span>
 <span class="sd">    :ivar inputs: The inputs registers of the operation.</span>
@@ -290,7 +312,10 @@
     <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span></div>
 
-<div class="viewcode-block" id="rPrepare"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rPrepare">[docs]</a><span class="k">class</span> <span class="nc">rPrepare</span><span class="p">(</span><span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rPrepare">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rPrepare">[docs]</a>
+<span class="k">class</span> <span class="nc">rPrepare</span><span class="p">(</span><span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A circuit preparing a QuantumRegister to an initial classical integer value.</span>
 
 <span class="sd">    :param X: The register to prepare.</span>
@@ -314,7 +339,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="rROR"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rROR">[docs]</a><span class="k">class</span> <span class="nc">rROR</span><span class="p">(</span><span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rROR">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rROR">[docs]</a>
+<span class="k">class</span> <span class="nc">rROR</span><span class="p">(</span><span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Defines the right rotation operation on a QuantumRegiser.</span>
 
 <span class="sd">    :param X: The register to rotate.</span>
@@ -334,7 +362,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">r</span><span class="p">:]</span><span class="o">+</span><span class="n">X</span><span class="p">[:</span><span class="n">r</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span></div>
 
-<div class="viewcode-block" id="rROL"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rROL">[docs]</a><span class="k">class</span> <span class="nc">rROL</span><span class="p">(</span><span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rROL">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rROL">[docs]</a>
+<span class="k">class</span> <span class="nc">rROL</span><span class="p">(</span><span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Defines the left rotation operation on a QuantumRegister.</span>
 
 <span class="sd">    :param X: The register to rotate.</span>
@@ -355,7 +386,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="n">r</span><span class="p">:]</span><span class="o">+</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="n">r</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span></div>
 
-<div class="viewcode-block" id="rConstantXOR"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantXOR">[docs]</a><span class="k">class</span> <span class="nc">rConstantXOR</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rConstantXOR">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantXOR">[docs]</a>
+<span class="k">class</span> <span class="nc">rConstantXOR</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing a logical bitwise XOR operation between a register of qubits and a constant.</span>
 <span class="sd">    </span>
 <span class="sd">    :param X: The register to XOR with c.</span>
@@ -382,7 +416,10 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="rNOT"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rNOT">[docs]</a><span class="k">class</span> <span class="nc">rNOT</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rNOT">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rNOT">[docs]</a>
+<span class="k">class</span> <span class="nc">rNOT</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing a bitwise NOT operation on a register</span>
 
 <span class="sd">    :param X: The register to apply NOT on.</span>
@@ -404,7 +441,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="rXOR"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rXOR">[docs]</a><span class="k">class</span> <span class="nc">rXOR</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rXOR">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rXOR">[docs]</a>
+<span class="k">class</span> <span class="nc">rXOR</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing a logical bitwise XOR operation between two registers.</span>
 
 <span class="sd">    :param X: The first register to XOR.</span>
@@ -430,7 +470,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="rConstantDKRSCarryLookaheadAdder"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder">[docs]</a><span class="k">class</span> <span class="nc">rConstantDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rConstantDKRSCarryLookaheadAdder">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder">[docs]</a>
+<span class="k">class</span> <span class="nc">rConstantDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing an addition modulo :math:`2^n` between a register of qubits and a constant.</span>
 <span class="sd">    </span>
 <span class="sd">    :param X: The register of size n to add c to.</span>
@@ -440,7 +483,9 @@
 <span class="sd">    :operation: :math:`X \leftarrow X + c`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="rConstantDKRSCarryLookaheadAdder.get_num_ancilla_qubits"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder.get_num_ancilla_qubits">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="rConstantDKRSCarryLookaheadAdder.get_num_ancilla_qubits">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder.get_num_ancilla_qubits">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of required ancilla qubits without instantiating the class.</span>
 
@@ -448,6 +493,7 @@
 <span class="sd">        :returns: The number of ancilla qubits needed for the computation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">rDKRSCarryLookaheadAdder</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
@@ -495,7 +541,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="rDKRSComputeCarry"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSComputeCarry">[docs]</a><span class="k">class</span> <span class="nc">rDKRSComputeCarry</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rDKRSComputeCarry">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSComputeCarry">[docs]</a>
+<span class="k">class</span> <span class="nc">rDKRSComputeCarry</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implemented the carry computation described in [DKRS2004]_. The last carry is not computed.</span>
 
 <span class="sd">    :param P0: :math:`P_0[i] = p[i, i+1]`, 1 if and only if carry propagages from bit :math:`i` to bit :math:`i+1`.</span>
@@ -538,7 +587,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="rDKRSCarryLookaheadAdder"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder">[docs]</a><span class="k">class</span> <span class="nc">rDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rDKRSCarryLookaheadAdder">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder">[docs]</a>
+<span class="k">class</span> <span class="nc">rDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing the n qubits carry-lookahead adder modulo :math:`2^n` described in [DKRS2004]_. This implementation skips the output carry compution.</span>
 
 
@@ -552,7 +604,9 @@
 
 <span class="sd">    .. [DKRS2004] Draper, T. G., Kutin, S. A., Rains, E. M., &amp; Svore, K. M. (2004). A logarithmic-depth quantum carry-lookahead adder. arXiv preprint quant-ph/0406142.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="rDKRSCarryLookaheadAdder.get_num_ancilla_qubits"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder.get_num_ancilla_qubits">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="rDKRSCarryLookaheadAdder.get_num_ancilla_qubits">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder.get_num_ancilla_qubits">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of required ancilla qubits without instantiating the class.</span>
 
@@ -562,6 +616,7 @@
         <span class="k">if</span> <span class="n">n</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">n</span> <span class="o">-</span> <span class="n">_hamming_weight</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">-</span><span class="mi">2</span></div>
+
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
@@ -603,7 +658,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="rTTKRippleCarryAdder"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rTTKRippleCarryAdder">[docs]</a><span class="k">class</span> <span class="nc">rTTKRippleCarryAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rTTKRippleCarryAdder">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rTTKRippleCarryAdder">[docs]</a>
+<span class="k">class</span> <span class="nc">rTTKRippleCarryAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing the n qubits ripple-carry adder modulo :math:`2^n` described in [TTK2009]_. This implementation skips the output carry compution.</span>
 
 
@@ -643,20 +701,31 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="simulate"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.simulate">[docs]</a><span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counts</span><span class="p">:</span>
+
+<div class="viewcode-block" id="simulate">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.simulate">[docs]</a>
+<span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;automatic&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;CPU&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counts</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This helper function simulates the given circuit and returns the results.</span>
 
 <span class="sd">    :param circuit: The circuit to simulate.</span>
-<span class="sd">    :returns: The results of the simulation.</span>
+<span class="sd">    :param method: The method to use for the simulator.</span>
+<span class="sd">    :param device: The device to run the simulation on (CPU or GPU).</span>
+<span class="sd">    :returns: The result counts of the simulation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">backend_sim</span> <span class="o">=</span> <span class="n">AerSimulator</span><span class="p">()</span>
+    <span class="n">backend_sim</span> <span class="o">=</span> <span class="n">AerSimulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">n_qubits</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)</span>
 
-    <span class="n">job_sim</span> <span class="o">=</span> <span class="n">backend_sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend_sim</span><span class="p">),</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="c1"># Transpile the circuit to convert rOperations into basis gates</span>
+    <span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend_sim</span><span class="p">)</span>
+
+    <span class="n">job_sim</span> <span class="o">=</span> <span class="n">backend_sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
     <span class="n">result_sim</span> <span class="o">=</span> <span class="n">job_sim</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">result_sim</span><span class="o">.</span><span class="n">get_counts</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">counts</span></div>
 
-<div class="viewcode-block" id="make_circuit"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.make_circuit">[docs]</a><span class="k">def</span> <span class="nf">make_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">output_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">]):</span>
+
+<div class="viewcode-block" id="make_circuit">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.make_circuit">[docs]</a>
+<span class="k">def</span> <span class="nf">make_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">output_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This helper function makes a circuit with registers as input and measurement operations for the output registers. It also prepares the initial values of the input registers.</span>
 
 <span class="sd">    :param circuit: The base circuit that will be expanded with measurement operations and preparation operations.</span>
@@ -684,15 +753,20 @@
 
     <span class="k">return</span> <span class="n">qc</span></div>
 
-<div class="viewcode-block" id="run_circuit"><a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.run_circuit">[docs]</a><span class="k">def</span> <span class="nf">run_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="run_circuit">
+<a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.run_circuit">[docs]</a>
+<span class="k">def</span> <span class="nf">run_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;automatic&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;CPU&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This helper function simulates a given circuit and retrieves the integer values of the classical registers.</span>
 
 <span class="sd">    :param circuit: The circuit to run.</span>
 <span class="sd">    :param verbose: Print the raw result given by the simulator.</span>
+<span class="sd">    :param method: The method to use for the simulator.</span>
+<span class="sd">    :param device: The device to run the simulation on (CPU or GPU).</span>
 <span class="sd">    :returns: A list of the integers stored in the classical registers of the circuit after the circuit has been simulated. It takes into account only the most frequent result.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Simulate the circuit</span>
-    <span class="n">raw_result</span> <span class="o">=</span> <span class="n">simulate</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+    <span class="n">raw_result</span> <span class="o">=</span> <span class="n">simulate</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Circuit result:&quot;</span><span class="p">,</span> <span class="n">raw_result</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">raw_result</span><span class="o">.</span><span class="n">most_frequent</span><span class="p">()</span>
@@ -700,6 +774,7 @@
     <span class="n">outputs</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">split</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># Convert the outputs to integers</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">]</span></div>
+
 </pre></div>
 
            </div>

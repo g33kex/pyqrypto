@@ -63,7 +63,7 @@ def showcase_add():
     print(result)
 
 def showcase_dkrs_adder():
-    n = 5
+    n = 64
     a = random.getrandbits(n)
     b = random.getrandbits(n)
     # Let's put the wires in the same order as the DKRS2004 paper
@@ -85,14 +85,14 @@ def showcase_dkrs_adder():
     print("Circuit stats:", qc.stats)
 
     # Show circuit as matplotlib graph
-    fig = qc.decompose(gates_to_decompose=[rOperation], reps=2).draw(wire_order=wire_order,output='mpl')
-    plt.show()
+    # fig = qc.decompose(gates_to_decompose=[rOperation], reps=2).draw(wire_order=wire_order,output='mpl')
+    # plt.show()
 
     # Add initialization and measurements
     final_circuit = make_circuit(qc, [a, b], [A, B], [A])
 
     # Run the circuit
-    result = run_circuit(final_circuit)
+    result = run_circuit(final_circuit, method='matrix_product_state')
 
     print("Result:", result[0])
 

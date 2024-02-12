@@ -4,7 +4,10 @@ from pyqrypto.sparkle import Alzette, Traxl_enc, Traxm_enc_round, c_alzette, c_t
 from itertools import chain
 import random
 
-nb_tests = 100
+"""Number of times to run each test"""
+NB_TESTS = 100
+"""Device for the tests"""
+DEVICE = "CPU"
 
 # Utils
 def rol(x, r, n):
@@ -29,7 +32,7 @@ def circuit_test(circuit, classical_function, inputs, input_registers, output_re
         print("Assembling it into the following circuit:")
         print(final_circuit)
         final_circuit.decompose().qasm(filename='circuit.qasm')
-    result = run_circuit(final_circuit, device='GPU')
+    result = run_circuit(final_circuit, device=DEVICE)
 
     if verbose:
         print("True result:\t", true_result)
@@ -41,7 +44,7 @@ def circuit_test(circuit, classical_function, inputs, input_registers, output_re
 
 # Specific tests
 def test_prepare():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n1 = random.randint(1, 10)
         n2 = random.randint(1, 10)
         a = random.getrandbits(n1)
@@ -57,7 +60,7 @@ def test_prepare():
         assert(result)
 
 def test_ror():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         r = random.randint(1, 3*n)
@@ -72,7 +75,7 @@ def test_ror():
         assert(result)
 
 def test_xor():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -88,7 +91,7 @@ def test_xor():
         assert(result)
 
 def test_xorc():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         c = random.getrandbits(n)
@@ -103,7 +106,7 @@ def test_xorc():
         assert(result)
 
 def test_rorrorxor():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -123,7 +126,7 @@ def test_rorrorxor():
         assert(result)
 
 def test_rorxorrolxor():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -143,7 +146,7 @@ def test_rorxorrolxor():
         assert(result)
 
 def test_complexxor():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -168,7 +171,7 @@ def test_complexxor():
         assert(result)
 
 def test_ripple_add():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -185,7 +188,7 @@ def test_ripple_add():
         assert(result)
 
 def test_lookahead_add():
-    for _ in range(nb_tests//5):
+    for _ in range(NB_TESTS//5):
         n = random.randint(1, 32)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -205,7 +208,7 @@ def test_lookahead_add():
         assert(result)
 
 def test_addc():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         c = random.getrandbits(n)
@@ -224,7 +227,7 @@ def test_addc():
         assert(result)
 
 def test_alzette():
-    for _ in range(nb_tests):
+    for _ in range(NB_TESTS):
         n = random.randint(1, 10)
         a = random.getrandbits(n)
         b = random.getrandbits(n)
@@ -257,7 +260,7 @@ def test_ctraxl():
     assert(res_y == true_y)
 
 def test_traxm():
-    for _ in range(nb_tests//10):
+    for _ in range(NB_TESTS//10):
         n = random.choice([16, 32, 64, 128])
         x = [random.getrandbits(n//4) for _ in range(2)]
         y = [random.getrandbits(n//4) for _ in range(2)]
@@ -298,3 +301,5 @@ def test_traxl():
 
         assert(result)
 
+if __name__ == "__main__":
+    test_ripple_add()
