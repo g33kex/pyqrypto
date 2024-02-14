@@ -77,7 +77,13 @@
 <span class="sd">The aim of this library is to be able to implement classical algorithms on quantum computers, to benefit from the speedup given by methods such as Grover&#39;s algorithm.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">ClassicalRegister</span><span class="p">,</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">QuantumCircuit</span><span class="p">,</span>
+    <span class="n">QuantumRegister</span><span class="p">,</span>
+    <span class="n">ClassicalRegister</span><span class="p">,</span>
+    <span class="n">AncillaRegister</span><span class="p">,</span>
+    <span class="n">transpile</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">qiskit_aer.backends</span> <span class="kn">import</span> <span class="n">AerSimulator</span>
 <span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Gate</span>
 <span class="kn">from</span> <span class="nn">qiskit.circuit.library</span> <span class="kn">import</span> <span class="n">Barrier</span><span class="p">,</span> <span class="n">CCXGate</span>
@@ -96,6 +102,7 @@
 <span class="n">SINGLE_QC</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="sd">&quot;&quot;&quot;The quantum cost of a single qubit gate.&quot;&quot;&quot;</span>
 
+
 <span class="k">def</span> <span class="nf">_int_to_bits</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_bits</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert integer k into list of bits in LSB-first.</span>
 
@@ -105,7 +112,8 @@
     <span class="c1"># Make sure k is in range</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">**</span><span class="n">num_bits</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> cannot be encoded on </span><span class="si">{</span><span class="n">num_bits</span><span class="si">}</span><span class="s2"> bits.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="s1">&#39;{:0</span><span class="si">{n}</span><span class="s1">b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">num_bits</span><span class="p">)][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="s2">&quot;{:0</span><span class="si">{n}</span><span class="s2">b}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">num_bits</span><span class="p">)][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
 
 <span class="k">def</span> <span class="nf">_hamming_weight</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Hamming weight of an integer.</span>
@@ -120,6 +128,7 @@
 
     <span class="k">return</span> <span class="n">c</span>
 
+
 <div class="viewcode-block" id="rCircuit">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit">[docs]</a>
 <span class="k">class</span> <span class="nc">rCircuit</span><span class="p">(</span><span class="n">QuantumCircuit</span><span class="p">):</span>
@@ -128,6 +137,7 @@
 <span class="sd">    :param inputs: The quantum registers to use as the circuit inputs.</span>
 <span class="sd">    :param kwargs: Other parameters to pass to the underlying :class:`QuantumCircuit` object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -144,8 +154,8 @@
 <span class="sd">        .. [FoM2009] Mohammadi, M., &amp; Eshghi, M. (2009). On figures of merit in reversible and quantum logic designs. Quantum Information Processing, 8, 297-318.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">stats</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;ancilla&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;qubits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_qubits</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;ancilla&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;qubits&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_qubits</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span>
 
         <span class="c1"># Decompose all rOperations in the circuit</span>
         <span class="n">decomposed_circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">gates_to_decompose</span><span class="o">=</span><span class="p">[</span><span class="n">rOperation</span><span class="p">])</span>
@@ -154,31 +164,33 @@
             <span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">for</span> <span class="n">instruction</span> <span class="ow">in</span> <span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instruction</span><span class="o">.</span><span class="n">operation</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
-                    <span class="n">decomposed_circuit</span> <span class="o">=</span> <span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">gates_to_decompose</span><span class="o">=</span><span class="p">[</span><span class="n">rOperation</span><span class="p">])</span>
+                    <span class="n">decomposed_circuit</span> <span class="o">=</span> <span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span>
+                        <span class="n">gates_to_decompose</span><span class="o">=</span><span class="p">[</span><span class="n">rOperation</span><span class="p">]</span>
+                    <span class="p">)</span>
                     <span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">break</span>
         <span class="n">operations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">count_ops</span><span class="p">())</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;gate_counts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operations</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;quantum_cost&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;gate_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operations</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;quantum_cost&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">operation</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;cx&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;cx&quot;</span><span class="p">:</span>
                 <span class="n">k</span> <span class="o">=</span> <span class="n">FEYNMAN_QC</span>
-            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;ccx&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;ccx&quot;</span><span class="p">:</span>
                 <span class="n">k</span> <span class="o">=</span> <span class="n">TOFFOLI_QC</span>
-            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
                 <span class="n">k</span> <span class="o">=</span> <span class="n">SINGLE_QC</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot compute quantum cost for operation </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>   
-            <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;quantum_cost&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k</span><span class="o">*</span><span class="n">count</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot compute quantum cost for operation </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;quantum_cost&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">count</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
         <span class="c1"># Some papers only count toffoli gates for the circuit depth</span>
         <span class="n">ccx_only</span> <span class="o">=</span> <span class="n">decomposed_circuit</span><span class="o">.</span><span class="n">copy_empty_like</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">instruction</span><span class="p">,</span> <span class="n">qargs</span><span class="p">,</span> <span class="n">cargs</span> <span class="ow">in</span> <span class="n">decomposed_circuit</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">CCXGate</span><span class="p">):</span>
                 <span class="n">ccx_only</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">qargs</span><span class="p">,</span> <span class="n">cargs</span><span class="p">)</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;toffoli_depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ccx_only</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
-        
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;toffoli_depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ccx_only</span><span class="o">.</span><span class="n">depth</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">stats</span>
 
 <div class="viewcode-block" id="rCircuit.ror">
@@ -251,7 +263,13 @@
 
 <div class="viewcode-block" id="rCircuit.add">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rCircuit.add">[docs]</a>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AncillaRegister</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;ripple&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span>
+        <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">ancillas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AncillaRegister</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;ripple&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumRegister</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Add modulo :math:`2^n` two registers of size n or a register of size n and a constant and store the result in the first register.</span>
 
 <span class="sd">        The adder can be implemented using different techniques:</span>
@@ -271,35 +289,41 @@
 <span class="sd">            If Y is a :class:`QuantumRegister`, this operation is an addition between two registers, but if Y is an integer it becomes an addition between a register and a constant. In the latter case, the mode is always :py:data:`lookahead`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">QuantumRegister</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;ripple&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;ripple&quot;</span><span class="p">:</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">rTTKRippleCarryAdder</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)))</span>
-            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;lookahead&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;lookahead&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">ancillas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Cannot make a carry-lookahead adder without ancilla qubits.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span>
+                        <span class="s2">&quot;Cannot make a carry-lookahead adder without ancilla qubits.&quot;</span>
+                    <span class="p">)</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">rDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">)))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown adder mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ancillas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Cannot make a constant adder without ancilla qubits.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span>
+                    <span class="s2">&quot;Cannot make a constant adder without ancilla qubits.&quot;</span>
+                <span class="p">)</span>
             <span class="n">op</span> <span class="o">=</span> <span class="n">rConstantDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 </div>
 
 
+
 <div class="viewcode-block" id="rOperation">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rOperation">[docs]</a>
 <span class="k">class</span> <span class="nc">rOperation</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class defining an operation on registers of qubits.</span>
-<span class="sd">    </span>
+
 <span class="sd">    :ivar inputs: The inputs registers of the operation.</span>
 <span class="sd">    :type inputs: Sequence[QuantumRegister]</span>
 <span class="sd">    :ivar outputs: The outputs registers of the operation.</span>
 <span class="sd">    :type outputs: Sequence[QuantumRegister]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -313,6 +337,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span></div>
 
 
+
 <div class="viewcode-block" id="rPrepare">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rPrepare">[docs]</a>
 <span class="k">class</span> <span class="nc">rPrepare</span><span class="p">(</span><span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
@@ -323,21 +348,22 @@
 
 <span class="sd">    :operation: :math:`X \leftarrow \mathrm{value}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-        
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">num_qubits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;rPrepare </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;rPrepare </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">bits</span> <span class="o">=</span> <span class="n">_int_to_bits</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">num_qubits</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">i</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">qc</span><span class="o">.</span><span class="n">qregs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;rPrepare </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">qc</span><span class="o">.</span><span class="n">qregs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;rPrepare </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">qc</span><span class="o">.</span><span class="n">to_gate</span><span class="p">(),</span> <span class="n">qubits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span></div>
+
 
 
 <div class="viewcode-block" id="rROR">
@@ -360,7 +386,8 @@
             <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Rotation must be by a positive amount.&quot;</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">r</span><span class="p">:]</span><span class="o">+</span><span class="n">X</span><span class="p">[:</span><span class="n">r</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">r</span><span class="p">:]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[:</span><span class="n">r</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span></div>
+
 
 
 <div class="viewcode-block" id="rROL">
@@ -384,14 +411,15 @@
             <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Rotation must be by a positive amount.&quot;</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="n">r</span><span class="p">:]</span><span class="o">+</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="n">r</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="n">r</span><span class="p">:]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="n">r</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span></div>
+
 
 
 <div class="viewcode-block" id="rConstantXOR">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantXOR">[docs]</a>
 <span class="k">class</span> <span class="nc">rConstantXOR</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing a logical bitwise XOR operation between a register of qubits and a constant.</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param X: The register to XOR with c.</span>
 <span class="sd">    :param c: The constant to XOR with X.</span>
 <span class="sd">    :param label: An optional label for the gate.</span>
@@ -407,14 +435,15 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rXORc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
         <span class="n">bits</span> <span class="o">=</span> <span class="n">_int_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-    
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;rXOR </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-   
+
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;rXOR </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bits</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">bit</span><span class="p">:</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
 
 
 <div class="viewcode-block" id="rNOT">
@@ -442,6 +471,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
 
+
 <div class="viewcode-block" id="rXOR">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rXOR">[docs]</a>
 <span class="k">class</span> <span class="nc">rXOR</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
@@ -455,27 +485,32 @@
 <span class="sd">    :operation: :math:`X \leftarrow X \oplus Y`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;rXOR operation must be between two QuantumRegisters of the same size.&quot;</span><span class="p">)</span> 
+            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span>
+                <span class="s2">&quot;rXOR operation must be between two QuantumRegisters of the same size.&quot;</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rXOR&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rXOR&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;rXOR&#39;</span><span class="p">)</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rXOR&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> 
+            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
 
 
 <div class="viewcode-block" id="rConstantDKRSCarryLookaheadAdder">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder">[docs]</a>
 <span class="k">class</span> <span class="nc">rConstantDKRSCarryLookaheadAdder</span><span class="p">(</span><span class="n">Gate</span><span class="p">,</span> <span class="n">rOperation</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A gate implementing an addition modulo :math:`2^n` between a register of qubits and a constant.</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param X: The register of size n to add c to.</span>
 <span class="sd">    :param c: The constant to add to X.</span>
 <span class="sd">    :param label: An optional label for the gate.</span>
@@ -495,51 +530,68 @@
         <span class="k">return</span> <span class="n">rDKRSCarryLookaheadAdder</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">A</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span>
+        <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rADDc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">),</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rADDc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">),</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Circuit needs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="si">}</span><span class="s2"> ancilla qubits but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span><span class="si">}</span><span class="s2"> were given.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Circuit needs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="si">}</span><span class="s2"> ancilla qubits but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span><span class="si">}</span><span class="s2"> were given.&quot;</span>
+            <span class="p">)</span>
 
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;rADD </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-   
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;rADD </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">bits</span> <span class="o">=</span> <span class="n">_int_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">Z</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">::])</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># Z[i] = g[i, i+1]</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="p">:])</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># Z[i] = g[i, i+1]</span>
                 <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="c1"># A[i] = p[i, i+1] and A[0] = s0</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>  <span class="c1"># A[i] = p[i, i+1] and A[0] = s0</span>
 
             <span class="c1"># Lookahead carry</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># Compute carry</span>
                 <span class="n">compute_carry</span> <span class="o">=</span> <span class="n">rDKRSComputeCarry</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Z</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_carry</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">compute_carry</span><span class="o">.</span><span class="n">inputs</span><span class="p">)))</span>
-            
-                <span class="c1"># Compute sum</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">Z</span><span class="p">)</span> <span class="c1"># A[i] = si</span>
-                <span class="c1"># Now do everything in reverse</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># A = s&#39;</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
-                    <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
-                <span class="n">uncompute_carry</span> <span class="o">=</span> <span class="n">rDKRSComputeCarry</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Z</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">reverse_ops</span><span class="p">()</span>
+                <span class="c1"># Compute sum</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">Z</span><span class="p">)</span>  <span class="c1"># A[i] = si</span>
+                <span class="c1"># Now do everything in reverse</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>  <span class="c1"># A = s&#39;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span>
+                        <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="p">)</span>
+
+                <span class="n">uncompute_carry</span> <span class="o">=</span> <span class="n">rDKRSComputeCarry</span><span class="p">(</span>
+                    <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Z</span><span class="p">,</span> <span class="n">X</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">reverse_ops</span><span class="p">()</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uncompute_carry</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">uncompute_carry</span><span class="o">.</span><span class="n">inputs</span><span class="p">)))</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
-                    <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span>
+                        <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                         <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
 
 
 <div class="viewcode-block" id="rDKRSComputeCarry">
@@ -552,40 +604,53 @@
 <span class="sd">    :param ancillas: The ancilla qubits used for the computation. They must be set to 0 before the circuit and will be reset to 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">P0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rCarry&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">P0</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">),</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">P0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">P0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rCarry&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">P0</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">),</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">P0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">P0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">]</span>
 
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">P0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;rCarry&#39;</span><span class="p">)</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">P0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rCarry&quot;</span><span class="p">)</span>
 
         <span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="n">P0</span><span class="p">]</span>
-        <span class="n">ancilla_index</span><span class="o">=</span><span class="mi">0</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))):</span>
-            <span class="n">Pt_size</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
-            <span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="n">ancilla_index</span><span class="p">:</span><span class="n">ancilla_index</span><span class="o">+</span><span class="n">Pt_size</span><span class="p">]))</span>
-            <span class="n">ancilla_index</span><span class="o">+=</span><span class="n">Pt_size</span>
+        <span class="n">ancilla_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))):</span>
+            <span class="n">Pt_size</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="n">ancilla_index</span> <span class="p">:</span> <span class="n">ancilla_index</span> <span class="o">+</span> <span class="n">Pt_size</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">ancilla_index</span> <span class="o">+=</span> <span class="n">Pt_size</span>
 
         <span class="c1"># P-rounds</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))):</span>
-            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)):</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)):</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
         <span class="c1"># G-rounds</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)):</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">],</span><span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)):</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span>
+                    <span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">P</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">],</span>
+                    <span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="p">)</span>
         <span class="c1"># C rounds</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">/</span><span class="mi">3</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span>
+                    <span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">P</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">G</span><span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="p">)</span>
 
         <span class="c1"># P^-1 rounds</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)):</span>
-                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="n">t</span><span class="p">)):</span>
+                <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
 
 
 <div class="viewcode-block" id="rDKRSCarryLookaheadAdder">
@@ -604,6 +669,7 @@
 
 <span class="sd">    .. [DKRS2004] Draper, T. G., Kutin, S. A., Rains, E. M., &amp; Svore, K. M. (2004). A logarithmic-depth quantum carry-lookahead adder. arXiv preprint quant-ph/0406142.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="rDKRSCarryLookaheadAdder.get_num_ancilla_qubits">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.rDKRSCarryLookaheadAdder.get_num_ancilla_qubits">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -613,50 +679,61 @@
 <span class="sd">        :param n: The number of qubits of the vectors to add.</span>
 <span class="sd">        :returns: The number of ancilla qubits needed for the computation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">n</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">n</span> <span class="o">-</span> <span class="n">_hamming_weight</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">-</span><span class="mi">2</span></div>
+        <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="n">_hamming_weight</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">floor</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mi">2</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">A</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span>
+        <span class="n">ancillas</span><span class="p">:</span> <span class="n">AncillaRegister</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rADD&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">),</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rADD&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">),</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;rADD operation must be between two QuantumRegisters of the same size.&quot;</span><span class="p">)</span> 
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;rADD&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span>
+                <span class="s2">&quot;rADD operation must be between two QuantumRegisters of the same size.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ancillas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rADD&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ancillas</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_ancilla_qubits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;Wrong number of ancilla qubits.&quot;</span><span class="p">)</span>
 
-        <span class="n">Z</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">::])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># Z[i] = g[i, i+1]</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">AncillaRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">ancillas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="p">:])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># Z[i] = g[i, i+1]</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="c1"># A[i] = p[i, i+1] and A[0] = s0</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>  <span class="c1"># A[i] = p[i, i+1] and A[0] = s0</span>
 
         <span class="c1"># Lookahead carry</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Compute carry</span>
             <span class="n">compute_carry</span> <span class="o">=</span> <span class="n">rDKRSComputeCarry</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Z</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_carry</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">compute_carry</span><span class="o">.</span><span class="n">inputs</span><span class="p">)))</span>
-        
+
             <span class="c1"># Compute sum</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">Z</span><span class="p">)</span> <span class="c1"># A[i] = si</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">Z</span><span class="p">)</span>  <span class="c1"># A[i] = si</span>
             <span class="c1"># Now do everything in reverse</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># A = s&#39;</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>  <span class="c1"># A = s&#39;</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
-            <span class="n">uncompute_carry</span> <span class="o">=</span> <span class="n">rDKRSComputeCarry</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Z</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">reverse_ops</span><span class="p">()</span>
+            <span class="n">uncompute_carry</span> <span class="o">=</span> <span class="n">rDKRSComputeCarry</span><span class="p">(</span>
+                <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Z</span><span class="p">,</span> <span class="n">X</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">reverse_ops</span><span class="p">()</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uncompute_carry</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">uncompute_carry</span><span class="o">.</span><span class="n">inputs</span><span class="p">)))</span>
 
             <span class="n">qc</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">QuantumRegister</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">A</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
+
 
 
 <div class="viewcode-block" id="rTTKRippleCarryAdder">
@@ -675,36 +752,41 @@
 <span class="sd">    .. [TTK2009] Takahashi, Y., Tani, S., &amp; Kunihiro, N. (2009). Quantum addition circuits and unbounded fan-out. arXiv preprint arXiv:0910.2530.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span><span class="s2">&quot;rADD operation must be between two QuantumRegisters of the same size.&quot;</span><span class="p">)</span> 
+            <span class="k">raise</span> <span class="n">CircuitError</span><span class="p">(</span>
+                <span class="s2">&quot;rADD operation must be between two QuantumRegisters of the same size.&quot;</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rADD&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;rADD&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
-        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;rADD&#39;</span><span class="p">)</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rADD&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>     
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">ccx</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
             <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">qc</span></div>
 
 
+
 <div class="viewcode-block" id="simulate">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.simulate">[docs]</a>
-<span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;automatic&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;CPU&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counts</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;automatic&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;CPU&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counts</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This helper function simulates the given circuit and returns the results.</span>
 
 <span class="sd">    :param circuit: The circuit to simulate.</span>
@@ -712,7 +794,19 @@
 <span class="sd">    :param device: The device to run the simulation on (CPU or GPU).</span>
 <span class="sd">    :returns: The result counts of the simulation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">backend_sim</span> <span class="o">=</span> <span class="n">AerSimulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">n_qubits</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)</span>
+
+    <span class="c1"># Manually set max_memory_mb to INT_MAX as workaround for https://github.com/Qiskit/qiskit-aer/issues/2056</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;matrix_product_state&quot;</span><span class="p">:</span>
+        <span class="n">backend_sim</span> <span class="o">=</span> <span class="n">AerSimulator</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">n_qubits</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">,</span>
+            <span class="n">max_memory_mb</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">64</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">backend_sim</span> <span class="o">=</span> <span class="n">AerSimulator</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">n_qubits</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">num_qubits</span>
+        <span class="p">)</span>
 
     <span class="c1"># Transpile the circuit to convert rOperations into basis gates</span>
     <span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend_sim</span><span class="p">)</span>
@@ -723,9 +817,15 @@
     <span class="k">return</span> <span class="n">counts</span></div>
 
 
+
 <div class="viewcode-block" id="make_circuit">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.make_circuit">[docs]</a>
-<span class="k">def</span> <span class="nf">make_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span> <span class="n">output_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">make_circuit</span><span class="p">(</span>
+    <span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">input_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span>
+    <span class="n">output_registers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">QuantumRegister</span><span class="p">],</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This helper function makes a circuit with registers as input and measurement operations for the output registers. It also prepares the initial values of the input registers.</span>
 
 <span class="sd">    :param circuit: The base circuit that will be expanded with measurement operations and preparation operations.</span>
@@ -745,18 +845,28 @@
         <span class="n">classical_output_registers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classical_output_register</span><span class="p">)</span>
     <span class="c1"># Prepare the input by initializing it to given values</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">input_register</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_registers</span><span class="p">):</span>
-        <span class="n">qc</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">rPrepare</span><span class="p">(</span><span class="n">input_register</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">input_register</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">front</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span>
+            <span class="n">rPrepare</span><span class="p">(</span><span class="n">input_register</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+            <span class="n">input_register</span><span class="p">,</span>
+            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">front</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="n">qc</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
     <span class="c1"># Add measurements for the output</span>
-    <span class="k">for</span> <span class="n">output_register</span><span class="p">,</span> <span class="n">classical_output_register</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_registers</span><span class="p">,</span> <span class="n">classical_output_registers</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">output_register</span><span class="p">,</span> <span class="n">classical_output_register</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">output_registers</span><span class="p">,</span> <span class="n">classical_output_registers</span>
+    <span class="p">):</span>
         <span class="n">qc</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="n">output_register</span><span class="p">,</span> <span class="n">classical_output_register</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">qc</span></div>
 
 
+
 <div class="viewcode-block" id="run_circuit">
 <a class="viewcode-back" href="../../rOperations.html#pyqrypto.rOperations.run_circuit">[docs]</a>
-<span class="k">def</span> <span class="nf">run_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;automatic&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;CPU&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">run_circuit</span><span class="p">(</span>
+    <span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;automatic&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;CPU&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This helper function simulates a given circuit and retrieves the integer values of the classical registers.</span>
 
 <span class="sd">    :param circuit: The circuit to run.</span>

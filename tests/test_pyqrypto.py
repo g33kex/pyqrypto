@@ -8,6 +8,8 @@ import random
 NB_TESTS = 100
 """Device for the tests"""
 DEVICE = "CPU"
+"""Simulation method"""
+METHOD = "matrix_product_state"
 
 # Utils
 def rol(x, r, n):
@@ -32,7 +34,7 @@ def circuit_test(circuit, classical_function, inputs, input_registers, output_re
         print("Assembling it into the following circuit:")
         print(final_circuit)
         final_circuit.decompose().qasm(filename='circuit.qasm')
-    result = run_circuit(final_circuit, device=DEVICE)
+    result = run_circuit(final_circuit, device=DEVICE, method=METHOD)
 
     if verbose:
         print("True result:\t", true_result)
