@@ -12,7 +12,6 @@ from qiskit import (
     AncillaRegister,
     transpile,
 )
-from qiskit_aer.backends import AerSimulator
 from qiskit.circuit import Gate
 from qiskit.circuit.library import Barrier, CCXGate
 from qiskit.result.counts import Counts
@@ -656,34 +655,41 @@ class rTTKRippleCarryAdder(Gate, rOperation):
 
 
 def simulate(circuit: QuantumCircuit, method="automatic", device="CPU") -> Counts:
-    """This helper function simulates the given circuit and returns the results.
+    """This helper function simulates the given circuit and returns the results. It needs the `qiskit_aer` dependency.
 
     :param circuit: The circuit to simulate.
     :param method: The method to use for the simulator.
     :param device: The device to run the simulation on (CPU or GPU).
     :returns: The result counts of the simulation.
     """
+    try:
+        from qiskit_aer.backends import AerSimulator
 
-    # Manually set max_memory_mb to INT_MAX as workaround for https://github.com/Qiskit/qiskit-aer/issues/2056
-    if method == "matrix_product_state":
-        backend_sim = AerSimulator(
-            method=method,
-            device=device,
-            n_qubits=circuit.num_qubits,
-            max_memory_mb=2**64 - 1,
+        # Manually set max_memory_mb to INT_MAX as workaround for https://github.com/Qiskit/qiskit-aer/issues/2056
+        if method == "matrix_product_state":
+            backend_sim = AerSimulator(
+                method=method,
+                device=device,
+                n_qubits=circuit.num_qubits,
+                max_memory_mb=2**64 - 1,
+            )
+        else:
+            backend_sim = AerSimulator(
+                method=method, device=device, n_qubits=circuit.num_qubits
+            )
+
+        # Transpile the circuit to convert rOperations into basis gates
+        transpiled_circuit = transpile(circuit, backend_sim)
+
+        job_sim = backend_sim.run(transpiled_circuit, shots=1024)
+        result_sim = job_sim.result()
+        counts = result_sim.get_counts(circuit)
+        return counts
+
+    except ImportError:
+        raise ImportError(
+            "qiskit_aer is not installed. Please install it to use the simulate function."
         )
-    else:
-        backend_sim = AerSimulator(
-            method=method, device=device, n_qubits=circuit.num_qubits
-        )
-
-    # Transpile the circuit to convert rOperations into basis gates
-    transpiled_circuit = transpile(circuit, backend_sim)
-
-    job_sim = backend_sim.run(transpiled_circuit, shots=1024)
-    result_sim = job_sim.result()
-    counts = result_sim.get_counts(circuit)
-    return counts
 
 
 def make_circuit(

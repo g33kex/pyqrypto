@@ -1,14 +1,8 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
+[tool.poetry]
 name = "pyqrypto"
-version = "0.1"
-authors = [ { name = "Vi Retault", email="g33kex@pm.me" } ]
+version = "0.1.1"
 description = "A library for building reversible quantum circuits that perform classical cryptography"
-readme = "README.md"
-requires-python = ">=3.7"
+keywords = ["cryptography", "qiskit", "quantum"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Development Status :: 3 - Alpha",
@@ -17,14 +11,26 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Security :: Cryptography"
 ]
-dependencies = [
-  'qiskit >= 0.43.1'
-]
-keywords = ["cryptography", "qiskit", "quantum"]
+authors = ["Vi Retault <g33kex@pm.me>"]
+license = "GPLv3"
+readme = "README.md"
+repository = "https://github.com/g33kex/pyqrypto.git"
+documentation = "https://g33kex.github.io/pyqrypto"
 
-[project.urls]
-Repository = "https://github.com/g33kex/pyqrypto.git"
-Documentation = "https://g33kex.github.io/pyqrypto"
+[tool.poetry.dependencies]
+python = "^3.9"
+qiskit = "^1.0.0"
+qiskit-aer = { version = "^0.13.3", optional = true }
 
-[tool.pytest.ini_options]
-pythonpath = "src"
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.1"
+sphinx = "^7.2.6"
+sphinx-rtd-theme = "^2.0.0"
+qiskit-aer = "^0.13.3"
+
+[tool.poetry.extras]
+simulate = ["qiskit_aer"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

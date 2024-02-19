@@ -1,4 +1,6 @@
 .venv/
 __pycache__/
-docs/build/doctrees/
 dist/
+docs/build/html/.buildinfo
+docs/build/html/.doctrees/
+poetry.lock

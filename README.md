@@ -7,19 +7,29 @@ pycrypto
 
 Read the documentation [here](https://g33kex.github.io/pyqrypto/build/html/index.html).
 
-## Packaging
+## Building
+
+Make sure [poetry](https://python-poetry.org/) is installed.
 
 Here are the steps to package this library.
-
 ```
-pip install -r reqs.development
-python3 -m build
+poetry build
 ```
 
 Follow theses steps to build the Sphinx documentation.
+```
+poetry install
+poetry run sphinx-build docs/source/ docs/build/html
+```
 
+## Test
+
+Run these commands to test the library:
 ```
-pip install -r reqs.development
-cd docs
-make html
+poetry install
+poetry run pytest
 ```
+
+## Contributing
+
+This is an early version of the library, but contributions are always welcome.
