@@ -1,5 +1,6 @@
 """A library of vectorial operations that can be applied to quantum registers.
-on a vector of qubits. Operations can be applied directly between registers, for example a bitwise
+
+Operations can be applied directly between registers, for example a bitwise
 XOR or an addition. This is similar to how registers work on classical computers. Rotations, and
 permutations in general, can be made without using any quantum gate because they just return a new
 view on the qubits, i.e. a new :class:`QuantumRegister` that has the same logical qubits but in a
@@ -11,16 +12,20 @@ benefit from the speedup given by methods such as Grover's algorithm.
 from __future__ import annotations
 
 import warnings
-from abc import ABC
 from itertools import chain
 from math import floor, log2
-from typing import Final, Optional, Sequence
+from typing import TYPE_CHECKING
 
 from qiskit import AncillaRegister, ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.circuit import Gate
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit.library import Barrier, CCXGate
-from qiskit.result.counts import Counts
+
+if TYPE_CHECKING:
+    from typing import Any, Final, Sequence
+
+    from qiskit.result.counts import Counts
+
 
 FEYNMAN_QC: Final[int] = 1
 """The quantum cost of the Feynman gate (CNOT)."""
@@ -30,21 +35,21 @@ SINGLE_QC: Final[int] = 1
 """The quantum cost of a single qubit gate."""
 
 
-def _int_to_bits(k: int, num_bits):
+def _int_to_bits(k: int, num_bits: int) -> list[int]:
     """Convert integer k into list of bits in LSB-first.
 
     :param  k: The integer to convert to list of bits.
-
     :param num_bits: The numbers of bits to use to encode k.
-
+    :returns: A list of bits encoding k.
     """
     # Make sure k is in range
     if k >= 2**num_bits:
-        raise ValueError(f"{k} cannot be encoded on {num_bits} bits.")
+        msg = f"{k} cannot be encoded on {num_bits} bits."
+        raise ValueError(msg)
     return [int(i) for i in f"{k:0{num_bits}b}"[::-1]]
 
 
-def _hamming_weight(k: int):
+def _hamming_weight(k: int) -> int:
     """Compute the Hamming weight of an integer.
 
     :param k: The integer to compute the Hamming weight of.
@@ -59,8 +64,11 @@ def _hamming_weight(k: int):
 
 
 class RegisterCircuit(QuantumCircuit):
-    """A wrapper around :class:`QuantumCircuit` that implements the logic needed to chain operations
-    on qubit vectors. It supports new operations that operate on whole quantum registers and handles
+    """A wrapper around :class:`QuantumCircuit`.
+
+    It implements the logic needed to chain operations on quantum registers.
+
+    It supports new operations that operate on whole quantum registers and handles
     rotations without using any gate by rewiring the circuit when needed. This being also a fully
     valid :class:`QuantumCircuit`, it is also possible to apply operations on single qubits as it is
     normally done in Qiskit.
@@ -69,23 +77,26 @@ class RegisterCircuit(QuantumCircuit):
     :param kwargs: Other parameters to pass to the underlying :class:`QuantumCircuit` object.
     """
 
-    def __init__(self, *inputs: QuantumRegister, **kwargs):
+    def __init__(self: RegisterCircuit, *inputs: QuantumRegister, **kwargs: Any) -> None:
+        """Initialize a register circuit with inputs and arguments for the quantum circuit."""
         super().__init__(*inputs, **kwargs)
 
     @property
-    def stats(self):
-        """Some statistics about the circuit:
+    def stats(self: RegisterCircuit) -> dict:
+        """Some statistics about the circuit.
 
         - :py:data:`quantum_cost`: The quantum cost of the circuit as defined by [FoM2009]_.
         - :py:data:`depth`: The circuit depth when register operations are decomposed into NOT,
-        CNOT and CCNOT gates.
+          CNOT and CCNOT gates.
         - :py:data:`gate_counts`: The number of basic gates in the circuit.
 
-        .. warning:: Quantum cost computation only works if the circuit contains only register
-        operations or NOT, CNOT, and CCNOT gates.
+        .. warning::
+            Quantum cost computation only works if the circuit contains only register
+            operations or NOT, CNOT, and CCNOT gates.
 
-        .. [FoM2009] Mohammadi, M., & Eshghi, M. (2009). On figures of merit in reversible and
-        quantum logic designs. Quantum Information Processing, 8, 297-318.
+        .. [FoM2009]
+            Mohammadi, M., & Eshghi, M. (2009). On figures of merit in reversible and
+            quantum logic designs. Quantum Information Processing, 8, 297-318.
         """
         stats = {}
         stats["ancilla"] = self.num_ancillas
@@ -99,7 +110,7 @@ class RegisterCircuit(QuantumCircuit):
             for instruction in decomposed_circuit.data:
                 if isinstance(instruction.operation, RegisterOperation):
                     decomposed_circuit = decomposed_circuit.decompose(
-                        gates_to_decompose=[RegisterOperation]
+                        gates_to_decompose=[RegisterOperation],
                     )
                     stop = False
                     break
@@ -115,7 +126,10 @@ class RegisterCircuit(QuantumCircuit):
             elif operation == "x":
                 cost = SINGLE_QC
             else:
-                warnings.warn(f"Cannot compute quantum cost for operation {operation}.")
+                warnings.warn(
+                    f"Cannot compute quantum cost for operation {operation}.",
+                    stacklevel=1,
+                )
             stats["quantum_cost"] += cost * count
         stats["depth"] = decomposed_circuit.depth()
         # Some papers only count toffoli gates for the circuit depth
@@ -127,7 +141,7 @@ class RegisterCircuit(QuantumCircuit):
 
         return stats
 
-    def ror(self, X: QuantumRegister, r: int) -> QuantumRegister:
+    def ror(self: RegisterCircuit, X: QuantumRegister, r: int) -> QuantumRegister:
         r"""Rotate right a register by a specified amount of qubits.
 
         :param X: The register to rotate.
@@ -139,7 +153,7 @@ class RegisterCircuit(QuantumCircuit):
         operation = RegisterROR(X, r)
         return operation.outputs[0]
 
-    def rol(self, X: QuantumRegister, r: int) -> QuantumRegister:
+    def rol(self: RegisterCircuit, X: QuantumRegister, r: int) -> QuantumRegister:
         r"""Rotate left a register by a specified amount of qubits.
 
         :param X: The register to rotate.
@@ -151,20 +165,19 @@ class RegisterCircuit(QuantumCircuit):
         operation = RegisterROL(X, r)
         return operation.outputs[0]
 
-    def xor(self, X: QuantumRegister, Y: QuantumRegister | int) -> QuantumRegister:
-        r"""Apply a bitwise XOR between two registers or between one register and a constant and
-        store the result in the first register.
+    def xor(self: RegisterCircuit, X: QuantumRegister, Y: QuantumRegister | int) -> QuantumRegister:
+        r"""Apply a bitwise XOR between two registers or between one register and a constant.
 
         :param X: The first register to XOR (the result will be stored in this register, overwriting
-        its previous value).
+          its previous value).
         :param Y: The second register to XOR or a constant.
         :returns: The output register :math:`X`.
 
         :operation: :math:`X \leftarrow X \oplus Y`
 
         .. note::
-            If Y is a :class:`QuantumRegister`, this operation is a XOR between two registers, but
-            if Y is an integer it becomes a XOR between a register and a constant.
+            If Y is a :class:`QuantumRegister`, this operation is a XOR between two registers,
+            but if Y is an integer it becomes a XOR between a register and a constant.
         """
         if isinstance(Y, QuantumRegister):
             operation = RegisterXOR(X, Y)
@@ -174,7 +187,7 @@ class RegisterCircuit(QuantumCircuit):
             self.append(operation, list(X))
         return operation.outputs[0]
 
-    def neg(self, X: QuantumRegister) -> QuantumRegister:
+    def neg(self: RegisterCircuit, X: QuantumRegister) -> QuantumRegister:
         r"""Apply a bitwise NOT on a register.
 
         :param X: The register to apply the NOT to.
@@ -187,24 +200,23 @@ class RegisterCircuit(QuantumCircuit):
         return operation.outputs[0]
 
     def add(
-        self,
+        self: RegisterCircuit,
         X: QuantumRegister,
         Y: QuantumRegister | int,
-        ancillas: Optional[AncillaRegister] = None,
-        mode="ripple",
+        ancillas: AncillaRegister | None = None,
+        mode: str = "ripple",
     ) -> QuantumRegister:
-        r"""Add modulo :math:`2^n` two registers of size n or a register of size n and a constant
-        and store the result in the first register.
+        r"""Add modulo :math:`2^n` two registers of size n or a register of size n and a constant.
 
         The adder can be implemented using different techniques:
 
         - :py:data:`ripple`: requires 0 ancilla qubits, uses the ripple-carry method
-        from [TTK2009]_.
+          from [TTK2009]_.
         - :py:data:`lookahead`: requires :math:`2n-w(n-1)-\lfloor \log(n-1) \rfloor-2` ancilla
-        qubits, uses the carry-lookahead method from [DKRS2004]_.
+          qubits, uses the carry-lookahead method from [DKRS2004]_.
 
         :param X: First register to add (the result will be stored in this register, overwriting
-        its previous value).
+          its previous value).
         :param Y: Second register to add or a constant.
         :param ancillas: The anquilla register needed in :py:data:`lookahead` mode.
         :mode: The type of adder to use.
@@ -223,23 +235,24 @@ class RegisterCircuit(QuantumCircuit):
                 self.append(operation, list(chain(X, Y)))
             elif mode == "lookahead":
                 if ancillas is None:
-                    raise CircuitError(
-                        "Cannot make a carry-lookahead adder without ancilla qubits."
-                    )
+                    msg = "Cannot make a carry-lookahead adder without ancilla qubits."
+                    raise CircuitError(msg)
                 operation = RegisterDKRSCarryLookaheadAdder(X, Y, ancillas)
                 self.append(operation, list(chain(X, Y, ancillas)))
             else:
-                raise CircuitError(f"Unknown adder mode {mode}.")
+                msg = f"Unknown adder mode {mode}"
+                raise CircuitError(msg)
         else:
             if ancillas is None:
-                raise CircuitError("Cannot make a constant adder without ancilla qubits.")
+                msg = "Cannot make a constant adder without ancilla qubits."
+                raise CircuitError(msg)
             operation = RegisterConstantDKRSCarryLookaheadAdder(X, Y, ancillas)
             self.append(operation, list(chain(X, ancillas)))
         return operation.outputs[0]
 
 
-class RegisterOperation(ABC):
-    """Abstract class defining an operation on registers of qubits.
+class RegisterOperation:
+    """An operation on registers of qubits.
 
     :ivar inputs: The inputs registers of the operation.
     :type inputs: Sequence[QuantumRegister]
@@ -247,12 +260,13 @@ class RegisterOperation(ABC):
     :type outputs: Sequence[QuantumRegister]
     """
 
-    def __init__(self):
-        self._inputs = []
-        self._outputs = []
+    def __init__(self: RegisterOperation) -> None:
+        """Initialize a register operation."""
+        self._inputs: Sequence[QuantumRegister] = []
+        self._outputs: Sequence[QuantumRegister] = []
 
     @property
-    def outputs(self) -> list[QuantumRegister]:
+    def outputs(self: RegisterOperation) -> Sequence[QuantumRegister]:
         """Get the outputs of the operation.
 
         :returns: A list containing the output quantum registers of the operation.
@@ -260,7 +274,7 @@ class RegisterOperation(ABC):
         return self._outputs
 
     @property
-    def inputs(self) -> list[QuantumRegister]:
+    def inputs(self: RegisterOperation) -> Sequence[QuantumRegister]:
         """Get the inputs of the operation.
 
         :returns: A list containing the input quantum registers of the operation.
@@ -277,7 +291,8 @@ class RegisterPrepare(QuantumCircuit, RegisterOperation):
     :operation: :math:`X \leftarrow \mathrm{value}`
     """
 
-    def __init__(self, X: QuantumRegister, value: int) -> None:
+    def __init__(self: RegisterPrepare, X: QuantumRegister, value: int) -> None:
+        """Initialize a RegisterPrepare operation."""
         num_qubits = len(X)
         circuit = QuantumCircuit(X, name=f"rPrepare {value}")
         bits = _int_to_bits(value, num_qubits)
@@ -306,10 +321,12 @@ class RegisterROR(RegisterOperation):
         The result will be stored in register :attr:`self.outputs[0]`.
     """
 
-    def __init__(self, X: QuantumRegister, r: int) -> None:
+    def __init__(self: RegisterROR, X: QuantumRegister, r: int) -> None:
+        """Initialize a RegisterROR operation."""
         super().__init__()
         if r < 0:
-            raise CircuitError("Rotation must be by a positive amount.")
+            msg = "Rotation must be by a positive amount."
+            raise CircuitError(msg)
         r = r % len(X)
         self._inputs = [X]
         self._outputs = [QuantumRegister(bits=X[r:] + X[:r], name=X.name)]
@@ -328,18 +345,19 @@ class RegisterROL(RegisterOperation):
         The result will be stored in register :attr:`self.outputs[0]`.
     """
 
-    def __init__(self, X: QuantumRegister, r: int) -> None:
+    def __init__(self: RegisterROL, X: QuantumRegister, r: int) -> None:
+        """Initialize a RegisterROL operation."""
         super().__init__()
         if r < 0:
-            raise CircuitError("Rotation must be by a positive amount.")
+            msg = "Rotation must be by a positive amount."
+            raise CircuitError(msg)
         r = r % len(X)
         self._inputs = [X]
         self._outputs = [QuantumRegister(bits=X[-r:] + X[:-r], name=X.name)]
 
 
 class RegisterConstantXOR(Gate, RegisterOperation):
-    r"""A gate implementing a logical bitwise XOR operation between a register of qubits and
-    a constant.
+    r"""Bitwise XOR between a quantum register and a constant.
 
     :param X: The register to XOR with c.
     :param c: The constant to XOR with X.
@@ -349,11 +367,12 @@ class RegisterConstantXOR(Gate, RegisterOperation):
     """
 
     def __init__(
-        self,
+        self: RegisterConstantXOR,
         X: QuantumRegister,
         c: int,
-        label: Optional[str] = None,
+        label: str | None = None,
     ) -> None:
+        """Initialize a RegisterConstantXOR operation."""
         self.n = len(X)
         self.c = c
         self._inputs = [X]
@@ -373,7 +392,7 @@ class RegisterConstantXOR(Gate, RegisterOperation):
 
 
 class RegisterNOT(Gate, RegisterOperation):
-    r"""A gate implementing a bitwise NOT operation on a quantum register
+    r"""Bitwise NOT on a quantum register.
 
     :param X: The register to apply NOT on.
     :param label: An optional label for the gate.
@@ -382,10 +401,11 @@ class RegisterNOT(Gate, RegisterOperation):
     """
 
     def __init__(
-        self,
+        self: RegisterNOT,
         X: QuantumRegister,
-        label: Optional[str] = None,
+        label: str | None = None,
     ) -> None:
+        """Initialize a RegisterNOT operation."""
         self.n = len(X)
         self._inputs = [X]
         self._outputs = [X]
@@ -401,7 +421,7 @@ class RegisterNOT(Gate, RegisterOperation):
 
 
 class RegisterXOR(Gate, RegisterOperation):
-    r"""A gate implementing a logical bitwise XOR operation between two quantum registers.
+    r"""Bitwise XOR operation between two quantum registers.
 
     :param X: The first register to XOR.
     :param Y: The second register to XOR.
@@ -411,11 +431,16 @@ class RegisterXOR(Gate, RegisterOperation):
     :operation: :math:`X \leftarrow X \oplus Y`
     """
 
-    def __init__(self, X: QuantumRegister, Y: QuantumRegister, label: Optional[str] = None) -> None:
+    def __init__(
+        self: RegisterXOR,
+        X: QuantumRegister,
+        Y: QuantumRegister,
+        label: str | None = None,
+    ) -> None:
+        """Initialize a RegisterXOR operation."""
         if len(X) != len(Y):
-            raise CircuitError(
-                "rXOR operation must be between two QuantumRegisters of the same size."
-            )
+            msg = "rXOR operation must be between two QuantumRegisters of the same size."
+            raise CircuitError(msg)
         self.n = len(X)
         self._inputs = [X, Y]
         self._outputs = [X, Y]
@@ -431,8 +456,7 @@ class RegisterXOR(Gate, RegisterOperation):
 
 
 class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
-    r"""A gate implementing an addition modulo :math:`2^n` between a quantum register and
-    a constant.
+    r"""Addition modulo :math:`2^n` between a quantum register and a constant.
 
     :param X: The register of size n to add c to.
     :param c: The constant to add to X.
@@ -451,8 +475,13 @@ class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
         return RegisterDKRSCarryLookaheadAdder.get_num_ancilla_qubits(n)
 
     def __init__(
-        self, A: QuantumRegister, c: int, ancillas: AncillaRegister, label: Optional[str] = None
+        self: RegisterConstantDKRSCarryLookaheadAdder,
+        A: QuantumRegister,
+        c: int,
+        ancillas: AncillaRegister,
+        label: str | None = None,
     ) -> None:
+        """Initialize a RegisterConstantDKRSCarryLookaheadAdder operation."""
         self.n = len(A)
         self.c = c
         self._inputs = [A, ancillas]
@@ -461,10 +490,11 @@ class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
         RegisterOperation.__init__(self)
 
         if len(ancillas) != self.get_num_ancilla_qubits(self.n):
-            raise CircuitError(
+            msg = (
                 f"Circuit needs {self.get_num_ancilla_qubits(self.n)}"
                 f"ancilla qubits but {len(ancillas)} were given."
             )
+            raise CircuitError(msg)
 
         circuit = RegisterCircuit(A, ancillas, name=f"rADD {self.c}")
 
@@ -489,17 +519,21 @@ class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
                 circuit.neg(QuantumRegister(bits=A[:-1]))  # A = s'
                 if len(A) > 2:
                     circuit.xor(
-                        QuantumRegister(bits=A[1:-1]), self.c >> 1 & (2 ** (self.n - 2) - 1)
+                        QuantumRegister(bits=A[1:-1]),
+                        self.c >> 1 & (2 ** (self.n - 2) - 1),
                     )
 
                 uncompute_carry = RegisterDKRSComputeCarry(
-                    QuantumRegister(bits=A[1:-1]), Z, X
+                    QuantumRegister(bits=A[1:-1]),
+                    Z,
+                    X,
                 ).reverse_ops()
                 circuit.append(uncompute_carry, list(chain(*uncompute_carry.inputs)))
 
                 if len(A) > 2:
                     circuit.xor(
-                        QuantumRegister(bits=A[1:-1]), self.c >> 1 & (2 ** (self.n - 2) - 1)
+                        QuantumRegister(bits=A[1:-1]),
+                        self.c >> 1 & (2 ** (self.n - 2) - 1),
                     )
                 for i in range(self.n - 1):
                     if bits[i]:
@@ -510,8 +544,9 @@ class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
 
 
 class RegisterDKRSComputeCarry(Gate, RegisterOperation):
-    r"""A gate implemented the carry computation described in [DKRS2004]_. The last carry is
-    not computed.
+    r"""Carry computation as described in [DKRS2004]_.
+
+    The last carry is not computed.
 
     :param P0: :math:`P_0[i] = p[i, i+1]`, 1 if and only if carry propagages from bit :math:`i` to
     bit :math:`i+1`.
@@ -521,7 +556,14 @@ class RegisterDKRSComputeCarry(Gate, RegisterOperation):
     circuit and will be reset to 0.
     """
 
-    def __init__(self, P0, G, ancillas: AncillaRegister, label: Optional[str] = None) -> None:
+    def __init__(
+        self: RegisterDKRSComputeCarry,
+        P0: Sequence[QuantumRegister],
+        G: Sequence[QuantumRegister],
+        ancillas: AncillaRegister,
+        label: str | None = None,
+    ) -> None:
+        """Initialize a RegisterDKRSComputeCarry operation."""
         self.n = len(P0) + 1
         Gate.__init__(self, "rCarry", len(P0) + len(G) + len(ancillas), [], label=label)
         RegisterOperation.__init__(self)
@@ -559,9 +601,9 @@ class RegisterDKRSComputeCarry(Gate, RegisterOperation):
 
 
 class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
-    r"""A gate implementing the n qubits carry-lookahead adder modulo :math:`2^n` described
-    in [DKRS2004]_. This implementation skips the output carry compution.
+    r"""A n qubits carry-lookahead adder modulo :math:`2^n`.
 
+    It implements the adder described in [DKRS2004]_ but skips the output carry compution.
 
     :param A: First register of size n to add.
     :param B: Second register of size n to add.
@@ -573,8 +615,9 @@ class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
 
     :operation: :math:`X \leftarrow X+Y \bmod 2^n`
 
-    .. [DKRS2004] Draper, T. G., Kutin, S. A., Rains, E. M., & Svore, K. M. (2004).
-    A logarithmic-depth quantum carry-lookahead adder. arXiv preprint quant-ph/0406142.
+    .. [DKRS2004]
+        Draper, T. G., Kutin, S. A., Rains, E. M., & Svore, K. M. (2004).
+        A logarithmic-depth quantum carry-lookahead adder. arXiv preprint quant-ph/0406142.
     """
 
     @staticmethod
@@ -591,25 +634,26 @@ class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
         return 2 * n - _hamming_weight(n - 1) - floor(log2(n - 1)) - 2
 
     def __init__(
-        self,
+        self: RegisterDKRSCarryLookaheadAdder,
         A: QuantumRegister,
         B: QuantumRegister,
         ancillas: AncillaRegister,
-        label: Optional[str] = None,
+        label: str | None = None,
     ) -> None:
+        """Initialize a RegisterDKRSCarryLookaheadAdder operation."""
         self.n = len(A)
         Gate.__init__(self, "rADD", self.n * 2 + len(ancillas), [], label=label)
         RegisterOperation.__init__(self)
         self._inputs = [A, B, ancillas]
         self._outputs = [A, B, ancillas]
         if len(A) != len(B):
-            raise CircuitError(
-                "rADD operation must be between two QuantumRegisters of the same size."
-            )
+            msg = "rADD operation must be between two QuantumRegisters of the same size."
+            raise CircuitError(msg)
         circuit = RegisterCircuit(A, B, ancillas, name="rADD")
 
         if len(ancillas) != self.get_num_ancilla_qubits(self.n):
-            raise CircuitError("Wrong number of ancilla qubits.")
+            msg = "Wrong number of ancilla qubits."
+            raise CircuitError(msg)
 
         Z = AncillaRegister(bits=ancillas[0 : self.n - 1])
         X = AncillaRegister(bits=ancillas[self.n - 1 : :])
@@ -630,7 +674,9 @@ class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
             circuit.xor(QuantumRegister(bits=A[1:-1]), QuantumRegister(bits=B[1:-1]))
 
             uncompute_carry = RegisterDKRSComputeCarry(
-                QuantumRegister(bits=A[1:-1]), Z, X
+                QuantumRegister(bits=A[1:-1]),
+                Z,
+                X,
             ).reverse_ops()
             circuit.append(uncompute_carry, list(chain(*uncompute_carry.inputs)))
 
@@ -643,9 +689,9 @@ class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
 
 
 class RegisterTTKRippleCarryAdder(Gate, RegisterOperation):
-    r"""A gate implementing the n qubits ripple-carry adder modulo :math:`2^n`
-    described in [TTK2009]_. This implementation skips the output carry compution.
+    r"""A gate implementing the n qubits ripple-carry adder modulo :math:`2^n`.
 
+    It implements the adder described in [TTK2009]_ but skips the output carry compution.
 
     :param X: First register of size n to add.
     :param Y: Second register of size n to add.
@@ -654,15 +700,21 @@ class RegisterTTKRippleCarryAdder(Gate, RegisterOperation):
 
     :operation: :math:`X \leftarrow X+Y \bmod 2^n`
 
-    .. [TTK2009] Takahashi, Y., Tani, S., & Kunihiro, N. (2009). Quantum addition circuits and
-    unbounded fan-out. arXiv preprint arXiv:0910.2530.
+    .. [TTK2009]
+        Takahashi, Y., Tani, S., & Kunihiro, N. (2009). Quantum addition circuits and
+        unbounded fan-out. arXiv preprint arXiv:0910.2530.
     """
 
-    def __init__(self, X: QuantumRegister, Y: QuantumRegister, label: Optional[str] = None) -> None:
+    def __init__(
+        self: RegisterTTKRippleCarryAdder,
+        X: QuantumRegister,
+        Y: QuantumRegister,
+        label: str | None = None,
+    ) -> None:
+        """Initialize a RegisterTTKRippleCarryAdder operation."""
         if len(X) != len(Y):
-            raise CircuitError(
-                "rADD operation must be between two QuantumRegisters of the same size."
-            )
+            msg = "rADD operation must be between two QuantumRegisters of the same size."
+            raise CircuitError(msg)
         self.n = len(X)
         self._inputs = [X, Y]
         self._outputs = [X, Y]
@@ -689,27 +741,37 @@ class RegisterTTKRippleCarryAdder(Gate, RegisterOperation):
         self.definition = circuit
 
 
-def simulate(circuit: QuantumCircuit, method="automatic", device="CPU", shots=1024) -> Counts:
-    """This helper function simulates the given circuit and returns the results.
-    It needs the `qiskit_aer` dependency.
+def simulate(
+    circuit: QuantumCircuit,
+    method: str = "automatic",
+    device: str = "CPU",
+    shots: int = 1024,
+) -> Counts:
+    """Simulate the given circuit and returns the results.
 
     :param circuit: The circuit to simulate.
     :param method: The method to use for the simulator.
     :param device: The device to run the simulation on (CPU or GPU).
     :param shots: The number of times to run the simulation.
     :returns: The result counts of the simulation.
+
+    .. note::
+        This function needs the `qiskit_aer` extra dependency.
     """
     try:
         # pylint: disable=import-outside-toplevel
         from qiskit_aer.backends import (
             AerSimulator,
-        )  # Using a dynamic import to avoid compulsory qiskit_aer dependency
+        )
 
         # Manually set max_memory_mb to INT_MAX
         # workaround for https://github.com/Qiskit/qiskit-aer/issues/2056
         if method == "matrix_product_state":
             backend_sim = AerSimulator(
-                method=method, device=device, n_qubits=circuit.num_qubits, max_memory_mb=2**64 - 1
+                method=method,
+                device=device,
+                n_qubits=circuit.num_qubits,
+                max_memory_mb=2**64 - 1,
             )
         else:
             backend_sim = AerSimulator(method=method, device=device, n_qubits=circuit.num_qubits)
@@ -719,13 +781,11 @@ def simulate(circuit: QuantumCircuit, method="automatic", device="CPU", shots=10
 
         job_sim = backend_sim.run(transpiled_circuit, shots=shots)
         result_sim = job_sim.result()
-        counts = result_sim.get_counts(circuit)
-        return counts
+        return result_sim.get_counts(circuit)
 
     except ImportError as exc:
-        raise ImportError(
-            "qiskit_aer is not installed. Please install it to use the simulate function."
-        ) from exc
+        msg = "qiskit_aer is not installed. Please install it to use the simulate function."
+        raise ImportError(msg) from exc
 
 
 def make_circuit(
@@ -733,17 +793,18 @@ def make_circuit(
     inputs: Sequence[int],
     input_registers: Sequence[QuantumRegister],
     output_registers: Sequence[QuantumRegister],
-):
-    """This helper function makes a circuit with registers as input and measurement operations for
-    the output registers. It also prepares the initial values of the input registers.
+) -> QuantumCircuit:
+    """Make a circuit with registers as input and measurement operations for the output registers.
+
+    Also prepare the initial values of the input registers.
 
     :param circuit: The base circuit that will be expanded with measurement operations and
-    preparation operations.
+        preparation operations.
     :param inputs: A list of the initial values to assign to the input registers.
     :param inputs_registers: A list of the input registers.
     :param output_registers: A list of the output registers.
     :returns: The final circuit containing the preparation step, the base circuit and the
-    measurement step.
+        measurement step.
     """
     # Copy the circuit
     circuit = circuit.copy()
@@ -768,7 +829,8 @@ def make_circuit(
         circuit.barrier()
     # Add measurements for the output
     for output_register, classical_output_register in zip(
-        output_registers, classical_output_registers
+        output_registers,
+        classical_output_registers,
     ):
         circuit.measure(output_register, classical_output_register)
 
@@ -776,23 +838,25 @@ def make_circuit(
 
 
 def run_circuit(
-    circuit: QuantumCircuit, verbose: bool = False, method="automatic", device="CPU", shots=1024
+    circuit: QuantumCircuit,
+    method: str = "automatic",
+    device: str = "CPU",
+    shots: int = 1024,
 ) -> Sequence[int]:
-    """This helper function simulates a given circuit and retrieves the integer values of the
-    classical registers.
+    """Simulate a circuit and retrieve the integer values of the classical registers.
 
     :param circuit: The circuit to run.
-    :param verbose: Print the raw result given by the simulator.
     :param method: The method to use for the simulator.
     :param device: The device to run the simulation on (CPU or GPU).
     :param shots: The number of times to run the simulation.
     :returns: A list of the integers stored in the classical registers of the circuit after the
     circuit has been simulated. It takes into account only the most frequent result.
+
+    .. note::
+        This function needs the `qiskit_aer` extra dependency.
     """
     # Simulate the circuit
     raw_result = simulate(circuit, method, device, shots)
-    if verbose:
-        print("Circuit result:", raw_result)
     result = raw_result.most_frequent()
     # Extract the output registers (result is MSB-first so we need to reverse the register order)
     outputs = result.split()[::-1]

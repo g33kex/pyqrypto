@@ -18,7 +18,7 @@ repository = "https://github.com/g33kex/pyqrypto.git"
 documentation = "https://g33kex.github.io/pyqrypto"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 qiskit = "^1.0.0"
 qiskit-aer = { version = "^0.13.3", optional = true }
 
@@ -37,12 +37,17 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 100
+fixable = ["ALL"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["N803", "N806", "PLR2004"]
 
 [tool.mypy]
 ignore_missing_imports = true
 
 [tool.pylint]
-good-names="X,Y,Z,P,n,c,r,k,i,t,m"
+good-names="A, B, X,Y,Z,P,K,n,c,r,k,i,t,m,x,y"
 init-hook = """
 try: import pylint_venv
 except ImportError: pass

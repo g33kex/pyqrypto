@@ -14,14 +14,14 @@ These are the quantum gates currently implemented by this project.
 
 - :py:class:`~pyqrypto.sparkle.Traxl_enc` - TRAX-L encryption
 - :py:class:`~pyqrypto.sparkle.Alzette` - a 64 bit ARX-box
-- :py:class:`~pyqrypto.rOperations.rTTKRippleCarryAdder` - ripple carry adder
-- :py:class:`~pyqrypto.rOperations.rDKRSCarryLookaheadAdder` - carry lookahead adder
-- :py:class:`~pyqrypto.rOperations.rConstantDKRSCarryLookaheadAdder`` - carry lookahead adder with a constant
-- :py:class:`~pyqrypto.rOperations.rXOR` - bitwise XOR
-- :py:class:`~pyqrypto.rOperations.rConstantXOR` - bitwise XOR with a constant
-- :py:class:`~pyqrypto.rOperations.rNOT` - bitwise NOT
-- :py:class:`~pyqrypto.rOperations.rROR` - right rotation (gate free)
-- :py:class:`~pyqrypto.rOperations.rROL` - left rotation (gate free)
+- :py:class:`~pyqrypto.register_operations.RegisterTTKRippleCarryAdder` - ripple carry adder
+- :py:class:`~pyqrypto.register_operations.RegisterDKRSCarryLookaheadAdder` - carry lookahead adder
+- :py:class:`~pyqrypto.register_operations.RegisterConstantDKRSCarryLookaheadAdder`` - carry lookahead adder with a constant
+- :py:class:`~pyqrypto.register_operations.RegisterXOR` - bitwise XOR
+- :py:class:`~pyqrypto.register_operations.RegisterConstantXOR` - bitwise XOR with a constant
+- :py:class:`~pyqrypto.register_operations.RegisterNOT` - bitwise NOT
+- :py:class:`~pyqrypto.register_operations.RegisterROR` - right rotation (gate free)
+- :py:class:`~pyqrypto.register_operations.RegisterROL` - left rotation (gate free)
 
 Examples
 --------
@@ -131,6 +131,6 @@ Let's add a preparation and a measurement step to our previous example and simul
    :maxdepth: 2
    :caption: Contents:
 
-   rOperations
+   register_operations
    sparkle
 
