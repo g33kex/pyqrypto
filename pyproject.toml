@@ -34,3 +34,17 @@ simulate = ["qiskit_aer"]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pylint]
+good-names="X,Y,Z,P,n,c,r,k,i,t,m"
+init-hook = """
+try: import pylint_venv
+except ImportError: pass
+else: pylint_venv.inithook()
+"""
