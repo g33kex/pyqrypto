@@ -41,13 +41,13 @@ fixable = ["ALL"]
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["N803", "N806", "PLR2004"]
+ignore = ["N803", "N806", "PLR2004", "S311", "S101"]
 
 [tool.mypy]
 ignore_missing_imports = true
 
 [tool.pylint]
-good-names="A, B, X,Y,Z,P,K,n,c,r,k,i,t,m,x,y,s,b"
+good-names="A,B,X,Y,Z,P,K,n,c,r,k,i,t,m,x,y,s,b,a"
 init-hook = """
 try: import pylint_venv
 except ImportError: pass
