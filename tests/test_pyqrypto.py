@@ -16,10 +16,12 @@ from pyqrypto.sparkle import (
     Alzette,
     TraxlEnc,
     TraxmEncRound,
+    TraxsEncRound,
     c_alzette,
     c_traxl_enc,
     c_traxl_genkeys,
     c_traxm_enc,
+    c_traxs_enc,
 )
 from qiskit import AncillaRegister, QuantumCircuit, QuantumRegister
 
@@ -64,7 +66,6 @@ def circuit_test(
     if verbose:
         print("Assembling it into the following circuit:")
         print(final_circuit)
-        final_circuit.decompose().qasm(filename="circuit.qasm")
     result = run_circuit(final_circuit, device=DEVICE, method=METHOD)
 
     if verbose:
@@ -369,6 +370,41 @@ def test_ctraxl() -> None:
     assert res_x == true_x
     assert res_y == true_y
 
+def test_traxs() -> None:
+    """Test TRAX-S against the classical implementation."""
+    for _ in range(NB_TESTS // 10):
+        n = random.choice([16, 32, 64, 128])
+        x = random.getrandbits(n // 2)
+        y = random.getrandbits(n // 2)
+        round_key = [random.getrandbits(n // 2) for _ in range(2)]
+
+        X = QuantumRegister(n // 2, name="X")
+        Y = QuantumRegister(n // 2, name="Y")
+        K = [QuantumRegister(n // 2, name=f"K{i}") for i in range(2)]
+        ancillas = AncillaRegister(TraxsEncRound.get_num_ancilla_qubits(n))
+
+        circuit = RegisterCircuit(X, Y, *K, ancillas)
+        gate = TraxsEncRound(X, Y, K, None, ancillas)
+        circuit.append(gate, list(chain(*gate.inputs)))
+
+        result = circuit_test(
+            circuit,
+            lambda *params:
+                list(c_traxs_enc(
+                    params[0],
+                    params[1],
+                    list(params[2::]),
+                    None,
+                    n=n // 2,
+                    nsteps=1,
+                    final_addition=False)),
+            [x, y, *round_key],
+            gate.inputs[:-1],
+            gate.outputs[:-3],
+        )
+
+        assert result
+
 
 def test_traxm() -> None:
     """Test TRAX-M against the classical implementation."""
@@ -389,7 +425,7 @@ def test_traxm() -> None:
 
         result = circuit_test(
             circuit,
-            lambda *params: chain.from_iterable(
+            lambda *params: list(chain.from_iterable(
                 c_traxm_enc(
                     list(params[0:2]),
                     list(params[2:4]),
@@ -399,10 +435,11 @@ def test_traxm() -> None:
                     nsteps=1,
                     final_addition=False,
                 ),
-            ),
+            )),
             x + y + round_key,
             gate.inputs[:-1],
-            gate.outputs[:-3],
+            gate.outputs[:-5],
+            verbose=False,
         )
 
         assert result
@@ -446,3 +483,6 @@ def test_traxl() -> None:
         )
 
         assert result
+
+if __name__ ==  '__main__':
+    test_traxs()

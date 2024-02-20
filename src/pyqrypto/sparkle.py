@@ -126,6 +126,7 @@ def c_traxs_enc(
     tweak: list[int],
     n: int = 32,
     nsteps: int = 10,
+    final_addition=True,
 ) -> tuple[int, int]:
     """Classical implementation of TRAX-S.
 
@@ -135,6 +136,7 @@ def c_traxs_enc(
     :param tweak: A list of the 2 :py:data:`n`-bit tweak parts.
     :param n: Size of each key part.
     :param nsteps: Number of rounds.
+    :param final_addition: Whether to do the final key addition.
     :returns: Encrypted (x,y).
     """
     for s in range(nsteps):
@@ -149,8 +151,9 @@ def c_traxs_enc(
         x, y = c_alzette(x, y, (RCON[s % 8] % 2**n), n)
 
     # Add subkeys to state for final key addition
-    x ^= subkeys[2 * nsteps]
-    y ^= subkeys[2 * nsteps + 1]
+    if final_addition:
+        x ^= subkeys[2 * nsteps]
+        y ^= subkeys[2 * nsteps + 1]
 
     return x, y
 
@@ -319,6 +322,7 @@ class Alzette(Gate, RegisterOperation):
         if len(X) != len(Y):
             msg = "X and Y must have the same size."
             raise CircuitError(msg)
+        RegisterOperation.__init__(self)
         self.n = len(X)
         self.c = c
         self._inputs = [X, Y]
@@ -340,7 +344,6 @@ class Alzette(Gate, RegisterOperation):
         else:
             Gate.__init__(self, "Alzette", self.n * 2, [], label=label)
             circuit = RegisterCircuit(X, Y, name="Alzette")
-        RegisterOperation.__init__(self)
 
         circuit.add(X, circuit.ror(Y, 31), ancillas, mode=adder_mode)
         circuit.xor(Y, circuit.ror(X, 24))
@@ -357,6 +360,121 @@ class Alzette(Gate, RegisterOperation):
 
         self._definition = circuit
         self._outputs = [X, Y]
+
+
+class TraxsEncRound(Gate, RegisterOperation):
+    """A quantum implementation of a round of the encryption step of TRAX-S.
+
+    The default block size for this cipher is 128 bits.
+    Only a single round is implemented because there is no standard key schedule for this cipher.
+
+    The adder in the Alzette rounds of TRAX can be implemented with two methods:
+
+    - :py:data:`lookahead`: Use a carry-lookahead adder.
+      carry lookahead adders.
+    - :py:data:`ripple`: Use a ripple-carry adder.
+
+    :param x: A quantum register of size n/2.
+    :param y: A quantum register of size n/2.
+    :param key: The round key, a list of 2 quantum registers of size n/2.
+    :param tweak: The tweak, a list of 2 integers on n/4 bits.
+      None if the tweak souldn't be added at that round.
+    :param ancillas: The ancillas qubits needed for the computation.
+    :param alzette_mode: The method to use to compute the Alzette rounds.
+    :param round_constant: The round constant to use for this round.
+    :param label: An optional label for the gate.
+    """
+
+    @staticmethod
+    def _get_num_ancilla_registers(alzette_mode: str = "lookahead") -> int:
+        """Get the numbers of ancilla registers used internally by TraxmEncRound."""
+        if alzette_mode in ("lookahead", "ripple"):
+            num_ancilla_registers = 1
+        else:
+            msg = f"Unknown alzette mode {alzette_mode}."
+            raise CircuitError(msg)
+
+        return num_ancilla_registers
+
+    @staticmethod
+    def get_num_ancilla_qubits(n: int = 128, alzette_mode: str = "lookahead") -> int:
+        """Get the number of required ancilla qubits without instantiating the class.
+
+        :param n: The size of the block size the cipher is operating on.
+        :param alzette_mode: The method to use to compute the Alzette rounds.
+        :returns: The number of ancilla qubits needed for the computation.
+        """
+        return RegisterDKRSCarryLookaheadAdder.get_num_ancilla_qubits(
+            n // 2,
+        ) * TraxsEncRound._get_num_ancilla_registers(alzette_mode)
+
+    def __init__(
+        self: TraxmEncRound,
+        x: QuantumRegister,
+        y: QuantumRegister,
+        round_key: list[QuantumRegister],
+        tweak: list[int] | None,
+        ancillas: AncillaRegister,
+        alzette_mode: str = "lookahead",
+        round_constant: int = RCON[0],
+        label: str | None = None,
+    ) -> None:
+        """Initialize TraxmEncRound."""
+        RegisterOperation.__init__(self)
+        if len(round_key) != 2 or (tweak is not None and len(tweak) != 2):
+            msg = "Wrong number of inputs."
+            raise CircuitError(msg)
+        self._inputs = [x, y, *round_key, ancillas]
+        self.n = len(x)  # Number of qubits in each register (by default 32)
+
+        Gate.__init__(self, "Traxs_enc_round", self.n * 4 + len(ancillas), [], label=label)
+
+        round_key = round_key.copy()
+        num_ancilla_registers = self._get_num_ancilla_registers(alzette_mode)
+        ancilla_registers = [
+            AncillaRegister(
+                bits=ancillas[
+                    i * len(ancillas) // num_ancilla_registers : (i + 1)
+                    * len(ancillas)
+                    // num_ancilla_registers
+                ],
+            )
+            for i in range(num_ancilla_registers)
+        ]
+
+        circuit = RegisterCircuit(*self.inputs, name="Traxs_enc_round")
+
+        # Add tweak if it exists
+        if tweak is not None:
+            circuit.xor(x, tweak[0])
+            circuit.xor(y, tweak[1])
+
+        # Add subkeys and execute ALZETTEs
+        circuit.xor(x, round_key[0])
+        circuit.xor(y, round_key[1])
+
+        if alzette_mode == "ripple":
+            circuit.append(
+                Alzette(x, y, (round_constant % 2**self.n), adder_mode="ripple"),
+                list(chain(x, y)),
+            )
+        elif alzette_mode == "lookahead":
+            circuit.append(
+                Alzette(
+                    x,
+                    y,
+                    (round_constant % 2**self.n),
+                    ancilla_registers[0],
+                    adder_mode="lookahead",
+                ),
+                list(chain(x, y, ancilla_registers[0])),
+            )
+        else:
+            msg = f"Unknown alzette mode {alzette_mode}."
+            raise CircuitError(msg)
+
+        self._outputs = [x, y, *round_key, ancillas]
+        self._definition = circuit
 
 
 class TraxmEncRound(Gate, RegisterOperation):
@@ -421,6 +539,7 @@ class TraxmEncRound(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize TraxmEncRound."""
+        RegisterOperation.__init__(self)
         if (
             len(x) != 2
             or len(y) != 2
@@ -433,7 +552,6 @@ class TraxmEncRound(Gate, RegisterOperation):
         self.n = len(x[0])  # Number of qubits in each register (by default 32)
 
         Gate.__init__(self, "Traxm_enc_round", self.n * 8 + len(ancillas), [], label=label)
-        RegisterOperation.__init__(self)
 
         x = x.copy()
         y = y.copy()
@@ -450,7 +568,7 @@ class TraxmEncRound(Gate, RegisterOperation):
             for i in range(num_ancilla_registers)
         ]
 
-        circuit = RegisterCircuit(*self.inputs, name="Trax_enc_round")
+        circuit = RegisterCircuit(*self.inputs, name="Traxm_enc_round")
 
         # Add tweak if it exists
         if tweak is not None:
@@ -591,6 +709,7 @@ class TraxlEnc(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize TraxlEnc."""
+        RegisterOperation.__init__(self)
         if len(x) != 4 or len(y) != 4 or len(key) != 8 or len(tweak) != 4:
             msg = "Wrong number of inputs."
             raise CircuitError(msg)
@@ -598,12 +717,12 @@ class TraxlEnc(Gate, RegisterOperation):
         self.n = len(x[0])  # Number of qubits in each register (by default 32)
 
         Gate.__init__(self, "Traxl_enc", self.n * 16 + len(ancillas), [], label=label)
-        RegisterOperation.__init__(self)
 
         if len(ancillas) != self.get_num_ancilla_qubits(self.n * 8, alzette_mode, schedule_mode):
-            msg = ("Circuit needs "
-                   f"{self.get_num_ancilla_qubits(self.n*8, alzette_mode, schedule_mode)} "
-                   f"ancilla qubits but {len(ancillas)} were given."
+            msg = (
+                "Circuit needs "
+                f"{self.get_num_ancilla_qubits(self.n*8, alzette_mode, schedule_mode)} "
+                f"ancilla qubits but {len(ancillas)} were given."
             )
             raise CircuitError(msg)
 

@@ -373,12 +373,13 @@ class RegisterConstantXOR(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize a RegisterConstantXOR operation."""
-        self.n = len(X)
+        RegisterOperation.__init__(self)
+        n = len(X)
+        Gate.__init__(self, "rXORc", n, [], label=label)
+        self.n = n
         self.c = c
         self._inputs = [X]
         self._outputs = [X]
-        Gate.__init__(self, "rXORc", self.n, [], label=label)
-        RegisterOperation.__init__(self)
 
         bits = _int_to_bits(self.c, self.n)
 
@@ -406,11 +407,12 @@ class RegisterNOT(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize a RegisterNOT operation."""
-        self.n = len(X)
+        n = len(X)
+        RegisterOperation.__init__(self)
+        Gate.__init__(self, "rNOT", n, [], label=label)
+        self.n = n
         self._inputs = [X]
         self._outputs = [X]
-        Gate.__init__(self, "rNOT", self.n, [], label=label)
-        RegisterOperation.__init__(self)
 
         circuit = QuantumCircuit(X, name="rNOT")
 
@@ -441,11 +443,12 @@ class RegisterXOR(Gate, RegisterOperation):
         if len(X) != len(Y):
             msg = "rXOR operation must be between two QuantumRegisters of the same size."
             raise CircuitError(msg)
-        self.n = len(X)
+        n = len(X)
+        RegisterOperation.__init__(self)
+        Gate.__init__(self, "rXOR", n * 2, [], label=label)
+        self.n = n
         self._inputs = [X, Y]
         self._outputs = [X, Y]
-        Gate.__init__(self, "rXOR", self.n * 2, [], label=label)
-        RegisterOperation.__init__(self)
 
         circuit = QuantumCircuit(X, Y, name="rXOR")
 
@@ -482,12 +485,13 @@ class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize a RegisterConstantDKRSCarryLookaheadAdder operation."""
-        self.n = len(A)
+        n = len(A)
+        RegisterOperation.__init__(self)
+        Gate.__init__(self, "rADDc", n + len(ancillas), [], label=label)
+        self.n = n
         self.c = c
         self._inputs = [A, ancillas]
         self._outputs = [A, ancillas]
-        Gate.__init__(self, "rADDc", self.n + len(ancillas), [], label=label)
-        RegisterOperation.__init__(self)
 
         if len(ancillas) != self.get_num_ancilla_qubits(self.n):
             msg = (
@@ -564,9 +568,9 @@ class RegisterDKRSComputeCarry(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize a RegisterDKRSComputeCarry operation."""
-        self.n = len(P0) + 1
-        Gate.__init__(self, "rCarry", len(P0) + len(G) + len(ancillas), [], label=label)
         RegisterOperation.__init__(self)
+        Gate.__init__(self, "rCarry", len(P0) + len(G) + len(ancillas), [], label=label)
+        self.n = len(P0) + 1
         self._inputs = [P0, G, ancillas]
         self._outputs = [P0, G, ancillas]
 
@@ -641,9 +645,10 @@ class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
         label: str | None = None,
     ) -> None:
         """Initialize a RegisterDKRSCarryLookaheadAdder operation."""
-        self.n = len(A)
-        Gate.__init__(self, "rADD", self.n * 2 + len(ancillas), [], label=label)
+        n = len(A)
         RegisterOperation.__init__(self)
+        Gate.__init__(self, "rADD", n * 2 + len(ancillas), [], label=label)
+        self.n = n
         self._inputs = [A, B, ancillas]
         self._outputs = [A, B, ancillas]
         if len(A) != len(B):
@@ -715,11 +720,12 @@ class RegisterTTKRippleCarryAdder(Gate, RegisterOperation):
         if len(X) != len(Y):
             msg = "rADD operation must be between two QuantumRegisters of the same size."
             raise CircuitError(msg)
-        self.n = len(X)
+        n = len(X)
+        RegisterOperation.__init__(self)
+        Gate.__init__(self, "rADD", n * 2, [], label=label)
+        self.n = n
         self._inputs = [X, Y]
         self._outputs = [X, Y]
-        Gate.__init__(self, "rADD", self.n * 2, [], label=label)
-        RegisterOperation.__init__(self)
 
         circuit = QuantumCircuit(X, Y, name="rADD")
 
