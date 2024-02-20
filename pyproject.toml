@@ -47,7 +47,7 @@ ignore = ["N803", "N806", "PLR2004"]
 ignore_missing_imports = true
 
 [tool.pylint]
-good-names="A, B, X,Y,Z,P,K,n,c,r,k,i,t,m,x,y"
+good-names="A, B, X,Y,Z,P,K,n,c,r,k,i,t,m,x,y,s,b"
 init-hook = """
 try: import pylint_venv
 except ImportError: pass

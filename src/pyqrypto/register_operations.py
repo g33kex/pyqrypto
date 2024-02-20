@@ -491,7 +491,7 @@ class RegisterConstantDKRSCarryLookaheadAdder(Gate, RegisterOperation):
 
         if len(ancillas) != self.get_num_ancilla_qubits(self.n):
             msg = (
-                f"Circuit needs {self.get_num_ancilla_qubits(self.n)}"
+                f"Circuit needs {self.get_num_ancilla_qubits(self.n)} "
                 f"ancilla qubits but {len(ancillas)} were given."
             )
             raise CircuitError(msg)
