@@ -4,3 +4,4 @@ dist/
 docs/build/html/.buildinfo
 docs/build/html/.doctrees/
 poetry.lock
+qasm/

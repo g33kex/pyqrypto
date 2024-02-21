@@ -80,8 +80,8 @@
 <h2>Implemented Gates<a class="headerlink" href="#implemented-gates" title="Link to this heading">¶</a></h2>
 <p>These are the quantum gates currently implemented by this project.</p>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Traxl_enc</span></code> - TRAX-L encryption</p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Alzette</span></code> - a 64 bit ARX-box</p></li>
+<li><p><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.TraxlEnc" title="pyqrypto.sparkle.TraxlEnc"><code class="xref py py-class docutils literal notranslate"><span class="pre">TraxlEnc</span></code></a> - TRAX-L encryption</p></li>
+<li><p><a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Alzette" title="pyqrypto.sparkle.Alzette"><code class="xref py py-class docutils literal notranslate"><span class="pre">Alzette</span></code></a> - a 64 bit ARX-box</p></li>
 <li><p><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterTTKRippleCarryAdder" title="pyqrypto.register_operations.RegisterTTKRippleCarryAdder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisterTTKRippleCarryAdder</span></code></a> - ripple carry adder</p></li>
 <li><p><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterDKRSCarryLookaheadAdder" title="pyqrypto.register_operations.RegisterDKRSCarryLookaheadAdder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisterDKRSCarryLookaheadAdder</span></code></a> - carry lookahead adder</p></li>
 <li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisterConstantDKRSCarryLookaheadAdder`</span></code> - carry lookahead adder with a constant</p></li>
@@ -95,16 +95,16 @@
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Here is an example on how to use <strong>pyqrypto</strong> to generate a simple circuit that operates on qubit vectors.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rOperations</span> <span class="kn">import</span> <span class="n">rCircuit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyqrypto.register_operations</span> <span class="kn">import</span> <span class="n">RegisterCircuit</span>
 <span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumRegister</span>
 
 <span class="c1"># Create two 4 qubit registers</span>
-<span class="n">X1</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-<span class="n">Y1</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">X1</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">Y1</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
 
 <span class="c1"># Create a register circuit from registers X and Y.</span>
 <span class="c1"># A register circuit can operate on quantum registers instead of on individual qubits.</span>
-<span class="n">qc</span> <span class="o">=</span> <span class="n">rCircuit</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Register Circuit&#39;</span><span class="p">)</span>
+<span class="n">qc</span> <span class="o">=</span> <span class="n">RegisterCircuit</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rCircuit&quot;</span><span class="p">)</span>
 
 <span class="c1"># Rotate left register X by 3 qubits.</span>
 <span class="c1"># A register can be seen as a &quot;view&quot; on logical qubits,</span>
@@ -117,28 +117,29 @@
 
 <span class="c1"># If we print the resulting circuit, we can see the XOR was done on a rotated version of X1.</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">qc</span><span class="o">.</span><span class="n">decompose</span><span class="p">())</span>
-<span class="c1">#          ┌───┐</span>
-<span class="c1">#X_0: ─────┤ X ├──────────</span>
-<span class="c1">#          └─┬─┘┌───┐</span>
-<span class="c1">#X_1: ───────┼──┤ X ├─────</span>
-<span class="c1">#            │  └─┬─┘┌───┐</span>
-<span class="c1">#X_2: ───────┼────┼──┤ X ├</span>
-<span class="c1">#     ┌───┐  │    │  └─┬─┘</span>
-<span class="c1">#X_3: ┤ X ├──┼────┼────┼──</span>
-<span class="c1">#     └─┬─┘  │    │    │</span>
-<span class="c1">#Y_0: ──■────┼────┼────┼──</span>
-<span class="c1">#            │    │    │</span>
-<span class="c1">#Y_1: ───────■────┼────┼──</span>
-<span class="c1">#                 │    │</span>
-<span class="c1">#Y_2: ────────────■────┼──</span>
-<span class="c1">#                      │</span>
-<span class="c1">#Y_3: ─────────────────■──</span>
+<span class="c1">#           ┌───┐</span>
+<span class="c1"># X_0: ─────┤ X ├──────────</span>
+<span class="c1">#           └─┬─┘┌───┐</span>
+<span class="c1"># X_1: ───────┼──┤ X ├─────</span>
+<span class="c1">#             │  └─┬─┘┌───┐</span>
+<span class="c1"># X_2: ───────┼────┼──┤ X ├</span>
+<span class="c1">#      ┌───┐  │    │  └─┬─┘</span>
+<span class="c1"># X_3: ┤ X ├──┼────┼────┼──</span>
+<span class="c1">#      └─┬─┘  │    │    │</span>
+<span class="c1"># Y_0: ──■────┼────┼────┼──</span>
+<span class="c1">#             │    │    │</span>
+<span class="c1"># Y_1: ───────■────┼────┼──</span>
+<span class="c1">#                  │    │</span>
+<span class="c1"># Y_2: ────────────■────┼──</span>
+<span class="c1">#                       │</span>
+<span class="c1"># Y_3: ─────────────────■──</span>
 </pre></div>
 </div>
-<p>For an example on how to implement a more complex circuit, please read the source code of <code class="xref py py-class docutils literal notranslate"><span class="pre">Alzette</span></code>.</p>
+<p>For an example on how to implement a more complex circuit, please read the source code of <a class="reference internal" href="sparkle.html#pyqrypto.sparkle.Alzette" title="pyqrypto.sparkle.Alzette"><code class="xref py py-class docutils literal notranslate"><span class="pre">Alzette</span></code></a>. Also check out the <a class="reference external" href="https://github.com/g33kex/pyqrypto/tree/main/examples">examples folder</a>.</p>
 <p>This library also provides handy tools to add preparation steps and measurements to a circuit operating on registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.</p>
 <p>Let’s add a preparation and a measurement step to our previous example and simulate it.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rOperations</span> <span class="kn">import</span> <span class="n">make_circuit</span><span class="p">,</span> <span class="n">run_circuit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyqrypto.register_operations</span> <span class="kn">import</span> <span class="n">make_circuit</span><span class="p">,</span> <span class="n">run_circuit</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">qasm3</span>
 
 <span class="c1"># Create a final circuit with measurement and preparation steps</span>
 <span class="c1"># Let&#39;s initialize X1 to 4 and Y1 to 11</span>
@@ -155,34 +156,35 @@
 <span class="c1"># We can print the final circuit</span>
 <span class="c1"># As you can see the measurements are done on</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">final_circuit</span><span class="p">)</span>
-<span class="c1">#      ┌─────────────┐ ┌───────┐   ┌─┐</span>
-<span class="c1"># X_0: ┤0            ├─┤1      ├───┤M├──────────────────</span>
-<span class="c1">#      │             │ │       │   └╥┘┌─┐</span>
-<span class="c1"># X_1: ┤1            ├─┤2      ├────╫─┤M├───────────────</span>
-<span class="c1">#      │  rPrepare 4 │ │       │    ║ └╥┘┌─┐</span>
-<span class="c1"># X_2: ┤2            ├─┤3      ├────╫──╫─┤M├────────────</span>
-<span class="c1">#      │             │ │       │┌─┐ ║  ║ └╥┘</span>
-<span class="c1"># X_3: ┤3            ├─┤0      ├┤M├─╫──╫──╫─────────────</span>
-<span class="c1">#      ├─────────────┴┐│  Rxor │└╥┘ ║  ║  ║ ┌─┐</span>
-<span class="c1"># Y_0: ┤0             ├┤4      ├─╫──╫──╫──╫─┤M├─────────</span>
-<span class="c1">#      │              ││       │ ║  ║  ║  ║ └╥┘┌─┐</span>
-<span class="c1"># Y_1: ┤1             ├┤5      ├─╫──╫──╫──╫──╫─┤M├──────</span>
-<span class="c1">#      │  rPrepare 11 ││       │ ║  ║  ║  ║  ║ └╥┘┌─┐</span>
-<span class="c1"># Y_2: ┤2             ├┤6      ├─╫──╫──╫──╫──╫──╫─┤M├───</span>
-<span class="c1">#      │              ││       │ ║  ║  ║  ║  ║  ║ └╥┘┌─┐</span>
-<span class="c1"># Y_3: ┤3             ├┤7      ├─╫──╫──╫──╫──╫──╫──╫─┤M├</span>
-<span class="c1">#      └──────────────┘└───────┘ ║  ║  ║  ║  ║  ║  ║ └╥┘</span>
-<span class="c1">#c0: 4/══════════════════════════╩══╩══╩══╩══╬══╬══╬══╬═</span>
-<span class="c1">#                                0  1  2  3  ║  ║  ║  ║</span>
-<span class="c1">#c1: 4/══════════════════════════════════════╩══╩══╩══╩═</span>
-<span class="c1">#                                            0  1  2  3</span>
+<span class="c1">#       ┌─────────────┐ ┌───────┐   ┌─┐</span>
+<span class="c1">#  X_0: ┤0            ├─┤1      ├───┤M├──────────────────</span>
+<span class="c1">#       │             │ │       │   └╥┘┌─┐</span>
+<span class="c1">#  X_1: ┤1            ├─┤2      ├────╫─┤M├───────────────</span>
+<span class="c1">#       │  rPrepare 4 │ │       │    ║ └╥┘┌─┐</span>
+<span class="c1">#  X_2: ┤2            ├─┤3      ├────╫──╫─┤M├────────────</span>
+<span class="c1">#       │             │ │       │┌─┐ ║  ║ └╥┘</span>
+<span class="c1">#  X_3: ┤3            ├─┤0      ├┤M├─╫──╫──╫─────────────</span>
+<span class="c1">#       ├─────────────┴┐│  Rxor │└╥┘ ║  ║  ║ ┌─┐</span>
+<span class="c1">#  Y_0: ┤0             ├┤4      ├─╫──╫──╫──╫─┤M├─────────</span>
+<span class="c1">#       │              ││       │ ║  ║  ║  ║ └╥┘┌─┐</span>
+<span class="c1">#  Y_1: ┤1             ├┤5      ├─╫──╫──╫──╫──╫─┤M├──────</span>
+<span class="c1">#       │  rPrepare 11 ││       │ ║  ║  ║  ║  ║ └╥┘┌─┐</span>
+<span class="c1">#  Y_2: ┤2             ├┤6      ├─╫──╫──╫──╫──╫──╫─┤M├───</span>
+<span class="c1">#       │              ││       │ ║  ║  ║  ║  ║  ║ └╥┘┌─┐</span>
+<span class="c1">#  Y_3: ┤3             ├┤7      ├─╫──╫──╫──╫──╫──╫──╫─┤M├</span>
+<span class="c1">#       └──────────────┘└───────┘ ║  ║  ║  ║  ║  ║  ║ └╥┘</span>
+<span class="c1"># c0: 4/══════════════════════════╩══╩══╩══╩══╬══╬══╬══╬═</span>
+<span class="c1">#                                 0  1  2  3  ║  ║  ║  ║</span>
+<span class="c1"># c1: 4/══════════════════════════════════════╩══╩══╩══╩═</span>
+<span class="c1">#                                             0  1  2  3</span>
 
 <span class="c1"># We can generate the QASM of that circuit and save it to a file</span>
 <span class="c1"># This can be used to run the circuit on an actual quantum computer</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">qasm</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;circuit.qasm&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;circuit.qasm&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">qasm3</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">final_circuit</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
 <span class="c1"># Let&#39;s run this circuit in a simulation and gather the result</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">run_circuit</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">run_circuit</span><span class="p">(</span><span class="n">final_circuit</span><span class="p">)</span>
 
 <span class="c1"># We can verify that ror(4, 3)^11 = 3, and that Y1 was unchanged.</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
@@ -190,31 +192,6 @@
 </pre></div>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="register_operations.html">Register Operations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.FEYNMAN_QC"><code class="docutils literal notranslate"><span class="pre">FEYNMAN_QC</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterCircuit"><code class="docutils literal notranslate"><span class="pre">RegisterCircuit</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterConstantDKRSCarryLookaheadAdder"><code class="docutils literal notranslate"><span class="pre">RegisterConstantDKRSCarryLookaheadAdder</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterConstantXOR"><code class="docutils literal notranslate"><span class="pre">RegisterConstantXOR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterDKRSCarryLookaheadAdder"><code class="docutils literal notranslate"><span class="pre">RegisterDKRSCarryLookaheadAdder</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterDKRSComputeCarry"><code class="docutils literal notranslate"><span class="pre">RegisterDKRSComputeCarry</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterNOT"><code class="docutils literal notranslate"><span class="pre">RegisterNOT</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterOperation"><code class="docutils literal notranslate"><span class="pre">RegisterOperation</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterPrepare"><code class="docutils literal notranslate"><span class="pre">RegisterPrepare</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterROL"><code class="docutils literal notranslate"><span class="pre">RegisterROL</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterROR"><code class="docutils literal notranslate"><span class="pre">RegisterROR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterTTKRippleCarryAdder"><code class="docutils literal notranslate"><span class="pre">RegisterTTKRippleCarryAdder</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.RegisterXOR"><code class="docutils literal notranslate"><span class="pre">RegisterXOR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.SINGLE_QC"><code class="docutils literal notranslate"><span class="pre">SINGLE_QC</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.TOFFOLI_QC"><code class="docutils literal notranslate"><span class="pre">TOFFOLI_QC</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.make_circuit"><code class="docutils literal notranslate"><span class="pre">make_circuit()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.run_circuit"><code class="docutils literal notranslate"><span class="pre">run_circuit()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="register_operations.html#pyqrypto.register_operations.simulate"><code class="docutils literal notranslate"><span class="pre">simulate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="sparkle.html">Sparkle</a></li>
-</ul>
 </div>
 </section>
 </section>

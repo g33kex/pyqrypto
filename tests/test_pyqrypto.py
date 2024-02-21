@@ -370,6 +370,7 @@ def test_ctraxl() -> None:
     assert res_x == true_x
     assert res_y == true_y
 
+
 def test_traxs() -> None:
     """Test TRAX-S against the classical implementation."""
     for _ in range(NB_TESTS // 10):
@@ -389,15 +390,17 @@ def test_traxs() -> None:
 
         result = circuit_test(
             circuit,
-            lambda *params:
-                list(c_traxs_enc(
+            lambda *params: list(
+                c_traxs_enc(
                     params[0],
                     params[1],
                     list(params[2::]),
                     None,
                     n=n // 2,
                     nsteps=1,
-                    final_addition=False)),
+                    final_addition=False,
+                )
+            ),
             [x, y, *round_key],
             gate.inputs[:-1],
             gate.outputs[:-3],
@@ -425,17 +428,19 @@ def test_traxm() -> None:
 
         result = circuit_test(
             circuit,
-            lambda *params: list(chain.from_iterable(
-                c_traxm_enc(
-                    list(params[0:2]),
-                    list(params[2:4]),
-                    list(params[4::]),
-                    None,
-                    n=n // 4,
-                    nsteps=1,
-                    final_addition=False,
-                ),
-            )),
+            lambda *params: list(
+                chain.from_iterable(
+                    c_traxm_enc(
+                        list(params[0:2]),
+                        list(params[2:4]),
+                        list(params[4::]),
+                        None,
+                        n=n // 4,
+                        nsteps=1,
+                        final_addition=False,
+                    ),
+                )
+            ),
             x + y + round_key,
             gate.inputs[:-1],
             gate.outputs[:-5],
@@ -483,6 +488,3 @@ def test_traxl() -> None:
         )
 
         assert result
-
-if __name__ ==  '__main__':
-    test_traxs()
