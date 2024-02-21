@@ -552,12 +552,12 @@ class RegisterDKRSComputeCarry(Gate, RegisterOperation):
 
     The last carry is not computed.
 
-    :param P0: :math:`P_0[i] = p[i, i+1]`, 1 if and only if carry propagages from bit :math:`i` to
-    bit :math:`i+1`.
-    :param G: :math:`G[i] = g[i-1, i]`, 1 if and only if a carry is generated between
-    bit :math:`i-1` and bit :math:`i`.
+    :param P0: Represents :math:`P_0[i] = p[i, i+1]`, which is 1 if and only if carry propagages
+      from bit :math:`i` to bit :math:`i+1`.
+    :param G: Represents :math:`G[i] = g[i-1, i]`, which is 1 if and only if a carry is generated
+      between bit :math:`i-1` and bit :math:`i`.
     :param ancillas: The ancilla qubits used for the computation. They must be set to 0 before the
-    circuit and will be reset to 0.
+      circuit and will be reset to 0.
     """
 
     def __init__(
@@ -612,10 +612,10 @@ class RegisterDKRSCarryLookaheadAdder(Gate, RegisterOperation):
     :param A: First register of size n to add.
     :param B: Second register of size n to add.
     :param ancillas: The ancilla qubits used for the computation. They must be set to 0 before the
-    circuit and will be reset to 0.
+      circuit and will be reset to 0.
     :param label: An optional label for the gate.
     :raises CircuitError: If A and B have a different size or if there is not the correct number of
-    ancilla qubits.
+      ancilla qubits.
 
     :operation: :math:`X \leftarrow X+Y \bmod 2^n`
 
@@ -782,7 +782,7 @@ def simulate(
         else:
             backend_sim = AerSimulator(method=method, device=device, n_qubits=circuit.num_qubits)
 
-        # Transpile the circuit to convert rOperations into basis gates
+        # Transpile the circuit to convert register operations into basis gates
         transpiled_circuit = transpile(circuit, backend_sim)
 
         job_sim = backend_sim.run(transpiled_circuit, shots=shots)
@@ -805,12 +805,12 @@ def make_circuit(
     Also prepare the initial values of the input registers.
 
     :param circuit: The base circuit that will be expanded with measurement operations and
-        preparation operations.
+      preparation operations.
     :param inputs: A list of the initial values to assign to the input registers.
     :param inputs_registers: A list of the input registers.
     :param output_registers: A list of the output registers.
     :returns: The final circuit containing the preparation step, the base circuit and the
-        measurement step.
+      measurement step.
     """
     # Copy the circuit
     circuit = circuit.copy()
@@ -856,7 +856,7 @@ def run_circuit(
     :param device: The device to run the simulation on (CPU or GPU).
     :param shots: The number of times to run the simulation.
     :returns: A list of the integers stored in the classical registers of the circuit after the
-    circuit has been simulated. It takes into account only the most frequent result.
+      circuit has been simulated. It takes into account only the most frequent result.
 
     .. note::
         This function needs the `qiskit_aer` extra dependency.

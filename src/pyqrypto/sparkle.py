@@ -1,6 +1,6 @@
 """A reversible quantum implementation of ciphers from the Sparkle-suite.
 
-It implements the n-qubits Alzette ARX box and the TRAX cipher as defined in [Alzette2020]_.
+It implements the n-qubits Alzette ARX box and the TRAX ciphers defined in [Alzette2020]_.
 
 .. [Alzette2020]
     Beierle, C., Biryukov, A., Cardoso dos Santos, L., Großschädl, J., Perrin, L., Udovenko, A.,
@@ -55,20 +55,20 @@ def c_rol(x: int, r: int, n: int) -> int:
     :param x: The integer to rotate.
     :param r: The rotation amount.
     :param n: The number of bits on which x is encoded.
-    :returns: The integer x rotated right by r bits.
+    :returns: The integer x rotated left by r bits.
     """
     r = r % n
     return ((x << r) | (x >> (n - r))) & ((2**n) - 1)
 
 
 def c_alzette(x: int, y: int, c: int, n: int) -> list[int]:
-    """Classical software implementation of Alzette.
+    r"""Classical software implementation of Alzette.
 
     :param x: The integer value of x.
     :param y: The integer value of y.
     :param c: The c constant in Alzette.
     :param n: The number of bits on which x, y and n are encoded.
-    :returns: alzette(x, y).
+    :returns: :math:`\text{ALZETTE}(x, y)`.
     """
     x = (x + c_ror(y, 31, n)) % 2**n
     y = y ^ c_ror(x, 24, n)
@@ -86,11 +86,11 @@ def c_alzette(x: int, y: int, c: int, n: int) -> list[int]:
 
 
 def c_ell(x: int, n: int) -> int:
-    """Classical implementation of Sparkle's ELL transformation.
+    r"""Classical implementation of Sparkle's ELL transformation.
 
     :param x: The integer value of x.
     :param n: The number of bits on which x is encoded.
-    :returns: :math:`ELL(x)`.
+    :returns: :math:`\text{ELL(x)}`.
     """
     return c_ror(((x) ^ ((x) << n // 2) % 2**n), n // 2, n)
 
@@ -269,7 +269,8 @@ class Alzette(Gate, RegisterOperation):
     :param Y: Y vector.
     :param c: Alzette constant.
     :param ancillas: The anquilla register needed if :py:obj:`adder_mode` is :py:data:`lookahead`.
-    :param adder_mode: See :py:func:`pyqrypto.rOperations.rCircuit.add`.
+    :param adder_mode: See
+      :py:func:`RegisterCircuit.add <pyqrypto.register_operations.RegisterCircuit.add>`.
     :param label: An optional label for the gate.
     :raises CiruitError: If X and Y have a different size.
 
@@ -299,7 +300,8 @@ class Alzette(Gate, RegisterOperation):
         """Get the number of required ancilla qubits without instantiating the class.
 
         :param n: The size of the two inputs of Alzette.
-        :param adder_mode: See :py:func:`pyqrypto.rOperations.rCircuit.add`.
+        :param adder_mode: See
+          :py:func:`RegisterCircuit.add <pyqrypto.register_operations.RegisterCircuit.add>`.
         :returns: The number of ancilla qubits needed for the computation.
         """
         if adder_mode == "ripple":
@@ -365,13 +367,12 @@ class Alzette(Gate, RegisterOperation):
 class TraxsEncRound(Gate, RegisterOperation):
     """A quantum implementation of a round of the encryption step of TRAX-S.
 
-    The default block size for this cipher is 128 bits.
+    The default block size for this cipher is 64 bits.
     Only a single round is implemented because there is no standard key schedule for this cipher.
 
     The adder in the Alzette rounds of TRAX can be implemented with two methods:
 
     - :py:data:`lookahead`: Use a carry-lookahead adder.
-      carry lookahead adders.
     - :py:data:`ripple`: Use a ripple-carry adder.
 
     :param x: A quantum register of size n/2.
@@ -397,10 +398,10 @@ class TraxsEncRound(Gate, RegisterOperation):
         return num_ancilla_registers
 
     @staticmethod
-    def get_num_ancilla_qubits(n: int = 128, alzette_mode: str = "lookahead") -> int:
+    def get_num_ancilla_qubits(n: int = 64, alzette_mode: str = "lookahead") -> int:
         """Get the number of required ancilla qubits without instantiating the class.
 
-        :param n: The size of the block size the cipher is operating on.
+        :param n: The block size of the cipher.
         :param alzette_mode: The method to use to compute the Alzette rounds.
         :returns: The number of ancilla qubits needed for the computation.
         """
@@ -519,7 +520,7 @@ class TraxmEncRound(Gate, RegisterOperation):
     def get_num_ancilla_qubits(n: int = 128, alzette_mode: str = "lookahead-parallel") -> int:
         """Get the number of required ancilla qubits without instantiating the class.
 
-        :param n: The size of the block size the cipher is operating on.
+        :param n: The block size of the cipher.
         :param alzette_mode: The method to use to compute the Alzette rounds.
         :returns: The number of ancilla qubits needed for the computation.
         """
@@ -627,7 +628,7 @@ class TraxlEnc(Gate, RegisterOperation):
 
     The Alzette rounds of TRAX can be implemented using different techniques:
 
-    - :py:data:`lookahead-parallel`: Run the 4 instances of Alzette in parallel*
+    - :py:data:`lookahead-parallel`: Run the 4 instances of Alzette in parallel
       using carry lookahead adders.
     - :py:data:`lookahead-half-parallel`: Run 2 instances of Alzette in parallel
       using carry lookahead adders.
@@ -688,7 +689,7 @@ class TraxlEnc(Gate, RegisterOperation):
     ) -> int:
         """Get the number of required ancilla qubits without instantiating the class.
 
-        :param n: The size of the block size the cipher is operating on.
+        :param n: The block size of the cipher.
         :param alzette_mode: The method to use to compute the Alzette rounds.
         :returns: The number of ancilla qubits needed for the computation.
         """
