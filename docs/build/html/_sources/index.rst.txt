@@ -26,17 +26,23 @@ These are the quantum gates currently implemented by this project.
 Examples
 --------
 
+Here are some usage examples for **pyqrypto**. Checkout the  `examples folder <https://github.com/g33kex/pyqrypto/tree/main/examples>`_ for more.
+
+Simple Usage
+~~~~~~~~~~~~
+
 Here is an example on how to use **pyqrypto** to generate a simple circuit that operates on qubit vectors.
 
 .. literalinclude:: ../../examples/simple_example.py
     :language: python
     :lines: 2-39
 
-For an example on how to implement a more complex circuit, please read the source code of :py:class:`~pyqrypto.sparkle.Alzette`. Also check out the `examples folder <https://github.com/g33kex/pyqrypto/tree/main/examples>`_.
+The library also provides handy tools to add preparation steps and measurements to a circuit operating on quantum registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.
 
-This library also provides handy tools to add preparation steps and measurements to a circuit operating on registers. The registers can be initialized to an integer initial value, and measurement gates can be automatically added and the values of the output of the classical registers converted to integers. This allows testing the circuit on real data to make sure the implementation is correct.
+Let's add a preparation and a measurement step to our previous example and simulate it. 
 
-Let's add a preparation and a measurement step to our previous example and simulate it.
+.. note ::
+        You need to install the `qiskit-aer <https://pypi.org/project/qiskit-aer/>`_ extra dependency to use the simulation feature.
 
 .. literalinclude:: ../../examples/simple_example.py
     :language: python
@@ -49,4 +55,39 @@ Let's add a preparation and a measurement step to our previous example and simul
 
    register_operations
    sparkle
+
+Addition
+~~~~~~~~
+
+Here is an example on how to do a 8-bit addition using a ripple-carry adder:
+
+.. literalinclude:: ../../examples/adders_example.py
+    :language: python
+    :dedent: 4
+    :lines: 17-36
+
+It is also possible to use a carry-lookahead adder to obtain a shallower circuit, at the expense of ancilla qubits:
+
+.. literalinclude:: ../../examples/adders_example.py
+    :language: python
+    :dedent: 4
+    :lines: 41-66
+
+Alzette
+~~~~~~~
+
+Here's how to use the :py:class:`~pyqrypto.sparkle.Alzette` gate:
+
+.. literalinclude:: ../../examples/alzette_example.py
+    :language: python
+    :lines: 2-38
+
+TRAX-L
+~~~~~~
+
+Here's how to use the :py:class:`~pyqrypto.sparkle.TraxlEnc` gate:
+
+.. literalinclude:: ../../examples/traxl_example.py
+    :language: python
+    :lines: 2-61
 
